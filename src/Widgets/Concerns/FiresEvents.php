@@ -2,10 +2,11 @@
 
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
-trait FiresEvents {
+trait FiresEvents
+{
     /**
      * Triggered when the user clicks an event.
-     * 
+     *
      * Commented out so we can save some requests :) Feel free to extend it.
      * @see https://fullcalendar.io/docs/eventClick
      */
@@ -21,7 +22,7 @@ trait FiresEvents {
 
     /**
      * Triggered when dragging stops and the event has moved to a different day/time.
-     * 
+     *
      * Commented out so we can save some requests :) Feel free to extend it.
      * @see https://fullcalendar.io/docs/eventDrop
      */
@@ -29,7 +30,7 @@ trait FiresEvents {
     // {
     //     //
     // }
-    
+
     public function isListeningDropEvent(): bool
     {
         return method_exists($this, 'onEventClick');

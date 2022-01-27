@@ -11,7 +11,7 @@ class FullCalendarWidget extends Widget
 {
     use FiresEvents;
     use UsesConfig;
-    
+
     protected static string $view = 'filament-fullcalendar::fullcalendar';
 
     protected int | string | array $columnSpan = 'full';
@@ -25,7 +25,7 @@ class FullCalendarWidget extends Widget
     {
         return view(static::$view)
             ->with([
-                'events' => $this->getViewData()
+                'events' => $this->getViewData(),
             ]);
     }
 }

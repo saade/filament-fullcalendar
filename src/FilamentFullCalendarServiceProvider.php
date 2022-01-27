@@ -3,8 +3,8 @@
 namespace Saade\FilamentFullCalendar;
 
 use Filament\PluginServiceProvider;
-use Spatie\LaravelPackageTools\Package;
 use Saade\FilamentFullCalendar\Commands\UpgradeFilamentFullCalendarCommand;
+use Spatie\LaravelPackageTools\Package;
 
 class FilamentFullCalendarServiceProvider extends PluginServiceProvider
 {
@@ -31,6 +31,6 @@ class FilamentFullCalendarServiceProvider extends PluginServiceProvider
         return [
             self::$name . '-fullcalendar' => __DIR__ . '/../dist/fullcalendar/lib/main.min.js',
             self::$name . '-fullcalendar-locales' => __DIR__ . '/../dist/fullcalendar/lib/locales-all.min.js',
-        ];   
+        ];
     }
 }
