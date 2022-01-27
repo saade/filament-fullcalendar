@@ -34,8 +34,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Saade\\FilamentFullCalendar\\": "src",
-            "Saade\\FilamentFullCalendar\\Database\\Factories\\": "database/factories"
+            "Saade\\FilamentFullCalendar\\": "src"
         }
     },
     "autoload-dev": {

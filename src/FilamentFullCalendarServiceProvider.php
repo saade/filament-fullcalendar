@@ -2,18 +2,35 @@
 
 namespace Saade\FilamentFullCalendar;
 
+use Filament\PluginServiceProvider;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Saade\FilamentFullCalendar\Commands\UpgradeFilamentFullCalendarCommand;
 
-class FilamentFullCalendarServiceProvider extends PackageServiceProvider
+class FilamentFullCalendarServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'filament-fullcalendar';
+
     public function configurePackage(Package $package): void
     {        
         $package
-            ->name('filament-fullcalendar')
+            ->name(self::$name)
             ->hasConfigFile()
-            ->hasViews()            
+            ->hasViews()
             ->hasCommand(UpgradeFilamentFullCalendarCommand::class);
+    }
+
+    protected function getStyles(): array
+    {
+        return [
+            self::$name . '-styles' => __DIR__ . '/../dist/fullcalendar/lib/main.min.css',
+        ];
+    }
+
+    protected function getScripts(): array
+    {
+        return [
+            self::$name . '-fullcalendar' => __DIR__ . '/../dist/fullcalendar/lib/main.min.js',
+            self::$name . '-fullcalendar-locales' => __DIR__ . '/../dist/fullcalendar/lib/locales-all.min.js',
+        ];   
     }
 }
