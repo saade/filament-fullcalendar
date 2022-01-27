@@ -11,7 +11,7 @@ class FilamentFullCalendarServiceProvider extends PluginServiceProvider
     public static string $name = 'filament-fullcalendar';
 
     public function configurePackage(Package $package): void
-    {        
+    {
         $package
             ->name(self::$name)
             ->hasConfigFile()
