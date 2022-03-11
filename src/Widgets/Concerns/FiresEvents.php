@@ -33,6 +33,6 @@ trait FiresEvents
 
     public function isListeningDropEvent(): bool
     {
-        return method_exists($this, 'onEventClick');
+        return method_exists($this, 'onEventDrop');
     }
 }
