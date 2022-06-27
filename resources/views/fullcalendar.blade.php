@@ -18,6 +18,11 @@
             ));
 
             calendar.render();
+
+            window.addEventListener("fullcalendar::refresh", event => {
+                calendar.removeAllEvents();
+                event.detail.data.map(event => calendar.addEvent(event));
+            });
         })'>
         </div>
     </x-filament::card>
