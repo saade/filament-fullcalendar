@@ -1,5 +1,15 @@
 <x-filament::widget>
     <x-filament::card>
+        @if( $this::canCreate() )
+            <div class="flex items-center justify-end">
+                <x-filament::button wire:click="onCreateEventClick">
+                    {{ __('filament::resources/pages/create-record.form.actions.create.label') }}
+                </x-filament::button>
+            </div>
+
+            <x-filament::hr />
+        @endif
+
         <div wire:ignore x-data="" x-init='document.addEventListener("DOMContentLoaded", () => {
             const calendar = new FullCalendar.Calendar($el, Object.assign(
                 @json($this->getConfig()),
@@ -21,4 +31,8 @@
         })'>
         </div>
     </x-filament::card>
+
+    @includeWhen($this::canCreate(), 'filament-fullcalendar::modals.create-event-modal')
+
+    @includeWhen($this::canEdit(), 'filament-fullcalendar::modals.edit-event-modal')
 </x-filament::widget>
