@@ -11,10 +11,7 @@
 
 - Accepts all configurations from [FullCalendar](https://fullcalendar.io/docs#toc)
 - Event click and drop events
-
-### Upcoming
-- Modal view when clicking on an event
-- Tailwindcss theme 💙
+- Modals for creating and editing events <sup>New in v1.0</sup>
 
 <br>
 
@@ -39,36 +36,6 @@ You can publish the config file with:
 
 ```bash
 php artisan vendor:publish --tag="filament-fullcalendar-config"
-```
-
-This is the contents of the published config file:
-
-```php
-<?php
-
-/**
- * Consider this file the root configuration object for FullCalendar.
- * Any configuration added here, will be added to the calendar.
- * @see https://fullcalendar.io/docs#toc
- */
-
-return [
-    'timeZone' => config('app.timezone'),
-
-    'locale' => config('app.locale'),
-
-    'headerToolbar' => [
-        'left'   => 'prev,next today',
-        'center' => 'title',
-        'right'  => 'dayGridMonth,dayGridWeek,dayGridDay'
-    ],
-
-    'navLinks' => true,
-
-    'editable' => true,
-
-    'dayMaxEvents' => true
-];
 ```
 
 <br>
@@ -131,7 +98,7 @@ class CalendarWidget extends FullCalendarWidget
 This is the contents of the default config file.
 
 You can use any property that FullCalendar uses on its root object.
-Please refer to: [FullCalendar Docs](https://fullcalendar.io/docs#toc) to see the available options. It supports all of them, really.
+Please refer to: [FullCalendar Docs](https://fullcalendar.io/docs#toc) to see the available options. It supports most of them.
 
 ```php
 <?php
@@ -169,27 +136,136 @@ The only events supported right now are: [EventClick](https://fullcalendar.io/do
 
 They're commented out by default so livewire does not spam requests without they being used. You are free to paste them in your `CalendarWidget` class. See: [FiresEvents](https://github.com/saade/filament-fullcalendar/blob/main/src/Widgets/Concerns/FiresEvents.php)
 
+> Note: if you are overriding the event callbacks, be sure to call its parent function to garantee that all functions works properly.
+
 ```php
 /**
  * Triggered when the user clicks an event.
- *
- * Commented out so we can save some requests :) Feel free to extend it.
- * @see https://fullcalendar.io/docs/eventClick
  */
 public function onEventClick($event): void
 {
-    //
+    parent::onEventClick($event);
+
+    // your code
 }
 
 /**
  * Triggered when dragging stops and the event has moved to a different day/time.
- *
- * Commented out so we can save some requests :) Feel free to extend it.
- * @see https://fullcalendar.io/docs/eventDrop
  */
 public function onEventDrop($oldEvent, $newEvent, $relatedEvents): void
 {
-    //
+    parent::onEventDrop($oldEvent, $newEvent, $relatedEvents);
+
+    // your code
+}
+```
+
+<br>
+
+# Creating and Editing events with modals.
+
+Since [v1.0.0](https://github.com/saade/filament-fullcalendar/releases/tag/v1.0.0) you can create and edit events using a modal.
+
+The process of saving and editing the event is up to you, since this plugin does not rely on a Model to save the calendar events.
+
+
+## Creating Events:
+
+Override the `createEvent` function in your widget class, and you are ready to go!
+
+```php
+public function createEvent(array $data): void
+{
+    // Create the event with the provided $data.
+}
+```
+
+If the default form does not fullfills your needs, you can override the `getCreateEventFormSchema` and use it like a normal Filament form.
+
+```php
+protected static function getCreateEventFormSchema(): array
+{
+    return [
+        Forms\Components\TextInput::make('title')
+            ->required(),
+        Forms\Components\DatePicker::make('start')
+            ->required(),
+        Forms\Components\DatePicker::make('end')
+            ->default(null),
+    ];
+}
+```
+
+<br>
+
+## Editing Events:
+
+Override the `editEvent` function in your widget class, and you are ready to go!
+
+```php
+public function editEvent(array $data): void
+{
+    // Edit the event with the provided $data.
+}
+```
+
+If the default form does not fullfills your needs, you can override the `getEditEventFormSchema` and use it like a normal Filament form.
+
+```php
+protected static function getEditEventFormSchema(): array
+{
+    return [
+        Forms\Components\TextInput::make('title')
+            ->required(),
+        Forms\Components\DatePicker::make('start')
+            ->required(),
+        Forms\Components\DatePicker::make('end')
+            ->default(null),
+    ];
+}
+```
+
+<br>
+
+## Authorizing actions
+
+If you want to authorize the `edit` or `create` action, you can override the default authorization methods that comes with this package.
+
+```php
+public static function canCreate(): bool
+{
+    // Returning 'false' will remove the 'Create' button on the calendar.
+    return true;
+}
+
+public static function canEdit(?array $event = null): bool
+{
+    // Returning 'false' will disable the edit modal when clicking on a event.
+    return true;
+}
+```
+
+If you want to disable all actions or keep the calendar as it was before [v1.0.0](https://github.com/saade/filament-fullcalendar/releases/tag/v1.0.0), you can return false for all the methods above, or use the convenient concern `CantManageEvents`. It will disable all calendar modals.
+
+```php
+class CalendarWidget extends FullCalendarWidget
+{
+    use CantManageEvents;
+
+    // ...
+}
+```
+
+<br>
+
+# Refreshing calendar events
+
+If you want to refresh the calendar events, you can call `$this->refreshEvents()` inside your widget class. This will call `getViewData()` and re-render the events on the calendar.
+
+```php
+public function yourMethod(): void
+{
+    $this->refreshEvents();
 }
 ```
 

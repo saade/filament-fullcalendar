@@ -2,31 +2,66 @@
 
 <x-filament::widget>
     <x-filament::card>
-        <div wire:ignore x-data="" x-init='document.addEventListener("DOMContentLoaded", () => {
-            const calendar = new FullCalendar.Calendar($el, Object.assign(
-                @json($this->getConfig()),
-                {
-                    locale: "{{ $locale }}",
-                    events: @json($events),
-                    eventClick: ({ event, jsEvent }) => {
-                        if(event.url) {
+        @if( $this::canCreate() )
+            <div class="flex items-center justify-end">
+                <x-filament::button wire:click="onCreateEventClick">
+                    {{ __('filament::resources/pages/create-record.form.actions.create.label') }}
+                </x-filament::button>
+            </div>
+
+            <x-filament::hr />
+        @endif
+
+        <div
+            wire:ignore
+            x-data=""
+            x-init='
+                document.addEventListener("DOMContentLoaded", function() {
+                    const config = @json($this->getConfig());
+                    const events = @json($events);
+                    const locale = "{{ $locale }}";
+
+                    const eventClick = function ({ event, jsEvent }) {
+                        if( event.url ) {
                             jsEvent.preventDefault();
                             window.open(event.url, event.extendedProps.shouldOpenInNewTab ? "_blank" : "_self");
                             return false;
                         }
-                        @js($this->isListeningClickEvent()) && window.livewire.find("{{ $this->id }}").onEventClick(event)
-                    },
-                    eventDrop:  ({ event, oldEvent, relatedEvents }) => @js($this->isListeningDropEvent()) && window.livewire.find("{{ $this->id }}").onEventDrop(event, oldEvent, relatedEvents),
-                }
-            ));
 
-            calendar.render();
+                        @if ($this::isListeningClickEvent())
+                            $wire.onEventClick(event)
+                        @endif
+                    }
 
-            window.addEventListener("fullcalendar::refresh", event => {
-                calendar.removeAllEvents();
-                event.detail.data.map(event => calendar.addEvent(event));
-            });
-        })'>
-        </div>
+                    const eventDrop = function ({ event, oldEvent, relatedEvents }) {
+                        @if($this::isListeningDropEvent())
+                            $wire.onEventDrop(event, oldEvent, relatedEvents)
+                        @endif
+                    }
+
+                    const calendar = new FullCalendar.Calendar($el, {
+                        ...config,
+                        locale,
+                        events,
+                        eventClick,
+                        eventDrop
+                    });
+
+                    calendar.render();
+
+                    window.addEventListener("filament-fullcalendar:refresh", (event) => {
+                        calendar.removeAllEvents();
+                        event.detail.data.map(event => calendar.addEvent(event));
+                    });
+                })
+            '></div>
     </x-filament::card>
+
+    @if($this::canCreate())
+        <x:filament-fullcalendar::create-event-modal />
+    @endif
+
+    @if($this::canEdit())
+        <x:filament-fullcalendar::edit-event-modal />
+    @endif
 </x-filament::widget>
