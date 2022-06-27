@@ -36,12 +36,8 @@ trait CreateEventForm
     {
         return [
             'createEventForm' => $this->makeForm()
-                ->schema(
-                    array_map(
-                        fn ($component) => $component->statePath('createEventFormState'),
-                        static::getCreateEventFormSchema()
-                    )
-                ),
+                ->schema(static::getCreateEventFormSchema())
+                ->statePath('createEventFormState'),
         ];
     }
 }

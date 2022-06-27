@@ -15,9 +15,9 @@ trait FiresEvents
     //     //
     // }
 
-    public function isListeningClickEvent(): bool
+    public static function isListeningClickEvent(): bool
     {
-        return method_exists($this, 'onEventClick');
+        return method_exists(static::class, 'onEventClick');
     }
 
     /**
@@ -31,8 +31,8 @@ trait FiresEvents
     //     //
     // }
 
-    public function isListeningDropEvent(): bool
+    public static function isListeningDropEvent(): bool
     {
-        return method_exists($this, 'onEventDrop');
+        return method_exists(static::class, 'onEventDrop');
     }
 }

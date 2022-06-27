@@ -10,29 +10,49 @@
             <x-filament::hr />
         @endif
 
-        <div wire:ignore x-data="" x-init='document.addEventListener("DOMContentLoaded", () => {
-            const calendar = new FullCalendar.Calendar($el, Object.assign(
-                @json($this->getConfig()),
-                {
-                    events: @json($events),
-                    eventClick: ({ event, jsEvent }) => {
-                        if(event.url) {
+        <div
+            wire:ignore
+            x-data=""
+            x-init='
+                document.addEventListener("DOMContentLoaded", function() {
+                    const config = @json($this->getConfig());
+                    const events = @json($events);
+
+                    const eventClick = function ({ event, jsEvent }) {
+                        if( event.url ) {
                             jsEvent.preventDefault();
                             window.open(event.url, "_blank");
                             return false;
                         }
-                        @js($this->isListeningClickEvent()) && window.livewire.find("{{ $this->id }}").onEventClick(event)
-                    },
-                    eventDrop:  ({ event, oldEvent, relatedEvents }) => @js($this->isListeningDropEvent()) && window.livewire.find("{{ $this->id }}").onEventDrop(event, oldEvent, relatedEvents),
-                }
-            ));
 
-            calendar.render();
-        })'>
-        </div>
+                        @if ($this::isListeningClickEvent())
+                            $wire.onEventClick(event)
+                        @endif
+                    }
+
+                    const eventDrop = function ({ event, oldEvent, relatedEvents }) {
+                        @if($this::isListeningDropEvent())
+                            $wire.onEventDrop(event, oldEvent, relatedEvents)
+                        @endif
+                    }
+
+                    const calendar = new FullCalendar.Calendar($el, {
+                        ...config,
+                        events,
+                        eventClick,
+                        eventDrop
+                    });
+
+                    calendar.render();
+                })
+            '></div>
     </x-filament::card>
 
-    @includeWhen($this::canCreate(), 'filament-fullcalendar::modals.create-event-modal')
+    @if($this::canCreate())
+        <x:filament-fullcalendar::create-event-modal />
+    @endif
 
-    @includeWhen($this::canEdit(), 'filament-fullcalendar::modals.edit-event-modal')
+    @if($this::canEdit())
+        <x:filament-fullcalendar::edit-event-modal />
+    @endif
 </x-filament::widget>

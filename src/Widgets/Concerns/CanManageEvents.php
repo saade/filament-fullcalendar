@@ -7,8 +7,20 @@ use Saade\FilamentFullCalendar\Widgets\Forms\EditEventForm;
 
 trait CanManageEvents
 {
+    use AuthorizesActions;
     use CreateEventForm;
     use EditEventForm;
+
+    protected function setUpForms(): void
+    {
+        if (static::canCreate()) {
+            $this->createEventForm->fill();
+        }
+
+        if (static::canEdit()) {
+            $this->editEventForm->fill();
+        }
+    }
 
     protected function getForms(): array
     {
@@ -34,8 +46,6 @@ trait CanManageEvents
         if (! static::canCreate()) {
             return;
         }
-
-        $this->createEventForm->fill();
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--create-event-modal']);
     }
