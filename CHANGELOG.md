@@ -2,6 +2,14 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.0.0 - 2022-06-27
+
+### What's Changed
+
+- feature: Modals for creating / editing events by @saade in https://github.com/saade/filament-fullcalendar/pull/11
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v0.3.0...v1.0.0
+
 ## v0.3.0 - 2022-06-27
 
 ### What's Changed
