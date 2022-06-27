@@ -1,9 +1,12 @@
+@php($locale = strtolower(str_replace('_', '-', $this->getConfig()['locale'])))
+
 <x-filament::widget>
     <x-filament::card>
         <div wire:ignore x-data="" x-init='document.addEventListener("DOMContentLoaded", () => {
             const calendar = new FullCalendar.Calendar($el, Object.assign(
                 @json($this->getConfig()),
                 {
+                    locale: "{{ $locale }}",
                     events: @json($events),
                     eventClick: ({ event, jsEvent }) => {
                         if(event.url) {
