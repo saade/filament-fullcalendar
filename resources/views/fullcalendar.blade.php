@@ -1,3 +1,5 @@
+@php($locale = strtolower(str_replace('_', '-', $this->getConfig()['locale'])))
+
 <x-filament::widget>
     <x-filament::card>
         @if( $this::canCreate() )
@@ -17,11 +19,12 @@
                 document.addEventListener("DOMContentLoaded", function() {
                     const config = @json($this->getConfig());
                     const events = @json($events);
+                    const locale = "{{ $locale }}";
 
                     const eventClick = function ({ event, jsEvent }) {
                         if( event.url ) {
                             jsEvent.preventDefault();
-                            window.open(event.url, "_blank");
+                            window.open(event.url, event.extendedProps.shouldOpenInNewTab ? "_blank" : "_self");
                             return false;
                         }
 
@@ -38,12 +41,18 @@
 
                     const calendar = new FullCalendar.Calendar($el, {
                         ...config,
+                        locale,
                         events,
                         eventClick,
                         eventDrop
                     });
 
                     calendar.render();
+
+                    window.addEventListener("filament-fullcalendar:refresh", (event) => {
+                        calendar.removeAllEvents();
+                        event.detail.data.map(event => calendar.addEvent(event));
+                    });
                 })
             '></div>
     </x-filament::card>

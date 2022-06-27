@@ -114,7 +114,8 @@ class CalendarWidget extends FullCalendarWidget
                 'id' => 2,
                 'title' => 'Meeting with Pamela',
                 'start' => now()->addDay(),
-                'url' => MeetingResource::getUrl('view', ['record' => 2])
+                'url' => MeetingResource::getUrl('view', ['record' => 2]),
+                'shouldOpenInNewTab' => true,
             ]
         ];
     }
