@@ -8,7 +8,7 @@
                     eventClick: ({ event, jsEvent }) => {
                         if(event.url) {
                             jsEvent.preventDefault();
-                            window.open(event.url, "_blank");
+                            window.open(event.url, event.extendedProps.shouldOpenInNewTab ? "_blank" : "_self");
                             return false;
                         }
                         @js($this->isListeningClickEvent()) && window.livewire.find("{{ $this->id }}").onEventClick(event)
