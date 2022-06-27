@@ -4,11 +4,13 @@ namespace Saade\FilamentFullCalendar\Widgets;
 
 use Filament\Widgets\Widget;
 use Illuminate\View\View;
+use Saade\FilamentFullCalendar\Widgets\Concerns\CanRefreshEvents;
 use Saade\FilamentFullCalendar\Widgets\Concerns\FiresEvents;
 use Saade\FilamentFullCalendar\Widgets\Concerns\UsesConfig;
 
 class FullCalendarWidget extends Widget
 {
+    use CanRefreshEvents;
     use FiresEvents;
     use UsesConfig;
 
