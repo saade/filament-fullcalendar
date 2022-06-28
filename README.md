@@ -10,7 +10,7 @@
 # Features
 
 - Accepts all configurations from [FullCalendar](https://fullcalendar.io/docs#toc)
-- Event click and drop events
+- Event click, drop and select events
 - Modals for creating and editing events <sup>New in v1.0</sup>
 
 <br>
@@ -124,6 +124,8 @@ return [
 
     'editable' => true,
 
+    'selectable' => true,
+
     'dayMaxEvents' => true
 ];
 ```
@@ -132,7 +134,7 @@ return [
 
 # Listening for events
 
-The only events supported right now are: [EventClick](https://fullcalendar.io/docs/eventClick) and [EventDrop](https://fullcalendar.io/docs/eventDrop)
+The only events supported right now are: [EventClick](https://fullcalendar.io/docs/eventClick), [EventDrop](https://fullcalendar.io/docs/eventDrop) and [Select](https://fullcalendar.io/docs/select-callback)
 
 They're commented out by default so livewire does not spam requests without they being used. You are free to paste them in your `CalendarWidget` class. See: [FiresEvents](https://github.com/saade/filament-fullcalendar/blob/main/src/Widgets/Concerns/FiresEvents.php)
 
@@ -155,6 +157,16 @@ public function onEventClick($event): void
 public function onEventDrop($oldEvent, $newEvent, $relatedEvents): void
 {
     parent::onEventDrop($oldEvent, $newEvent, $relatedEvents);
+
+    // your code
+}
+
+/**
+ * Triggered when a date/time selection is made.
+ */
+public function onEventSelect(string $start, string $end, bool $allDay): void
+{
+    parent::onEventSelect($start, $end, $allDay);
 
     // your code
 }
@@ -229,7 +241,7 @@ protected static function getEditEventFormSchema(): array
 
 ## Authorizing actions
 
-If you want to authorize the `edit` or `create` action, you can override the default authorization methods that comes with this package.
+If you want to authorize the `edit`, `create` or `select` action, you can override the default authorization methods that comes with this package.
 
 ```php
 public static function canCreate(): bool
@@ -241,6 +253,12 @@ public static function canCreate(): bool
 public static function canEdit(?array $event = null): bool
 {
     // Returning 'false' will disable the edit modal when clicking on a event.
+    return true;
+}
+
+public static function canSelect(?string $start = null, ?string $end = null, ?bool $allDay = null): bool
+{
+    // Returning 'false' will disable the create modal when selecting a date.
     return true;
 }
 ```

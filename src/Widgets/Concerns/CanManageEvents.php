@@ -49,4 +49,15 @@ trait CanManageEvents
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--create-event-modal']);
     }
+
+    public function onEventSelect(string $start, string $end, bool $allDay): void
+    {
+        if (! static::canSelect()) {
+            return;
+        }
+
+        $this->createEventForm->fill(['start' => $start, 'end' => $end, 'allDay' => $allDay]);
+
+        $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--create-event-modal']);
+    }
 }

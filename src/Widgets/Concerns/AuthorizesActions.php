@@ -14,6 +14,11 @@ trait AuthorizesActions
         return true;
     }
 
+    public static function canSelect(?string $start = null, ?string $end = null, ?bool $allDay = null): bool
+    {
+        return true;
+    }
+
     public static function canDelete(?array $event = null): bool
     {
         return true;

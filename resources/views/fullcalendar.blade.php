@@ -39,12 +39,19 @@
                         @endif
                     }
 
+                    const select = function ({ start, end, allDay }) {
+                        @if ($this::isListeningSelectEvent())
+                            $wire.onEventSelect(start, end, allDay)
+                        @endif
+                    }
+
                     const calendar = new FullCalendar.Calendar($el, {
                         ...config,
                         locale,
                         events,
                         eventClick,
-                        eventDrop
+                        eventDrop,
+                        select,
                     });
 
                     calendar.render();

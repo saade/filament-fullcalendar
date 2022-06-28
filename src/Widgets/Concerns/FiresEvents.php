@@ -35,4 +35,20 @@ trait FiresEvents
     {
         return method_exists(static::class, 'onEventDrop');
     }
+
+    /**
+     * Triggered when a date/time selection is made.
+     *
+     * Commented out so we can save some requests :) Feel free to extend it.
+     * @see https://fullcalendar.io/docs/select-callback
+     */
+    // public function onEventSelect($start, $end, $allDay): void
+    // {
+    //     //
+    // }
+
+    public static function isListeningSelectEvent(): bool
+    {
+        return method_exists(static::class, 'onEventSelect');
+    }
 }
