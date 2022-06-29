@@ -58,16 +58,6 @@
                         @else
                             events: eventsData,
                         @endif
-                        @if( $this::canCreate() )
-                            dateClick: function(info){
-                                $wire.onCreateEventClick(info)
-                            },
-                            @if($this->config('selectable', false))
-                                select: function(info){
-                                    $wire.onCreateEventClick(info)
-                                },
-                            @endif
-                        @endif
                     });
 
                     calendar.render();
