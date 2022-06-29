@@ -11,6 +11,8 @@ trait CanManageEvents
     use CreateEventForm;
     use EditEventForm;
 
+    public ?int $record_id = null;
+
     protected function setUpForms(): void
     {
         if (static::canCreate()) {
@@ -37,6 +39,8 @@ trait CanManageEvents
         }
 
         $this->editEventForm->fill($event);
+
+        $this->record_id = $event['id'] ?? null;
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--edit-event-modal']);
     }
