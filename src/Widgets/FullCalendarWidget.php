@@ -10,6 +10,7 @@ use Saade\FilamentFullCalendar\Widgets\Concerns\CanManageEvents;
 use Saade\FilamentFullCalendar\Widgets\Concerns\CanRefreshEvents;
 use Saade\FilamentFullCalendar\Widgets\Concerns\FiresEvents;
 use Saade\FilamentFullCalendar\Widgets\Concerns\UsesConfig;
+use Saade\FilamentFullCalendar\Widgets\Concerns\UsesLazyLoad;
 
 class FullCalendarWidget extends Widget implements HasForms
 {
@@ -20,6 +21,7 @@ class FullCalendarWidget extends Widget implements HasForms
     use CanRefreshEvents;
     use FiresEvents;
     use UsesConfig;
+    use UsesLazyLoad;
 
     protected static string $view = 'filament-fullcalendar::fullcalendar';
 
@@ -34,7 +36,7 @@ class FullCalendarWidget extends Widget implements HasForms
     {
         return view(static::$view)
             ->with([
-                'events' => $this->getViewData(),
+                'events' => $this->isLazyLoad() ? $this->lazyLoadViewData() : $this->getViewData(),
             ]);
     }
 }

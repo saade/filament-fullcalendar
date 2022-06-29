@@ -18,7 +18,7 @@
             x-init='
                 document.addEventListener("DOMContentLoaded", function() {
                     const config = @json($this->getConfig());
-                    const events = @json($events);
+                    const eventsData = @json($events);
                     const locale = "{{ $locale }}";
 
                     const eventClick = function ({ event, jsEvent }) {
@@ -39,12 +39,35 @@
                         @endif
                     }
 
+                    var initial = true;
+
                     const calendar = new FullCalendar.Calendar($el, {
                         ...config,
                         locale,
-                        events,
                         eventClick,
-                        eventDrop
+                        eventDrop,
+                        @if($this->isLazyLoad())
+                            events: function(fetchInfo, successCallback, failureCallback) {
+                                if(initial){
+                                    initial = false
+                                    successCallback(eventsData)
+                                }else{
+                                    return $wire.lazyLoadViewData(fetchInfo)
+                                }
+                            },
+                        @else
+                            events: eventsData,
+                        @endif
+                        @if( $this::canCreate() )
+                            dateClick: function(info){
+                                $wire.onCreateEventClick(info)
+                            },
+                            @if($this->config('selectable', false))
+                                select: function(info){
+                                    $wire.onCreateEventClick(info)
+                                },
+                            @endif
+                        @endif
                     });
 
                     calendar.render();
