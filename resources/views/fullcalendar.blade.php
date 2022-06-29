@@ -2,7 +2,7 @@
 
 <x-filament::widget>
     <x-filament::card>
-        @if( $this::canCreate() )
+        @if($this->showCreateButton && $this::canCreate() )
             <div class="flex items-center justify-end">
                 <x-filament::button wire:click="onCreateEventClick">
                     {{ __('filament::resources/pages/create-record.form.actions.create.label') }}
@@ -44,7 +44,17 @@
                         locale,
                         events,
                         eventClick,
-                        eventDrop
+                        eventDrop,
+                        @if( $this::canCreate() )
+                            dateClick: function(info){
+                                $wire.onCreateEventClick(info)
+                            },
+                            @if($this->config('selectable', false))
+                                select: function(info){
+                                    $wire.onCreateEventClick(info)
+                                },
+                            @endif
+                        @endif
                     });
 
                     calendar.render();
