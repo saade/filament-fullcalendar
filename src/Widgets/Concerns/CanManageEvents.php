@@ -4,8 +4,8 @@ namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Closure;
 use Illuminate\Support\Carbon;
-use Saade\FilamentFullCalendar\Widgets\Forms\EditEventForm;
 use Saade\FilamentFullCalendar\Widgets\Forms\CreateEventForm;
+use Saade\FilamentFullCalendar\Widgets\Forms\EditEventForm;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 trait CanManageEvents
