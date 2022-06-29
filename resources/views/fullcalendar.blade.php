@@ -20,6 +20,9 @@
                     const config = @json($this->getConfig());
                     const eventsData = @json($events);
                     const locale = "{{ $locale }}";
+                    @if($this->isLazyLoad())
+                        const cachedEventIds = [];
+                    @endif
 
                     const eventClick = function ({ event, jsEvent }) {
                         if( event.url ) {
@@ -50,9 +53,24 @@
                             events: function(fetchInfo, successCallback, failureCallback) {
                                 if(initial){
                                     initial = false
+
+                                    if(eventsData[0]?.id){
+                                        eventsData.forEach((event) => cachedEventIds.push(event.id))
+                                    }
+
                                     successCallback(eventsData)
                                 }else{
-                                    return $wire.lazyLoadViewData(fetchInfo)
+                                    $wire.lazyLoadViewData(fetchInfo)
+                                        .then(result => {
+                                            if(result.length == 0) return
+
+                                            if(result[0].id){
+                                                result.forEach((event) => cachedEventIds.indexOf(event.id) != -1 ? null : cachedEventIds.push(event.id) && eventsData.push(event))
+                                                successCallback(eventsData)
+                                            }else{
+                                                successCallback(result)
+                                            }
+                                        })
                                 }
                             },
                         @else
