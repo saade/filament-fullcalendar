@@ -82,7 +82,13 @@
 
                     window.addEventListener("filament-fullcalendar:refresh", (event) => {
                         calendar.removeAllEvents();
-                        event.detail.data.map(event => calendar.addEvent(event));
+                        @unless($this->isLazyLoad())
+                            event.detail.data.map(event => calendar.addEvent(event));
+                        @else
+                            cachedEventIds.splice(0, cachedEventIds.length)
+                            calendar.refetchEvents()
+                            eventsData.splice(0, eventsData.length)
+                        @endunless
                     });
                 })
             '></div>

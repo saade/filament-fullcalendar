@@ -6,6 +6,6 @@ trait CanRefreshEvents
 {
     protected function refreshEvents(): void
     {
-        $this->dispatchBrowserEvent('filament-fullcalendar:refresh', ['data' => $this->getViewData()]);
+        $this->dispatchBrowserEvent('filament-fullcalendar:refresh', $this->isLazyLoad() ? null : ['data' => $this->getViewData()]);
     }
 }
