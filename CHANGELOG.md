@@ -2,6 +2,15 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.1.0 - 2022-07-01
+
+### What's Changed
+
+- feat: open modal on calendar click by @wychoong in https://github.com/saade/filament-fullcalendar/pull/16
+- feat: lazy loading the events data by @wychoong in https://github.com/saade/filament-fullcalendar/pull/17
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.0.0...v1.1.0
+
 ## v1.0.0 - 2022-06-27
 
 ### What's Changed
