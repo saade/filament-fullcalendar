@@ -1,4 +1,4 @@
-@php($locale = strtolower(str_replace('_', '-', $this->getConfig()['locale'])))
+@php($locale = strtolower(str_replace('_', '-', $this->config('locale', config('app.locale')))))
 
 <x-filament::widget>
     <x-filament::card>
@@ -8,8 +8,11 @@
             x-init='
                 document.addEventListener("DOMContentLoaded", function() {
                     const config = @json($this->getConfig());
-                    const events = @json($events);
                     const locale = "{{ $locale }}";
+                    const events = @json($events);
+                    const cachedEventIds = [
+                        ...events.map(event => event.id),
+                    ];
 
                     const eventClick = function ({ event, jsEvent }) {
                         if( event.url ) {
@@ -41,21 +44,40 @@
                         @endif
                     }
 
+                    const fetchEvents = function ({ start, end }, successCallback, failureCallback) {
+                        @if( $this::canFetchEvents() )
+                            return $wire.fetchEvents({ start, end }, cachedEventIds)
+                                .then(events => {
+                                    // Cache fetched events
+                                    cachedEventIds.push(...events.map(event => event.id));
+
+                                    return successCallback(events);
+                                })
+                                .catch( failureCallback );
+                        @else
+                            return successCallback([]);
+                        @endif
+                    }
+
                     const calendar = new FullCalendar.Calendar($el, {
                         ...config,
                         locale,
-                        events,
                         eventClick,
                         eventDrop,
                         dateClick,
                         select,
+                        eventSources:[
+                            { events },
+                            fetchEvents
+                        ]
                     });
 
                     calendar.render();
 
-                    window.addEventListener("filament-fullcalendar:refresh", (event) => {
+                    window.addEventListener("filament-fullcalendar:refresh", () => {
                         calendar.removeAllEvents();
-                        event.detail.data.map(event => calendar.addEvent(event));
+                        cachedEventIds.length = 0;
+                        calendar.refetchEvents();
                     });
                 })
             '></div>

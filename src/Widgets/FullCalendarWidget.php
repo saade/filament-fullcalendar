@@ -6,6 +6,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Widgets\Widget;
 use Illuminate\View\View;
+use Saade\FilamentFullCalendar\Widgets\Concerns\CanFetchEvents;
 use Saade\FilamentFullCalendar\Widgets\Concerns\CanManageEvents;
 use Saade\FilamentFullCalendar\Widgets\Concerns\CanRefreshEvents;
 use Saade\FilamentFullCalendar\Widgets\Concerns\FiresEvents;
@@ -18,6 +19,7 @@ class FullCalendarWidget extends Widget implements HasForms
     }
 
     use CanRefreshEvents;
+    use CanFetchEvents;
     use FiresEvents;
     use UsesConfig;
 
