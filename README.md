@@ -62,8 +62,6 @@ php artisan make:filament-widget CalendarWidget
 
 namespace App\Filament\Widgets;
 
-use App\Models\Meeting;
-use App\Filament\Resources\MeetingResource;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class CalendarWidget extends FullCalendarWidget
@@ -81,7 +79,7 @@ class CalendarWidget extends FullCalendarWidget
                 'id' => 2,
                 'title' => 'Meeting with Pamela',
                 'start' => now()->addDay(),
-                'url' => MeetingResource::getUrl('view', ['record' => 2]),
+                'url' => 'https://some-url.com',
                 'shouldOpenInNewTab' => true,
             ]
         ];
