@@ -2,21 +2,12 @@
 
 <x-filament::widget>
     <x-filament::card>
-        @if( $this::canCreate() )
-            <div class="flex items-center justify-end">
-                <x-filament::button wire:click="onCreateEventClick">
-                    {{ __('filament::resources/pages/create-record.form.actions.create.label') }}
-                </x-filament::button>
-            </div>
-
-            <x-filament::hr />
-        @endif
-
         <div
             wire:ignore
             x-data=""
             x-init='
                 document.addEventListener("DOMContentLoaded", function() {
+                    var initial = true;
                     const config = @json($this->getConfig());
                     const eventsData = @json($events);
                     const locale = "{{ $locale }}";
@@ -42,13 +33,25 @@
                         @endif
                     }
 
-                    var initial = true;
+                    const dateClick = function ({ date, allDay }) {
+                        @if($this::canCreate())
+                            $wire.onCreateEventClick({ date, allDay })
+                        @endif
+                    }
+
+                    const select = function ({ start, end, allDay }) {
+                        @if($this->config('selectable', false))
+                            $wire.onCreateEventClick({ start, end, allDay })
+                        @endif
+                    }
 
                     const calendar = new FullCalendar.Calendar($el, {
                         ...config,
                         locale,
                         eventClick,
                         eventDrop,
+                        dateClick,
+                        select,
                         @if($this->isLazyLoad())
                             events: function(fetchInfo, successCallback, failureCallback) {
                                 if(initial){

@@ -1,6 +1,6 @@
 # The Most Popular JavaScript Calendar as a Filament Widget 💛
 
-![Monthly Calendar](./art/fullcalendar-widget.png)
+![FullCalendar Widget](./art/fullcalendar-widget.png)
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/saade/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/saade/filament-fullcalendar)
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/saade/filament-fullcalendar/run-tests?label=tests)](https://github.com/saade/filament-fullcalendar/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -62,8 +62,6 @@ php artisan make:filament-widget CalendarWidget
 
 namespace App\Filament\Widgets;
 
-use App\Models\Meeting;
-use App\Filament\Resources\MeetingResource;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class CalendarWidget extends FullCalendarWidget
@@ -81,7 +79,7 @@ class CalendarWidget extends FullCalendarWidget
                 'id' => 2,
                 'title' => 'Meeting with Pamela',
                 'start' => now()->addDay(),
-                'url' => MeetingResource::getUrl('view', ['record' => 2]),
+                'url' => 'https://some-url.com',
                 'shouldOpenInNewTab' => true,
             ]
         ];
@@ -123,6 +121,8 @@ return [
     'navLinks' => true,
 
     'editable' => true,
+
+    'selectable' => false,
 
     'dayMaxEvents' => true
 ];
