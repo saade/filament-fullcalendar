@@ -26,7 +26,7 @@ trait FiresEvents
      * Commented out so we can save some requests :) Feel free to extend it.
      * @see https://fullcalendar.io/docs/eventDrop
      */
-    // public function onEventDrop($oldEvent, $newEvent, $relatedEvents): void
+    // public function onEventDrop($newEvent, $oldEvent, $relatedEvents): void
     // {
     //     //
     // }
