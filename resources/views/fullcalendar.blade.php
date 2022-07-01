@@ -1,4 +1,4 @@
-@php($locale = strtolower(str_replace('_', '-', $this->getConfig()['locale'])))
+@php($locale = strtolower(str_replace('_', '-', $this->config('locale', config('app.locale')))))
 
 <x-filament::widget>
     <x-filament::card>
@@ -7,13 +7,12 @@
             x-data=""
             x-init='
                 document.addEventListener("DOMContentLoaded", function() {
-                    var initial = true;
                     const config = @json($this->getConfig());
-                    const eventsData = @json($events);
                     const locale = "{{ $locale }}";
-                    @if($this->isLazyLoad())
-                        const cachedEventIds = [];
-                    @endif
+                    const events = @json($events);
+                    const cachedEventIds = [
+                        ...events.map(event => event.id),
+                    ];
 
                     const eventClick = function ({ event, jsEvent }) {
                         if( event.url ) {
@@ -45,6 +44,21 @@
                         @endif
                     }
 
+                    const fetchEvents = function ({ start, end }, successCallback, failureCallback) {
+                        @if( $this::canFetchEvents() )
+                            return $wire.fetchEvents({ start, end }, cachedEventIds)
+                                .then(events => {
+                                    // Cache fetched events
+                                    cachedEventIds.push(...events.map(event => event.id));
+
+                                    return successCallback(events);
+                                })
+                                .catch( failureCallback );
+                        @else
+                            return successCallback([]);
+                        @endif
+                    }
+
                     const calendar = new FullCalendar.Calendar($el, {
                         ...config,
                         locale,
@@ -52,46 +66,18 @@
                         eventDrop,
                         dateClick,
                         select,
-                        @if($this->isLazyLoad())
-                            events: function(fetchInfo, successCallback, failureCallback) {
-                                if(initial){
-                                    initial = false
-
-                                    if(eventsData[0]?.id){
-                                        eventsData.forEach((event) => cachedEventIds.push(event.id))
-                                    }
-
-                                    successCallback(eventsData)
-                                }else{
-                                    $wire.lazyLoadViewData(fetchInfo)
-                                        .then(result => {
-                                            if(result.length == 0) return
-
-                                            if(result[0].id){
-                                                result.forEach((event) => cachedEventIds.indexOf(event.id) != -1 ? null : cachedEventIds.push(event.id) && eventsData.push(event))
-                                                successCallback(eventsData)
-                                            }else{
-                                                successCallback(result)
-                                            }
-                                        })
-                                }
-                            },
-                        @else
-                            events: eventsData,
-                        @endif
+                        eventSources:[
+                            { events },
+                            fetchEvents
+                        ]
                     });
 
                     calendar.render();
 
-                    window.addEventListener("filament-fullcalendar:refresh", (event) => {
+                    window.addEventListener("filament-fullcalendar:refresh", () => {
                         calendar.removeAllEvents();
-                        @unless($this->isLazyLoad())
-                            event.detail.data.map(event => calendar.addEvent(event));
-                        @else
-                            cachedEventIds.splice(0, cachedEventIds.length)
-                            calendar.refetchEvents()
-                            eventsData.splice(0, eventsData.length)
-                        @endunless
+                        cachedEventIds.length = 0;
+                        calendar.refetchEvents();
                     });
                 })
             '></div>
