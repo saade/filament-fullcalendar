@@ -45,6 +45,11 @@ trait CanManageEvents
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--edit-event-modal']);
     }
 
+    public function onEventDrop($newEvent, $oldEvent, $relatedEvents): void
+    {
+        $this->onEventClick($newEvent);
+    }
+
     public function onCreateEventClick(array $date): void
     {
         if (! static::canCreate()) {
