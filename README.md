@@ -166,9 +166,9 @@ public function onEventClick($event): void
 /**
  * Triggered when dragging stops and the event has moved to a different day/time.
  */
-public function onEventDrop($oldEvent, $newEvent, $relatedEvents): void
+public function onEventDrop($newEvent, $oldEvent, $relatedEvents): void
 {
-    parent::onEventDrop($oldEvent, $newEvent, $relatedEvents);
+    parent::onEventDrop($newEvent, $oldEvent, $relatedEvents);
 
     // your code
 }
