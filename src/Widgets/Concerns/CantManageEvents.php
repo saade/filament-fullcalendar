@@ -4,8 +4,6 @@ namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 trait CantManageEvents
 {
-    protected bool $showCreateButton = false;
-
     public static function canCreate(): bool
     {
         return false;

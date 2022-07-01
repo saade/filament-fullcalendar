@@ -15,8 +15,6 @@ trait CanManageEvents
     use EditEventForm;
     use EvaluateClosures;
 
-    protected bool $showCreateButton = true;
-
     protected function setUpForms(): void
     {
         if (static::canCreate()) {
@@ -47,19 +45,15 @@ trait CanManageEvents
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--edit-event-modal']);
     }
 
-    public function onCreateEventClick($date = null): void
+    public function onCreateEventClick(array $date): void
     {
         if (! static::canCreate()) {
             return;
         }
 
-        if ($date) {
-            $this->evaluate($this->handleCreateEventClickUsing(), [
-                'date' => $date,
-            ]);
-        } else {
-            $this->createEventForm->fill();
-        }
+        $this->evaluate($this->handleCreateEventClickUsing(), [
+            'date' => $date,
+        ]);
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--create-event-modal']);
     }
@@ -74,13 +68,12 @@ trait CanManageEvents
             } else { // for date range select
                 $start = Carbon::parse($date['start'], $timezone);
                 $end = Carbon::parse($date['end'], $timezone);
+
                 if ($date['allDay']) {
                     /**
-                     *
                      * date is exclusive, read more https://fullcalendar.io/docs/select-callback
                      * For example, if the selection is all-day and the last day is a Thursday, end will be Friday.
                      */
-
                     $end->subDay()->endOfDay();
                 }
             }
