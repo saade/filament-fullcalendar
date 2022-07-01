@@ -2,16 +2,6 @@
 
 <x-filament::widget>
     <x-filament::card>
-        @if( $this::canCreate() )
-            <div class="flex items-center justify-end">
-                <x-filament::button wire:click="onCreateEventClick">
-                    {{ __('filament::resources/pages/create-record.form.actions.create.label') }}
-                </x-filament::button>
-            </div>
-
-            <x-filament::hr />
-        @endif
-
         <div
             wire:ignore
             x-data=""
@@ -39,12 +29,26 @@
                         @endif
                     }
 
+                    const dateClick = function ({ date, allDay }) {
+                        @if($this::canCreate())
+                            $wire.onCreateEventClick({ date, allDay })
+                        @endif
+                    }
+
+                    const select = function ({ start, end, allDay }) {
+                        @if($this->config('selectable', false))
+                            $wire.onCreateEventClick({ start, end, allDay })
+                        @endif
+                    }
+
                     const calendar = new FullCalendar.Calendar($el, {
                         ...config,
                         locale,
                         events,
                         eventClick,
-                        eventDrop
+                        eventDrop,
+                        dateClick,
+                        select,
                     });
 
                     calendar.render();

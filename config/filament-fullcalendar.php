@@ -12,14 +12,16 @@ return [
     'locale' => config('app.locale'),
 
     'headerToolbar' => [
-        'left'   => 'prev,next today',
+        'left' => 'prev,next today',
         'center' => 'title',
-        'right'  => 'dayGridMonth,dayGridWeek,dayGridDay'
+        'right' => 'dayGridMonth,dayGridWeek,dayGridDay',
     ],
 
     'navLinks' => true,
 
     'editable' => true,
 
-    'dayMaxEvents' => true
+    'selectable' => false,
+
+    'dayMaxEvents' => true,
 ];
