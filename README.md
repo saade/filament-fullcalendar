@@ -150,7 +150,8 @@ The only event-related events supported right now are: [EventClick](https://full
 
 They're commented out by default so livewire does not spam requests without they being used. You are free to paste them in your `CalendarWidget` class. See: [FiresEvents](https://github.com/saade/filament-fullcalendar/blob/main/src/Widgets/Concerns/FiresEvents.php)
 
-> Note: if you are overriding the event callbacks, be sure to call its parent function to garantee that all functions works properly.
+Since [v1.0.0](https://github.com/saade/filament-fullcalendar/releases/tag/v1.0.0) we use `onEventClick` to open the edit modal.
+If you need to hook up into this event, be sure to call the original method using `parent::onEventClick()` to keep the modal opening as it should.
 
 ```php
 /**
@@ -168,8 +169,6 @@ public function onEventClick($event): void
  */
 public function onEventDrop($newEvent, $oldEvent, $relatedEvents): void
 {
-    parent::onEventDrop($newEvent, $oldEvent, $relatedEvents);
-
     // your code
 }
 ```
