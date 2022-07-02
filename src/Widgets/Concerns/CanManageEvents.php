@@ -15,6 +15,8 @@ trait CanManageEvents
     use EditEventForm;
     use EvaluateClosures;
 
+    protected string $modalWidth = 'sm';
+
     protected function setUpForms(): void
     {
         if (static::canCreate()) {
@@ -32,6 +34,11 @@ trait CanManageEvents
             ...$this->getCreateEventForm(),
             ...$this->getEditEventForm(),
         ];
+    }
+
+    protected function getModalWidth(): string
+    {
+        return $this->modalWidth;
     }
 
     public function onEventClick($event): void
