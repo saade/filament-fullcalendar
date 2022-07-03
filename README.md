@@ -67,7 +67,7 @@ use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 class CalendarWidget extends FullCalendarWidget
 {
     /**
-     * Return events that should be rendered statically on calendar first render.
+     * Return events that should be rendered statically on calendar.
      */
     public function getViewData(): array
     {
@@ -91,15 +91,17 @@ class CalendarWidget extends FullCalendarWidget
      * FullCalendar will call this function whenever it needs new event data.
      * This is triggered when the user clicks prev/next or switches views on the calendar.
      */
-    public function fetchEvents(array $fetchInfo, array $ignorableIds): array
+    public function fetchEvents(array $fetchInfo): array
     {
-        // You can use $fetchInfo to filter events by date, and $ignorableIds to ignore already displayed events.
+        // You can use $fetchInfo to filter events by date.
         return [];
     }
 }
 ```
 
-You can use one or both methods to fetch events.
+> **Warning**
+>
+> You should use only one of the functions above, using both can cause duplicates.
 
 > Both methods should retun an array of [EventObject](https://fullcalendar.io/docs/event-object).
 
@@ -330,29 +332,23 @@ If you want to filter your events based on the days that are currently shown in 
  *
  * @see https://fullcalendar.io/docs/events-function
  * @param array $fetchInfo start and end date of the current view
- * @param array $ignorableIds ids of the events that are already loaded and should be ignored
- */
-public function fetchEvents(array $fetchInfo, array $ignorableIds): array
+public function fetchEvents(array $fetchInfo): array
 {
     return [];
 }
 ```
 
 you can filter events based on the timespan `$fetchInfo['start']` and `$fetchInfo['end']`.
-> **Warning**
->
-> Keep in mind that returning events that are already in the calendar, can cause duplicates. You should filter them out using the `$ignorableIds` ids.
 
 example:
 ```php
-public function fetchEvents(array $fetchInfo, array $ignorableIds): array
+public function fetchEvents(array $fetchInfo): array
 {
     $schedules = Appointment::query()
         ->where([
             ['start_at', '>=', $fetchInfo['start']],
             ['end_at', '<', $fetchInfo['end']],
         ])
-        ->whereNotIn('id', $ignorableIds)
         ->get();
 
     $data = $schedules->map( ... );
