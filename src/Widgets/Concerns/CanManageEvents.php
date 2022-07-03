@@ -2,8 +2,8 @@
 
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
-use Illuminate\Database\Eloquent\Model;
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Saade\FilamentFullCalendar\Widgets\Forms\CreateEventForm;
 use Saade\FilamentFullCalendar\Widgets\Forms\EditEventForm;
@@ -48,7 +48,7 @@ trait CanManageEvents
 
     public function onEventClick($event): void
     {
-        if (!static::canEdit($event)) {
+        if (! static::canEdit($event)) {
             return;
         }
 
@@ -65,7 +65,7 @@ trait CanManageEvents
 
     public function onCreateEventClick(array $date): void
     {
-        if (!static::canCreate()) {
+        if (! static::canCreate()) {
             return;
         }
 
