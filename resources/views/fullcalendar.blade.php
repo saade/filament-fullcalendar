@@ -10,9 +10,7 @@
                     const config = @json($this->getConfig());
                     const locale = "{{ $locale }}";
                     const events = @json($events);
-                    const cachedEventIds = [
-                        ...events.map(event => event.id),
-                    ];
+                    const cachedEvents = new Object();
 
                     const eventClick = function ({ event, jsEvent }) {
                         if( event.url ) {
@@ -44,14 +42,20 @@
                         @endif
                     }
 
-                    const fetchEvents = function ({ start, end }, successCallback, failureCallback) {
+                    const fetchEvents = function ({ start, end, allDay }, successCallback, failureCallback) {
                         @if( $this::canFetchEvents() )
-                            return $wire.fetchEvents({ start, end }, cachedEventIds)
+                            return $wire.fetchEvents({ start, end, allDay })
                                 .then(events => {
-                                    // Cache fetched events
-                                    cachedEventIds.push(...events.map(event => event.id));
+                                    if(events.length == 0) return Object.values(cachedEvents)
 
-                                    return successCallback(events);
+                                    if(events[0].id){ // cater for no id provided
+                                        // Cache fetched events
+                                        events.forEach((event) => cachedEvents[event.id] = event)
+
+                                        successCallback(Object.values(cachedEvents))
+                                    }else{
+                                        successCallback(events)
+                                    }
                                 })
                                 .catch( failureCallback );
                         @else
@@ -74,10 +78,14 @@
 
                     calendar.render();
 
-                    window.addEventListener("filament-fullcalendar:refresh", () => {
+                    window.addEventListener("filament-fullcalendar:refresh", (event) => {
                         calendar.removeAllEvents();
-                        cachedEventIds.length = 0;
-                        calendar.refetchEvents();
+                        @if( $this::canFetchEvents() )
+                            calendar.refetchEvents();
+                        @else
+                            event.detail.data.map(event => calendar.addEvent(event));
+                        @endif
+
                     });
                 })
             '></div>

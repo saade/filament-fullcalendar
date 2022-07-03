@@ -11,9 +11,8 @@ trait CanFetchEvents
      *
      * @see https://fullcalendar.io/docs/events-function
      * @param array $fetchInfo start and end date of the current view
-     * @param array $ignorableIds ids of the events that are already loaded and should be ignored
      */
-    // public function fetchEvents(array $fetchInfo, array $ignorableIds): array
+    // public function fetchEvents(array $fetchInfo): array
     // {
     //     return [];
     // }
