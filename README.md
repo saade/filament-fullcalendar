@@ -1,6 +1,6 @@
 # The Most Popular JavaScript Calendar as a Filament Widget 💛
 
-![Monthly Calendar](./art/fullcalendar-widget.png)
+![FullCalendar Widget](./art/fullcalendar-widget.png)
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/saade/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/saade/filament-fullcalendar)
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/saade/filament-fullcalendar/run-tests?label=tests)](https://github.com/saade/filament-fullcalendar/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -62,13 +62,13 @@ php artisan make:filament-widget CalendarWidget
 
 namespace App\Filament\Widgets;
 
-use App\Models\Meeting;
-use App\Filament\Resources\MeetingResource;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class CalendarWidget extends FullCalendarWidget
 {
-
+    /**
+     * Return events that should be rendered statically on calendar first render.
+     */
     public function getViewData(): array
     {
         return [
@@ -81,15 +81,27 @@ class CalendarWidget extends FullCalendarWidget
                 'id' => 2,
                 'title' => 'Meeting with Pamela',
                 'start' => now()->addDay(),
-                'url' => MeetingResource::getUrl('view', ['record' => 2]),
+                'url' => 'https://some-url.com',
                 'shouldOpenInNewTab' => true,
             ]
         ];
     }
+
+    /**
+     * FullCalendar will call this function whenever it needs new event data.
+     * This is triggered when the user clicks prev/next or switches views on the calendar.
+     */
+    public function fetchEvents(array $fetchInfo, array $ignorableIds): array
+    {
+        // You can use $fetchInfo to filter events by date, and $ignorableIds to ignore already displayed events.
+        return [];
+    }
 }
 ```
 
-> You should return an array of FullCalendar [EventObject](https://fullcalendar.io/docs/event-object).
+You can use one or both methods to fetch events.
+
+> Both methods should retun an array of [EventObject](https://fullcalendar.io/docs/event-object).
 
 
 <br>
@@ -124,6 +136,8 @@ return [
 
     'editable' => true,
 
+    'selectable' => false,
+
     'dayMaxEvents' => true
 ];
 ```
@@ -132,11 +146,12 @@ return [
 
 # Listening for events
 
-The only events supported right now are: [EventClick](https://fullcalendar.io/docs/eventClick) and [EventDrop](https://fullcalendar.io/docs/eventDrop)
+The only event-related events supported right now are: [EventClick](https://fullcalendar.io/docs/eventClick) and [EventDrop](https://fullcalendar.io/docs/eventDrop)
 
 They're commented out by default so livewire does not spam requests without they being used. You are free to paste them in your `CalendarWidget` class. See: [FiresEvents](https://github.com/saade/filament-fullcalendar/blob/main/src/Widgets/Concerns/FiresEvents.php)
 
-> Note: if you are overriding the event callbacks, be sure to call its parent function to garantee that all functions works properly.
+Since [v1.0.0](https://github.com/saade/filament-fullcalendar/releases/tag/v1.0.0) we use `onEventClick` to open the edit modal.
+If you need to hook up into this event, be sure to call the original method using `parent::onEventClick()` to keep the modal opening as it should.
 
 ```php
 /**
@@ -152,10 +167,8 @@ public function onEventClick($event): void
 /**
  * Triggered when dragging stops and the event has moved to a different day/time.
  */
-public function onEventDrop($oldEvent, $newEvent, $relatedEvents): void
+public function onEventDrop($newEvent, $oldEvent, $relatedEvents): void
 {
-    parent::onEventDrop($oldEvent, $newEvent, $relatedEvents);
-
     // your code
 }
 ```
@@ -166,12 +179,21 @@ public function onEventDrop($oldEvent, $newEvent, $relatedEvents): void
 
 Since [v1.0.0](https://github.com/saade/filament-fullcalendar/releases/tag/v1.0.0) you can create and edit events using a modal.
 
+To change the modal size, override the `protected string $modalWidth` property in your widget.
+
 The process of saving and editing the event is up to you, since this plugin does not rely on a Model to save the calendar events.
 
 
 ## Creating Events:
 
-Override the `createEvent` function in your widget class, and you are ready to go!
+Events can be created in two ways.
+
+- Clicking on a day (default)
+- Selecting a date range (click and drag across calendar days) (you need to opt-in for this, set `selectable => true` in the config file.)
+
+This will open the Create Event modal.
+
+When the create form gets submitted, it will call the `createEvent` function on your widget. Be sure to add the snippet below to your calendar class.
 
 ```php
 public function createEvent(array $data): void
@@ -200,7 +222,11 @@ protected static function getCreateEventFormSchema(): array
 
 ## Editing Events:
 
-Override the `editEvent` function in your widget class, and you are ready to go!
+Events can be edited by clicking on an event on the calendar.
+
+This will open the Edit Event modal.
+
+When the edit form gets submitted, it will call the `editEvent` function on your widget. Be sure to add the snippet below to your calendar class.
 
 ```php
 public function editEvent(array $data): void
@@ -266,6 +292,50 @@ If you want to refresh the calendar events, you can call `$this->refreshEvents()
 public function yourMethod(): void
 {
     $this->refreshEvents();
+}
+```
+
+<br>
+
+# Filtering events based on the calendar view
+
+If you want to filter your events based on the days that are currently shown in the calendar, you can implement the `fetchInfo()` method from the [CanFetchEvents](https://github.com/saade/filament-fullcalendar/blob/main/src/Widgets/Concerns/CanFetchEvents.php) trait. Add the following code to your calendar widget:
+
+```php
+/**
+ * FullCalendar will call this function whenever it needs new event data.
+ * This is triggered when the user clicks prev/next or switches views.
+ *
+ * @see https://fullcalendar.io/docs/events-function
+ * @param array $fetchInfo start and end date of the current view
+ * @param array $ignorableIds ids of the events that are already loaded and should be ignored
+ */
+public function fetchEvents(array $fetchInfo, array $ignorableIds): array
+{
+    return [];
+}
+```
+
+you can filter events based on the timespan `$fetchInfo['start']` and `$fetchInfo['end']`.
+> **Warning**
+>
+> Keep in mind that returning events that are already in the calendar, can cause duplicates. You should filter them out using the `$ignorableIds` ids.
+
+example:
+```php
+public function fetchEvents(array $fetchInfo, array $ignorableIds): array
+{
+    $schedules = Appointment::query()
+        ->where([
+            ['start_at', '>=', $fetchInfo['start']],
+            ['end_at', '<', $fetchInfo['end']],
+        ])
+        ->whereNotIn('id', $ignorableIds)
+        ->get();
+
+    $data = $schedules->map( ... );
+
+    return $data;
 }
 ```
 

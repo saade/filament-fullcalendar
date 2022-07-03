@@ -1,25 +1,18 @@
-@php($locale = strtolower(str_replace('_', '-', $this->getConfig()['locale'])))
+@php($locale = strtolower(str_replace('_', '-', $this->config('locale', config('app.locale')))))
 
 <x-filament::widget>
     <x-filament::card>
-        @if( $this::canCreate() )
-            <div class="flex items-center justify-end">
-                <x-filament::button wire:click="onCreateEventClick">
-                    {{ __('filament::resources/pages/create-record.form.actions.create.label') }}
-                </x-filament::button>
-            </div>
-
-            <x-filament::hr />
-        @endif
-
         <div
             wire:ignore
             x-data=""
             x-init='
                 document.addEventListener("DOMContentLoaded", function() {
                     const config = @json($this->getConfig());
-                    const events = @json($events);
                     const locale = "{{ $locale }}";
+                    const events = @json($events);
+                    const cachedEventIds = [
+                        ...events.map(event => event.id),
+                    ];
 
                     const eventClick = function ({ event, jsEvent }) {
                         if( event.url ) {
@@ -39,19 +32,52 @@
                         @endif
                     }
 
+                    const dateClick = function ({ date, allDay }) {
+                        @if($this::canCreate())
+                            $wire.onCreateEventClick({ date, allDay })
+                        @endif
+                    }
+
+                    const select = function ({ start, end, allDay }) {
+                        @if($this->config('selectable', false))
+                            $wire.onCreateEventClick({ start, end, allDay })
+                        @endif
+                    }
+
+                    const fetchEvents = function ({ start, end }, successCallback, failureCallback) {
+                        @if( $this::canFetchEvents() )
+                            return $wire.fetchEvents({ start, end }, cachedEventIds)
+                                .then(events => {
+                                    // Cache fetched events
+                                    cachedEventIds.push(...events.map(event => event.id));
+
+                                    return successCallback(events);
+                                })
+                                .catch( failureCallback );
+                        @else
+                            return successCallback([]);
+                        @endif
+                    }
+
                     const calendar = new FullCalendar.Calendar($el, {
                         ...config,
                         locale,
-                        events,
                         eventClick,
-                        eventDrop
+                        eventDrop,
+                        dateClick,
+                        select,
+                        eventSources:[
+                            { events },
+                            fetchEvents
+                        ]
                     });
 
                     calendar.render();
 
-                    window.addEventListener("filament-fullcalendar:refresh", (event) => {
+                    window.addEventListener("filament-fullcalendar:refresh", () => {
                         calendar.removeAllEvents();
-                        event.detail.data.map(event => calendar.addEvent(event));
+                        cachedEventIds.length = 0;
+                        calendar.refetchEvents();
                     });
                 })
             '></div>

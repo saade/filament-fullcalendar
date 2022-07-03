@@ -1,4 +1,4 @@
-<x-filament::modal id="fullcalendar--create-event-modal">
+<x-filament::modal id="fullcalendar--create-event-modal" :width="$this->getModalWidth()">
     <x-slot name="heading">
         {{ __('filament::resources/pages/create-record.title', ['label' => 'Event']) }}
     </x-slot>
