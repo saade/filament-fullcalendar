@@ -10,9 +10,7 @@
                     const config = @json($this->getConfig());
                     const locale = "{{ $locale }}";
                     const events = @json($events);
-                    const cachedEventIds = [
-                        ...events.map(event => event.id),
-                    ];
+                    const cachedEvents = new Object();
                     const eventsData = [];
 
                     const eventClick = function ({ event, jsEvent }) {
@@ -45,16 +43,17 @@
                         @endif
                     }
 
-                    const fetchEvents = function ({ start, end }, successCallback, failureCallback) {
+                    const fetchEvents = function ({ start, end, allDay }, successCallback, failureCallback) {
                         @if( $this::canFetchEvents() )
-                            return $wire.fetchEvents({ start, end }, cachedEventIds)
+                            return $wire.fetchEvents({ start, end, allDay })
                                 .then(events => {
-                                    if(events.length == 0) return eventsData
+                                    if(events.length == 0) return Object.values(cachedEvents)
 
                                     if(events[0].id){ // cater for no id provided
                                         // Cache fetched events
-                                        events.forEach((event) => cachedEventIds.indexOf(event.id) != -1 ? null : cachedEventIds.push(event.id) && eventsData.push(event))
-                                        successCallback(eventsData)
+                                        events.forEach((event) => cachedEvents[event.id] = event)
+
+                                        successCallback(Object.values(cachedEvents))
                                     }else{
                                         successCallback(events)
                                     }
@@ -82,7 +81,7 @@
 
                     window.addEventListener("filament-fullcalendar:refresh", () => {
                         calendar.removeAllEvents();
-                        cachedEventIds.length = 0;
+                        cachedEvents.length = 0;
                         eventsData.length = 0;
                         calendar.refetchEvents();
                     });
