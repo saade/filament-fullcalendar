@@ -49,10 +49,15 @@
                         @if( $this::canFetchEvents() )
                             return $wire.fetchEvents({ start, end }, cachedEventIds)
                                 .then(events => {
-                                    // Cache fetched events
-                                    events.forEach((event) => cachedEventIds.indexOf(event.id) != -1 ? null : cachedEventIds.push(event.id) && eventsData.push(event))
+                                    if(events.length == 0) return eventsData
 
-                                    return successCallback(eventsData);
+                                    if(events[0].id){ // cater for no id provided
+                                        // Cache fetched events
+                                        events.forEach((event) => cachedEventIds.indexOf(event.id) != -1 ? null : cachedEventIds.push(event.id) && eventsData.push(event))
+                                        successCallback(eventsData)
+                                    }else{
+                                        successCallback(events)
+                                    }
                                 })
                                 .catch( failureCallback );
                         @else
