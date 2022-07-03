@@ -2,6 +2,21 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.2.0 - 2022-07-03
+
+### What's Changed
+
+- fix: correct onEventDrop parameter order by @ashleyhood in https://github.com/saade/filament-fullcalendar/pull/20
+- feat: change modal size by @ashleyhood in https://github.com/saade/filament-fullcalendar/pull/19
+- Fix/fetch events cache by @wychoong in https://github.com/saade/filament-fullcalendar/pull/25
+- Fix/store record id for edit by @wychoong in https://github.com/saade/filament-fullcalendar/pull/18
+
+### New Contributors
+
+- @ashleyhood made their first contribution in https://github.com/saade/filament-fullcalendar/pull/20
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.1.0...v1.2.0
+
 ## v1.1.0 - 2022-07-01
 
 ### What's Changed
