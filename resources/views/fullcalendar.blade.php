@@ -11,7 +11,6 @@
                     const locale = "{{ $locale }}";
                     const events = @json($events);
                     const cachedEvents = new Object();
-                    const eventsData = [];
 
                     const eventClick = function ({ event, jsEvent }) {
                         if( event.url ) {
@@ -81,8 +80,6 @@
 
                     window.addEventListener("filament-fullcalendar:refresh", () => {
                         calendar.removeAllEvents();
-                        cachedEvents.length = 0;
-                        eventsData.length = 0;
                         calendar.refetchEvents();
                     });
                 })
