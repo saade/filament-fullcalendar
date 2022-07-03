@@ -3,6 +3,7 @@
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Saade\FilamentFullCalendar\Widgets\Forms\CreateEventForm;
 use Saade\FilamentFullCalendar\Widgets\Forms\EditEventForm;
@@ -16,6 +17,10 @@ trait CanManageEvents
     use EvaluateClosures;
 
     protected string $modalWidth = 'sm';
+
+    public ?int $record_id = null;
+
+    public ?Model $record = null;
 
     protected function setUpForms(): void
     {
@@ -48,6 +53,12 @@ trait CanManageEvents
         }
 
         $this->editEventForm->fill($event);
+
+        if (method_exists($this, 'resolveEventRecord')) {
+            $this->record = $this->resolveEventRecord($event);
+        } else {
+            $this->record_id = $event['id'] ?? null;
+        }
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--edit-event-modal']);
     }
