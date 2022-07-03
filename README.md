@@ -232,6 +232,28 @@ When the edit form gets submitted, it will call the `editEvent` function on your
 public function editEvent(array $data): void
 {
     // Edit the event with the provided $data.
+
+    /**
+     * here you can access to 2 properties to perform update
+     * 1. $this->record_id
+     * 2. $this->record
+    */
+    
+    # $this->record_id
+    // the value is retrieved from event's id key
+    // eg: Appointment::find($this->record);
+    
+    # $this->record
+    // model instance is resolved by user defined resolveEventRecord() funtion. See example below
+    // eg: $this->record->update($data);
+
+}
+
+// Resolve Event record into Model property
+public function resolveEventRecord(array $data): Model
+{
+    // Using Appointment class as example
+    return Appointment::find($data['id']);
 }
 ```
 
