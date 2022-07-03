@@ -13,6 +13,7 @@
                     const cachedEventIds = [
                         ...events.map(event => event.id),
                     ];
+                    const eventsData = [];
 
                     const eventClick = function ({ event, jsEvent }) {
                         if( event.url ) {
@@ -49,9 +50,9 @@
                             return $wire.fetchEvents({ start, end }, cachedEventIds)
                                 .then(events => {
                                     // Cache fetched events
-                                    cachedEventIds.push(...events.map(event => event.id));
+                                    events.forEach((event) => cachedEventIds.indexOf(event.id) != -1 ? null : cachedEventIds.push(event.id) && eventsData.push(event))
 
-                                    return successCallback(events);
+                                    return successCallback(eventsData);
                                 })
                                 .catch( failureCallback );
                         @else
@@ -77,6 +78,7 @@
                     window.addEventListener("filament-fullcalendar:refresh", () => {
                         calendar.removeAllEvents();
                         cachedEventIds.length = 0;
+                        eventsData.length = 0;
                         calendar.refetchEvents();
                     });
                 })
