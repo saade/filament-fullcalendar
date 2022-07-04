@@ -79,11 +79,11 @@
                     calendar.render();
 
                     window.addEventListener("filament-fullcalendar:refresh", () => {
-                        calendar.removeAllEvents();
-                        
                         @if( $this::canFetchEvents() )
                             calendar.refetchEvents();
                         @else
+                            calendar.removeAllEvents();
+
                             event.detail.data.map(event => calendar.addEvent(event));
                         @endif
                     });
