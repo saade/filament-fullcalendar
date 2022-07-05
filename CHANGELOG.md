@@ -2,6 +2,15 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.2.1 - 2022-07-05
+
+### What's Changed
+
+- Bump dependabot/fetch-metadata from 1.3.1 to 1.3.3 by @dependabot in https://github.com/saade/filament-fullcalendar/pull/26
+- fix: stop event flash when using `fetchEvents` method by @ashleyhood in https://github.com/saade/filament-fullcalendar/pull/27
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.2.0...v1.2.1
+
 ## v1.2.0 - 2022-07-03
 
 ### What's Changed
