@@ -1,6 +1,8 @@
 <x-filament::modal id="fullcalendar--edit-event-modal" :width="$this->getModalWidth()">
-    <x-slot name="heading">
-        {{ __('filament::resources/pages/edit-record.title', ['label' => 'Event']) }}
+    <x-slot name="header">
+        <x-filament::modal.heading>
+            {{ __('filament::resources/pages/edit-record.title', ['label' => $this->getModalLabel()]) }}
+        </x-filament::modal.heading>
     </x-slot>
 
     <x-filament::form wire:submit.prevent="onEditEventSubmit">
