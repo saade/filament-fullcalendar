@@ -181,7 +181,10 @@ public function onEventDrop($newEvent, $oldEvent, $relatedEvents): void
 
 Since [v1.0.0](https://github.com/saade/filament-fullcalendar/releases/tag/v1.0.0) you can create and edit events using a modal.
 
-To change the modal size, override the `protected string $modalWidth` property in your widget.
+To customise the modal, override the following properties in your widget:
+
+- `protected string $modalWidth`
+- `protected string $modalLabel`
 
 The process of saving and editing the event is up to you, since this plugin does not rely on a Model to save the calendar events.
 
@@ -240,11 +243,11 @@ public function editEvent(array $data): void
      * 1. $this->record_id
      * 2. $this->record
     */
-    
+
     # $this->record_id
     // the value is retrieved from event's id key
     // eg: Appointment::find($this->record);
-    
+
     # $this->record
     // model instance is resolved by user defined resolveEventRecord() funtion. See example below
     // eg: $this->record->update($data);

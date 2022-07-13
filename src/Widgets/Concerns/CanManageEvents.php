@@ -12,11 +12,10 @@ use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 trait CanManageEvents
 {
     use AuthorizesActions;
+    use CanManageModals;
     use CreateEventForm;
     use EditEventForm;
     use EvaluateClosures;
-
-    protected string $modalWidth = 'sm';
 
     public ?int $record_id = null;
 
@@ -39,11 +38,6 @@ trait CanManageEvents
             ...$this->getCreateEventForm(),
             ...$this->getEditEventForm(),
         ];
-    }
-
-    protected function getModalWidth(): string
-    {
-        return $this->modalWidth;
     }
 
     public function onEventClick($event): void
