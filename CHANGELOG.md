@@ -2,6 +2,14 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.3.0 - 2022-07-13
+
+### What's Changed
+
+- feat: change modal label by @ashleyhood in https://github.com/saade/filament-fullcalendar/pull/28
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.2.1...v1.2.2
+
 ## v1.2.1 - 2022-07-05
 
 ### What's Changed
