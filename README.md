@@ -311,6 +311,17 @@ class CalendarWidget extends FullCalendarWidget
 
 <br>
 
+## Listening for cancelled modal
+
+If you want to know when a modal has been cancelled, you can add for the following [Livewire events](https://laravel-livewire.com/docs/2.x/events#event-listeners) to your widgets `$listener` array:
+
+```php
+    protected $listeners = [
+        'cancelledFullcalendarCreateEventModal' => 'onCreateEventCancelled',
+        'cancelledFullcalendarEditEventModal' => 'onEditEventCancelled',
+    ];
+```
+
 # Refreshing calendar events
 
 If you want to refresh the calendar events, you can call `$this->refreshEvents()` inside your widget class. This will call `getViewData()` and re-render the events on the calendar.
