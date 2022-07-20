@@ -9,6 +9,10 @@ use Saade\FilamentFullCalendar\Widgets\Forms\CreateEventForm;
 use Saade\FilamentFullCalendar\Widgets\Forms\EditEventForm;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
+/**
+ * @property \Filament\Forms\ComponentContainer $createEventForm
+ * @property \Filament\Forms\ComponentContainer $editEventForm
+ */
 trait CanManageEvents
 {
     use AuthorizesActions;
