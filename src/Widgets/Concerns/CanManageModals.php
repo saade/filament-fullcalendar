@@ -17,4 +17,14 @@ trait CanManageModals
     {
         return $this->modalWidth;
     }
+
+    public function isListeningCancelledEditModal(): bool
+    {
+        return in_array('cancelledFullcalendarEditEventModal', $this->getEventsBeingListenedFor());
+    }
+
+    public function isListeningCancelledCreateModal(): bool
+    {
+        return in_array('cancelledFullcalendarCreateEventModal', $this->getEventsBeingListenedFor());
+    }
 }
