@@ -34,10 +34,10 @@ trait CanManageEvents
 
     protected function getForms(): array
     {
-        return [
-            ...$this->getCreateEventForm(),
-            ...$this->getEditEventForm(),
-        ];
+        return array_merge(
+            $this->getCreateEventForm(),
+            $this->getEditEventForm()
+        );
     }
 
     public function onEventClick($event): void
