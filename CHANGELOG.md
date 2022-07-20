@@ -2,6 +2,15 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.3.1 - 2022-07-20
+
+### What's Changed
+
+- fix: use array_merge instead of spread to support php versions < 8.1 by @saade in https://github.com/saade/filament-fullcalendar/pull/31
+- refactor: property type hints by @ashleyhood in https://github.com/saade/filament-fullcalendar/pull/29
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.3.0...v1.3.1
+
 ## v1.3.0 - 2022-07-13
 
 ### What's Changed
