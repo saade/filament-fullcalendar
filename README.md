@@ -248,17 +248,17 @@ public function editEvent(array $data): void
 
     /**
      * here you can access to 2 properties to perform update
-     * 1. $this->record_id
-     * 2. $this->record
+     * 1. $this->event_id
+     * 2. $this->event
     */
 
-    # $this->record_id
+    # $this->event_id
     // the value is retrieved from event's id key
-    // eg: Appointment::find($this->record);
+    // eg: Appointment::find($this->event);
 
-    # $this->record
+    # $this->event
     // model instance is resolved by user defined resolveEventRecord() funtion. See example below
-    // eg: $this->record->update($data);
+    // eg: $this->event->update($data);
 
 }
 
