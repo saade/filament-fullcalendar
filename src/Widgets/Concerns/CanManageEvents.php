@@ -21,9 +21,9 @@ trait CanManageEvents
     use EditEventForm;
     use EvaluateClosures;
 
-    public ?int $record_id = null;
+    public ?int $event_id = null;
 
-    public ?Model $record = null;
+    public ?Model $event = null;
 
     protected function setUpForms(): void
     {
@@ -53,9 +53,9 @@ trait CanManageEvents
         $this->editEventForm->fill($event);
 
         if (method_exists($this, 'resolveEventRecord')) {
-            $this->record = $this->resolveEventRecord($event);
+            $this->event = $this->resolveEventRecord($event);
         } else {
-            $this->record_id = $event['id'] ?? null;
+            $this->event_id = $event['id'] ?? null;
         }
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--edit-event-modal']);
