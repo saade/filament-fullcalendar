@@ -42,7 +42,7 @@ trait FiresEvents
      * Commented out so we can save some requests :) Feel free to extend it.
      * @see https://fullcalendar.io/docs/eventResize
      */
-    // public function onEventResize($newEvent, $oldEvent, $relatedEvents): void
+    // public function onEventResize($event, $oldEvent, $relatedEvents): void
     // {
     //     //
     // }
