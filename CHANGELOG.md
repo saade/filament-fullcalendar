@@ -2,6 +2,20 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.4.0 - 2022-08-04
+
+### What's Changed
+
+- eventResize by @invaders-xx in https://github.com/saade/filament-fullcalendar/pull/40
+- BREAKING CHANGE: Rename `$record` and `$record_id` to `$event` and `$event_id` by @invaders-xx in https://github.com/saade/filament-fullcalendar/pull/41
+- feat: Livewire event triggered for cancelled modal by @ashleyhood in https://github.com/saade/filament-fullcalendar/pull/30
+
+### New Contributors
+
+- @invaders-xx made their first contribution in https://github.com/saade/filament-fullcalendar/pull/40
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.3.1...v1.4.0
+
 ## v1.3.1 - 2022-07-20
 
 ### What's Changed
