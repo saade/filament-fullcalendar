@@ -173,6 +173,14 @@ public function onEventDrop($newEvent, $oldEvent, $relatedEvents): void
 {
     // your code
 }
+
+/**
+ * Triggered when event's resize stops.
+ */
+public function onEventResize($newEvent, $oldEvent, $relatedEvents): void
+{
+    // your code
+}
 ```
 
 <br>

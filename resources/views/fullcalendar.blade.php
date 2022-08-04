@@ -29,6 +29,11 @@
                             $wire.onEventDrop(event, oldEvent, relatedEvents)
                         @endif
                     }
+                    const eventResize = function ({ event, oldEvent, relatedEvents }) {
+                        @if($this::isListeningResizeEvent())
+                            $wire.onEventResize(event, oldEvent, relatedEvents)
+                        @endif
+                    }
 
                     const dateClick = function ({ date, allDay }) {
                         @if($this::canCreate())
@@ -68,6 +73,7 @@
                         locale,
                         eventClick,
                         eventDrop,
+                        eventResize,
                         dateClick,
                         select,
                         eventSources:[

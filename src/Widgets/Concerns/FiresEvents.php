@@ -35,4 +35,20 @@ trait FiresEvents
     {
         return method_exists(static::class, 'onEventDrop');
     }
+
+    /**
+     * Triggered when event's resize stops .
+     *
+     * Commented out so we can save some requests :) Feel free to extend it.
+     * @see https://fullcalendar.io/docs/eventResize
+     */
+    // public function onEventResize($newEvent, $oldEvent, $relatedEvents): void
+    // {
+    //     //
+    // }
+
+    public static function isListeningResizeEvent(): bool
+    {
+        return method_exists(static::class, 'onEventResize');
+    }
 }
