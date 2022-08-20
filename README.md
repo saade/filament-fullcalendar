@@ -146,6 +146,46 @@ return [
 
 <br>
 
+# Styling
+
+Copy-paste this into your `app.css` file to match filament's look and feel.
+
+```css
+.fc .fc-button {
+    @apply transition-colors outline-none rounded-lg font-medium text-sm text-white min-h-[2.25rem] px-4 py-1 shadow;
+}
+
+.fc .fc-button-primary {
+    @apply bg-primary-600 border-primary-600
+}
+
+.fc .fc-button-primary:hover {
+    @apply bg-primary-500 border-primary-600
+}
+
+.fc .fc-button-primary:disabled {
+    @apply bg-primary-600 opacity-70 border-primary-600;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active, .fc .fc-button-primary:not(:disabled):active {
+    @apply bg-primary-500 border-primary-600 shadow-none;
+}
+
+.fc .fc-button-primary:focus, .fc .fc-button-primary:not(:disabled):focus, .fc .fc-button-primary:not(:disabled).fc-button-active:focus, .fc .fc-button-primary:not(:disabled):active:focus {
+    @apply bg-primary-700 outline-none ring-2 ring-inset ring-offset-2 ring-offset-primary-700 ring-white shadow-none;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+    @apply bg-primary-50;
+}
+
+.dark .fc .fc-daygrid-day.fc-day-today {
+    @apply bg-primary-900;
+}
+```
+
+<br>
+
 # Listening for events
 
 The only event-related events supported right now are: [EventClick](https://fullcalendar.io/docs/eventClick) and [EventDrop](https://fullcalendar.io/docs/eventDrop)
