@@ -73,6 +73,10 @@ php artisan make:filament-widget CalendarWidget
 
 2. Your newly created widget should extends the `Saade\FilamentFullCalendar\Widgets\FullCalendarWidget` class of this package
 
+> **Warning**
+>
+> Don't forget to remove `protected static string $view` from the generated class!
+
 ```php
 <?php
 
