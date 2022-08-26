@@ -50,13 +50,13 @@ trait CanManageEvents
             return;
         }
 
-        $this->editEventForm->fill($event);
-
         if (method_exists($this, 'resolveEventRecord')) {
             $this->event = $this->resolveEventRecord($event);
         } else {
             $this->event_id = $event['id'] ?? null;
         }
+
+        $this->editEventForm->fill($this->event?->getAttributes() ?? $event);
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--edit-event-modal']);
     }
