@@ -77,7 +77,9 @@ trait CanManageEvents
     protected function handleCreateEventClickUsing(): Closure
     {
         return function ($date, FullCalendarWidget $calendar) {
-            $timezone = $this->config('timeZone', config('app.timezone'));
+            $timezone = $this->config('timeZone') !== ' local'
+                ? $this->config('timeZone', config('app.timezone'))
+                : config('app.timezone');
 
             if (isset($date['date'])) { // for single date click
                 $end = $start = Carbon::parse($date['date'], $timezone);
