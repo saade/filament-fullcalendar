@@ -2,7 +2,11 @@
     <x-filament::modal id="fullcalendar--edit-event-modal" :width="$this->getModalWidth()">
         <x-slot name="header">
             <x-filament::modal.heading>
-                {{ __('filament::resources/pages/edit-record.title', ['label' => $this->getModalLabel()]) }}
+                {{
+                    $this->editEventForm->isDisabled()
+                        ? __('filament::resources/pages/view-record.title', ['label' => $this->getModalLabel()])
+                        : __('filament::resources/pages/edit-record.title', ['label' => $this->getModalLabel()])
+                }}
             </x-filament::modal.heading>
         </x-slot>
 
@@ -13,19 +17,30 @@
         {{ $this->editEventForm }}
 
         <x-slot name="footer">
-            <x-filament::button type="submit" form="onEditEventSubmit">
-                {{ __('filament::resources/pages/edit-record.form.actions.save.label') }}
-            </x-filament::button>
+            @if(!$this->editEventForm->isDisabled())
+                <x-filament::button type="submit" form="onEditEventSubmit">
+                    {{ __('filament::resources/pages/edit-record.form.actions.save.label') }}
+                </x-filament::button>
+            @endif
 
             @if($this->isListeningCancelledEditModal())
-                <x-filament::button color="secondary" x-on:click="isOpen = false; Livewire.emit('cancelledFullcalendarEditEventModal')">
-                    {{ __('filament::resources/pages/edit-record.form.actions.cancel.label') }}
+                <x-filament::button color="secondary"
+                                    x-on:click="isOpen = false; Livewire.emit('cancelledFullcalendarEditEventModal')">
+                    {{
+                        $this->editEventForm->isDisabled()
+                        ?  __('filament-support::actions/view.single.modal.actions.close.label')
+                        : __('filament::resources/pages/edit-record.form.actions.cancel.label')
+                     }}
                 </x-filament::button>
             @else
                 <x-filament::button color="secondary" x-on:click="isOpen = false">
-                    {{ __('filament::resources/pages/edit-record.form.actions.cancel.label') }}
+                    {{
+                        $this->editEventForm->isDisabled()
+                        ?  __('filament-support::actions/view.single.modal.actions.close.label')
+                        : __('filament::resources/pages/edit-record.form.actions.cancel.label')
+                     }}
                 </x-filament::button>
-            @endif
+                @endif
         </x-slot>
     </x-filament::modal>
 </x-filament::form>

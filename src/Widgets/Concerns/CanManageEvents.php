@@ -3,6 +3,7 @@
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Closure;
+use Filament\Forms\ComponentContainer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Saade\FilamentFullCalendar\Widgets\Forms\CreateEventForm;
@@ -10,8 +11,8 @@ use Saade\FilamentFullCalendar\Widgets\Forms\EditEventForm;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 /**
- * @property \Filament\Forms\ComponentContainer $createEventForm
- * @property \Filament\Forms\ComponentContainer $editEventForm
+ * @property ComponentContainer $createEventForm
+ * @property ComponentContainer $editEventForm
  */
 trait CanManageEvents
 {
@@ -22,7 +23,6 @@ trait CanManageEvents
     use EvaluateClosures;
 
     public ?int $event_id = null;
-
     public ?Model $event = null;
 
     protected function setUpForms(): void
@@ -46,11 +46,13 @@ trait CanManageEvents
 
     public function onEventClick($event): void
     {
-        if (! static::canEdit($event)) {
+        if (!static::canView($event)) {
             return;
         }
 
-        $this->editEventForm->fill($event);
+        $this->editEventForm
+            ->disabled(!static::canView($event))
+            ->fill($event);
 
         if (method_exists($this, 'resolveEventRecord')) {
             $this->event = $this->resolveEventRecord($event);
@@ -63,7 +65,7 @@ trait CanManageEvents
 
     public function onCreateEventClick(array $date): void
     {
-        if (! static::canCreate()) {
+        if (!static::canCreate()) {
             return;
         }
 
