@@ -46,12 +46,12 @@ trait CanManageEvents
 
     public function onEventClick($event): void
     {
-        if (!static::canView($event)) {
+        if (! static::canView($event)) {
             return;
         }
 
         $this->editEventForm
-            ->disabled(!static::canView($event))
+            ->disabled(! static::canView($event))
             ->fill($event);
 
         if (method_exists($this, 'resolveEventRecord')) {
@@ -65,7 +65,7 @@ trait CanManageEvents
 
     public function onCreateEventClick(array $date): void
     {
-        if (!static::canCreate()) {
+        if (! static::canCreate()) {
             return;
         }
 
