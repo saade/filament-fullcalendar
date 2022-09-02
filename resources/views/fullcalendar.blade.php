@@ -68,6 +68,16 @@
                         @endif
                     }
 
+                    @if($this->config('saveState', false))
+                    const key = "{{ $this->getKey() }}";
+                    const initialView =
+                        localStorage.getItem("fullcalendar.view." + key) ??
+                            @json($this->config('initialView'));
+                    const initialDate =
+                        localStorage.getItem("fullcalendar.date." + key) ??
+                            @json($this->config('initialDate'));
+                    @endif
+
                     const calendar = new FullCalendar.Calendar($el, {
                         ...config,
                         locale,
@@ -79,7 +89,15 @@
                         eventSources:[
                             { events },
                             fetchEvents
-                        ]
+                        ],
+                        @if($this->config('saveState', false))
+                        initialView: initialView ?? undefined,
+                        initialDate: initialDate ?? undefined,
+                        datesSet: function ({start, view}) {
+                            localStorage.setItem("fullcalendar.view." + key, view.type);
+                            localStorage.setItem("fullcalendar.date." + key, start.toISOString());
+                        },
+                        @endif
                     });
 
                     calendar.render();
