@@ -101,7 +101,7 @@
         <x:filament-fullcalendar::create-event-modal />
     @endif
 
-    @if($this::canEdit())
+    @if($this::canView())
         <x:filament-fullcalendar::edit-event-modal />
     @endif
 </x-filament::widget>
