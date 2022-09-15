@@ -58,7 +58,7 @@ trait CanManageEvents
         }
 
         $this->editEventForm
-            ->disabled(! static::canView($event))
+            ->disabled(! static::canEdit($event))
             ->fill($this->event?->getAttributes() ?? $event);
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--edit-event-modal']);
