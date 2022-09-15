@@ -3,6 +3,7 @@
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Closure;
+use Filament\Forms\ComponentContainer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Saade\FilamentFullCalendar\Widgets\Forms\CreateEventForm;
@@ -10,8 +11,8 @@ use Saade\FilamentFullCalendar\Widgets\Forms\EditEventForm;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 /**
- * @property \Filament\Forms\ComponentContainer $createEventForm
- * @property \Filament\Forms\ComponentContainer $editEventForm
+ * @property ComponentContainer $createEventForm
+ * @property ComponentContainer $editEventForm
  */
 trait CanManageEvents
 {
@@ -22,7 +23,6 @@ trait CanManageEvents
     use EvaluateClosures;
 
     public ?int $event_id = null;
-
     public ?Model $event = null;
 
     protected function setUpForms(): void
@@ -46,7 +46,7 @@ trait CanManageEvents
 
     public function onEventClick($event): void
     {
-        if (! static::canEdit($event)) {
+        if (! static::canView($event)) {
             return;
         }
 
@@ -57,7 +57,9 @@ trait CanManageEvents
             $this->event_id = $event['id'] ?? null;
         }
 
-        $this->editEventForm->fill($this->event?->getAttributes() ?? $event);
+        $this->editEventForm
+            ->disabled(! static::canView($event))
+            ->fill($this->event?->getAttributes() ?? $event);
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--edit-event-modal']);
     }
@@ -78,7 +80,9 @@ trait CanManageEvents
     protected function handleCreateEventClickUsing(): Closure
     {
         return function ($date, FullCalendarWidget $calendar) {
-            $timezone = $this->config('timeZone', config('app.timezone'));
+            $timezone = $this->config('timeZone') !== ' local'
+                ? $this->config('timeZone', config('app.timezone'))
+                : config('app.timezone');
 
             if (isset($date['date'])) { // for single date click
                 $end = $start = Carbon::parse($date['date'], $timezone);

@@ -350,6 +350,21 @@ protected static function getEditEventFormSchema(): array
 
 ## Authorizing actions
 
+If you want to authorize the `view` action, you can override the default authorization methods that comes with this package.
+
+```php
+public static function canView(?array $event = null): bool
+{
+    // When event is null, MAKE SURE you allow View otherwise the entire widget/calendar won't be rendered
+    if ($event === null) {
+        return true;
+    }
+    
+    // Returning 'false' will not show the event Modal.
+    return true;
+}
+```
+
 If you want to authorize the `edit` or `create` action, you can override the default authorization methods that comes with this package.
 
 ```php
