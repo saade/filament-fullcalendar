@@ -3,6 +3,7 @@
 namespace Saade\FilamentFullCalendar\Widgets\Forms;
 
 use Filament\Forms;
+use Illuminate\Database\Eloquent\Model;
 
 trait CreateEventForm
 {
@@ -10,14 +11,19 @@ trait CreateEventForm
 
     public function onCreateEventSubmit()
     {
-        $this->createEvent($this->createEventForm->getState());
+        $eventModel = $this->createEvent($this->createEventForm->getState());
+        if ($eventModel) {
+            $this->createEventForm->model($eventModel);
+            $this->createEventForm->saveRelationships();
+        }
 
         $this->dispatchBrowserEvent('close-modal', ['id' => 'fullcalendar--create-event-modal']);
     }
 
-    public function createEvent(array $data): void
+    public function createEvent(array $data): ?Model
     {
         // Override this function and do whatever you want with $data
+        return null;
     }
 
     protected static function getCreateEventFormSchema(): array
@@ -36,6 +42,7 @@ trait CreateEventForm
     {
         return [
             'createEventForm' => $this->makeForm()
+                ->model($this->getFormModel()::getModel())
                 ->schema(static::getCreateEventFormSchema())
                 ->statePath('createEventFormState'),
         ];
