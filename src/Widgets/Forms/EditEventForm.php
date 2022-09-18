@@ -36,7 +36,6 @@ trait EditEventForm
     {
         return [
             'editEventForm' => $this->makeForm()
-                ->model($this->getFormModel())
                 ->schema(static::getEditEventFormSchema())
                 ->statePath('editEventFormState'),
         ];
