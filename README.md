@@ -299,7 +299,7 @@ public function getCreateEventModalTitle(): string
 }
 ```
 
-You can override the `getCreateModalSubmitButtonLabel()` and `getCreateModalCloseButtonLabel()` methods to change the modal button labels to custom labels:
+You can override the `getCreateEventModalSubmitButtonLabel()` and `getCreateEventModalCloseButtonLabel()` methods to change the modal button labels to custom labels:
 ```php
 public function getCreateModalSubmitButtonLabel(): string 
 {
