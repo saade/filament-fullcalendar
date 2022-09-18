@@ -46,7 +46,7 @@ trait CreateEventForm
         return __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
     }
 
-    public function getCreateModalSubmitButtonLabel(): string 
+    public function getCreateEventModalSubmitButtonLabel(): string 
     {
         return __('filament::resources/pages/create-record.form.actions.create.label');
     }
