@@ -15,7 +15,7 @@
         <x-slot name="footer">
             @if(!$this->editEventForm->isDisabled())
                 <x-filament::button type="submit" form="onEditEventSubmit">
-                    {{ $this->getEditModalSubmitButtonLabel() }}
+                    {{ $this->getEditEventModalSubmitButtonLabel() }}
                 </x-filament::button>
             @endif
 
