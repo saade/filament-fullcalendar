@@ -2,7 +2,7 @@
     <x-filament::modal id="fullcalendar--edit-event-modal" :width="$this->getModalWidth()">
         <x-slot name="header">
             <x-filament::modal.heading>
-                {{ $this->getEditModalTitle() }}
+                {{ $this->getEditEventModalTitle() }}
             </x-filament::modal.heading>
         </x-slot>
 
