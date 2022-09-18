@@ -377,7 +377,7 @@ public function getCreateEventModalTitle(): string
 
 You can override the `getEditEventModalSubmitButtonLabel()` and `getEditEventModalCloseButtonLabel()` methods to change the modal button labels to custom labels:
 ```php
-public function getEditModalSubmitButtonLabel(): string 
+public function getEditEventModalSubmitButtonLabel(): string 
 {
     return __('filament::resources/pages/edit-record.form.actions.save.label');
 }
