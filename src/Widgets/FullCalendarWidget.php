@@ -17,7 +17,6 @@ class FullCalendarWidget extends Widget implements HasForms
     use InteractsWithForms, CanManageEvents {
         CanManageEvents::getForms insteadof InteractsWithForms;
     }
-
     use CanRefreshEvents;
     use CanFetchEvents;
     use FiresEvents;
@@ -38,5 +37,10 @@ class FullCalendarWidget extends Widget implements HasForms
             ->with([
                 'events' => $this->getViewData(),
             ]);
+    }
+
+    public function getKey(): string
+    {
+        return $this->key ?? 'default';
     }
 }
