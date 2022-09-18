@@ -2,6 +2,14 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v.1.5.1 - 2022-09-18
+
+### What's Changed
+
+- Revert "Allow event's model to have relationship" by @saade in https://github.com/saade/filament-fullcalendar/pull/53
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.5.0...v1.5.1
+
 ## v1.5.0 - 2022-09-18
 
 ### What's Changed
