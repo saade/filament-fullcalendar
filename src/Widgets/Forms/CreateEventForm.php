@@ -41,7 +41,7 @@ trait CreateEventForm
         ];
     }
 
-    public function getCreateModalTitle(): string 
+    public function getCreateEventModalTitle(): string 
     {
         return __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
     }
