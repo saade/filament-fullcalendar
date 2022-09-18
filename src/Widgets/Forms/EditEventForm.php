@@ -48,7 +48,7 @@ trait EditEventForm
             : __('filament::resources/pages/edit-record.title', ['label' => $this->getModalLabel()]);
     }
 
-    public function getEditModalSubmitButtonLabel(): string 
+    public function getEditEventModalSubmitButtonLabel(): string 
     {
         return __('filament::resources/pages/edit-record.form.actions.save.label');
     }
