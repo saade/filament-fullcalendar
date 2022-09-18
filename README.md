@@ -291,7 +291,7 @@ protected static function getCreateEventFormSchema(): array
 }
 ```
 
-You can override the `getCreateModalTitle()` method to change the modal title to a custom one:
+You can override the `getCreateEventModalTitle()` method to change the modal title to a custom one:
 ```php
 public function getCreateModalTitle(): string 
 {
