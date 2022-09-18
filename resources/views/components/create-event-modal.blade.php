@@ -14,7 +14,7 @@
 
         <x-slot name="footer">
             <x-filament::button type="submit" form="onCreateEventSubmit">
-                {{ $this->getCreateModalSubmitButtonLabel() }}
+                {{ $this->getCreateEventModalSubmitButtonLabel() }}
             </x-filament::button>
 
             @if($this->isListeningCancelledCreateModal())
