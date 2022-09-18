@@ -48,17 +48,17 @@ trait CreateEventForm
         ];
     }
 
-    public function getCreateEventModalTitle(): string 
+    public function getCreateEventModalTitle(): string
     {
         return __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
     }
 
-    public function getCreateEventModalSubmitButtonLabel(): string 
+    public function getCreateEventModalSubmitButtonLabel(): string
     {
         return __('filament::resources/pages/create-record.form.actions.create.label');
     }
 
-    public function getCreateEventModalCloseButtonLabel(): string 
+    public function getCreateEventModalCloseButtonLabel(): string
     {
         return __('filament::resources/pages/create-record.form.actions.cancel.label');
     }

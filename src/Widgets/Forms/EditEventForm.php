@@ -42,19 +42,19 @@ trait EditEventForm
         ];
     }
 
-    public function getEditEventModalTitle(): string 
+    public function getEditEventModalTitle(): string
     {
         return $this->editEventForm->isDisabled()
             ? __('filament::resources/pages/view-record.title', ['label' => $this->getModalLabel()])
             : __('filament::resources/pages/edit-record.title', ['label' => $this->getModalLabel()]);
     }
 
-    public function getEditEventModalSubmitButtonLabel(): string 
+    public function getEditEventModalSubmitButtonLabel(): string
     {
         return __('filament::resources/pages/edit-record.form.actions.save.label');
     }
 
-    public function getEditEventModalCloseButtonLabel(): string 
+    public function getEditEventModalCloseButtonLabel(): string
     {
         return $this->editEventForm->isDisabled()
             ? __('filament-support::actions/view.single.modal.actions.close.label')
