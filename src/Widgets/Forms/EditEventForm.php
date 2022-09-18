@@ -40,4 +40,23 @@ trait EditEventForm
                 ->statePath('editEventFormState'),
         ];
     }
+
+    public function getEditModalTitle(): string 
+    {
+        return $this->editEventForm->isDisabled()
+            ? __('filament::resources/pages/view-record.title', ['label' => $this->getModalLabel()])
+            : __('filament::resources/pages/edit-record.title', ['label' => $this->getModalLabel()]);
+    }
+
+    public function getEditModalSubmitButtonLabel(): string 
+    {
+        return __('filament::resources/pages/edit-record.form.actions.save.label');
+    }
+
+    public function getEditModalCloseButtonLabel(): string 
+    {
+        return $this->editEventForm->isDisabled()
+            ? __('filament-support::actions/view.single.modal.actions.close.label')
+            : __('filament::resources/pages/edit-record.form.actions.cancel.label');
+    }
 }

@@ -291,6 +291,27 @@ protected static function getCreateEventFormSchema(): array
 }
 ```
 
+You can override the `getCreateModalTitle()` method to change the modal title to a custom one:
+```php
+public function getCreateModalTitle(): string 
+{
+    return __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
+}
+```
+
+You can override the `getCreateModalSubmitButtonLabel()` and `getCreateModalCloseButtonLabel()` methods to change the modal button labels to custom labels:
+```php
+public function getCreateModalSubmitButtonLabel(): string 
+{
+    return __('filament::resources/pages/create-record.form.actions.create.label');
+}
+
+public function getCreateModalCloseButtonLabel(): string 
+{
+    return __('filament::resources/pages/create-record.form.actions.cancel.label');
+}
+```
+
 <br>
 
 ## Editing Events
@@ -343,6 +364,29 @@ protected static function getEditEventFormSchema(): array
         Forms\Components\DatePicker::make('end')
             ->default(null),
     ];
+}
+```
+
+You can override the `getEditModalTitle()` method to change the modal title to a custom one:
+```php
+public function getCreateModalTitle(): string 
+{
+    return __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
+}
+```
+
+You can override the `getEditModalSubmitButtonLabel()` and `getEditModalCloseButtonLabel()` methods to change the modal button labels to custom labels:
+```php
+public function getEditModalSubmitButtonLabel(): string 
+{
+    return __('filament::resources/pages/edit-record.form.actions.save.label');
+}
+
+public function getEditModalCloseButtonLabel(): string 
+{
+    return $this->editEventForm->isDisabled()
+        ? __('filament-support::actions/view.single.modal.actions.close.label')
+        : __('filament::resources/pages/edit-record.form.actions.cancel.label');
 }
 ```
 

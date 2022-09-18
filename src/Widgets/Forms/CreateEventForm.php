@@ -40,4 +40,19 @@ trait CreateEventForm
                 ->statePath('createEventFormState'),
         ];
     }
+
+    public function getCreateModalTitle(): string 
+    {
+        return __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
+    }
+
+    public function getCreateModalSubmitButtonLabel(): string 
+    {
+        return __('filament::resources/pages/create-record.form.actions.create.label');
+    }
+
+    public function getCreateModalCloseButtonLabel(): string 
+    {
+        return __('filament::resources/pages/create-record.form.actions.cancel.label');
+    }
 }
