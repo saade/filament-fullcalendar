@@ -51,7 +51,7 @@ trait CreateEventForm
         return __('filament::resources/pages/create-record.form.actions.create.label');
     }
 
-    public function getCreateModalCloseButtonLabel(): string 
+    public function getCreateEventModalCloseButtonLabel(): string 
     {
         return __('filament::resources/pages/create-record.form.actions.cancel.label');
     }
