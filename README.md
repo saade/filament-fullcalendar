@@ -382,7 +382,7 @@ public function getEditEventModalSubmitButtonLabel(): string
     return __('filament::resources/pages/edit-record.form.actions.save.label');
 }
 
-public function getEditModalCloseButtonLabel(): string 
+public function getEditEventModalCloseButtonLabel(): string 
 {
     return $this->editEventForm->isDisabled()
         ? __('filament-support::actions/view.single.modal.actions.close.label')
