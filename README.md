@@ -293,7 +293,7 @@ protected static function getCreateEventFormSchema(): array
 
 You can override the `getCreateEventModalTitle()` method to change the modal title to a custom one:
 ```php
-public function getCreateModalTitle(): string 
+public function getCreateEventModalTitle(): string 
 {
     return __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
 }
