@@ -41,7 +41,7 @@ trait EditEventForm
         ];
     }
 
-    public function getEditModalTitle(): string 
+    public function getEditEventModalTitle(): string 
     {
         return $this->editEventForm->isDisabled()
             ? __('filament::resources/pages/view-record.title', ['label' => $this->getModalLabel()])
