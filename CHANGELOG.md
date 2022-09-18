@@ -2,6 +2,25 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.5.0 - 2022-09-18
+
+### What's Changed
+
+- Add View Modal and corresponding canView authorization. by @tiagof in https://github.com/saade/filament-fullcalendar/pull/46
+- Avoids error when full-calendar timezone is 'local' by @tiagof in https://github.com/saade/filament-fullcalendar/pull/48
+- Add ability for custom modal titles and button labels by @flord22 in https://github.com/saade/filament-fullcalendar/pull/52
+- Fixes wrong permissions check. by @tiagof in https://github.com/saade/filament-fullcalendar/pull/51
+- feat: save state by @fauzie811 in https://github.com/saade/filament-fullcalendar/pull/50
+- Allow event's model to have relationship by @tiagof in https://github.com/saade/filament-fullcalendar/pull/47
+
+### New Contributors
+
+- @tiagof made their first contribution in https://github.com/saade/filament-fullcalendar/pull/46
+- @flord22 made their first contribution in https://github.com/saade/filament-fullcalendar/pull/52
+- @fauzie811 made their first contribution in https://github.com/saade/filament-fullcalendar/pull/50
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.4.0...v1.5.0
+
 ## v1.4.0 - 2022-08-04
 
 ### What's Changed
