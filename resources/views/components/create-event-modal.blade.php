@@ -2,7 +2,7 @@
     <x-filament::modal id="fullcalendar--create-event-modal" :width="$this->getModalWidth()">
         <x-slot name="header">
             <x-filament::modal.heading>
-                {{ __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]) }}
+                {{ $this->getCreateEventModalTitle() }}
             </x-filament::modal.heading>
         </x-slot>
 
@@ -14,16 +14,16 @@
 
         <x-slot name="footer">
             <x-filament::button type="submit" form="onCreateEventSubmit">
-                {{ __('filament::resources/pages/create-record.form.actions.create.label') }}
+                {{ $this->getCreateEventModalSubmitButtonLabel() }}
             </x-filament::button>
 
             @if($this->isListeningCancelledCreateModal())
                 <x-filament::button color="secondary" x-on:click="isOpen = false; Livewire.emit('cancelledFullcalendarCreateEventModal')">
-                    {{ __('filament::resources/pages/create-record.form.actions.cancel.label') }}
+                    {{ $this->getCreateEventModalCloseButtonLabel() }}
                 </x-filament::button>
             @else
                 <x-filament::button color="secondary" x-on:click="isOpen = false">
-                    {{ __('filament::resources/pages/create-record.form.actions.cancel.label') }}
+                    {{ $this->getCreateEventModalCloseButtonLabel() }}
                 </x-filament::button>
             @endif
         </x-slot>

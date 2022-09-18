@@ -2,11 +2,7 @@
     <x-filament::modal id="fullcalendar--edit-event-modal" :width="$this->getModalWidth()">
         <x-slot name="header">
             <x-filament::modal.heading>
-                {{
-                    $this->editEventForm->isDisabled()
-                        ? __('filament::resources/pages/view-record.title', ['label' => $this->getModalLabel()])
-                        : __('filament::resources/pages/edit-record.title', ['label' => $this->getModalLabel()])
-                }}
+                {{ $this->getEditEventModalTitle() }}
             </x-filament::modal.heading>
         </x-slot>
 
@@ -19,28 +15,20 @@
         <x-slot name="footer">
             @if(!$this->editEventForm->isDisabled())
                 <x-filament::button type="submit" form="onEditEventSubmit">
-                    {{ __('filament::resources/pages/edit-record.form.actions.save.label') }}
+                    {{ $this->getEditEventModalSubmitButtonLabel() }}
                 </x-filament::button>
             @endif
 
             @if($this->isListeningCancelledEditModal())
                 <x-filament::button color="secondary"
                                     x-on:click="isOpen = false; Livewire.emit('cancelledFullcalendarEditEventModal')">
-                    {{
-                        $this->editEventForm->isDisabled()
-                        ?  __('filament-support::actions/view.single.modal.actions.close.label')
-                        : __('filament::resources/pages/edit-record.form.actions.cancel.label')
-                     }}
+                    {{ $this->getEditEventModalCloseButtonLabel() }}
                 </x-filament::button>
             @else
                 <x-filament::button color="secondary" x-on:click="isOpen = false">
-                    {{
-                        $this->editEventForm->isDisabled()
-                        ?  __('filament-support::actions/view.single.modal.actions.close.label')
-                        : __('filament::resources/pages/edit-record.form.actions.cancel.label')
-                     }}
+                    {{ $this->getEditEventModalCloseButtonLabel() }}
                 </x-filament::button>
-                @endif
+            @endif
         </x-slot>
     </x-filament::modal>
 </x-filament::form>
