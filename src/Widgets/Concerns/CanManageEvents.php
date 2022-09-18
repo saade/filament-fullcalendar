@@ -51,7 +51,7 @@ trait CanManageEvents
         }
 
         $this->editEventForm
-            ->disabled(! static::canView($event))
+            ->disabled(! static::canEdit($event))
             ->fill($event);
 
         if (method_exists($this, 'resolveEventRecord')) {
