@@ -23,7 +23,7 @@
                 </x-filament::button>
             @else
                 <x-filament::button color="secondary" x-on:click="isOpen = false">
-                    {{ $this->getCreateModalCloseButtonLabel() }}
+                    {{ $this->getCreateEventModalCloseButtonLabel() }}
                 </x-filament::button>
             @endif
         </x-slot>
