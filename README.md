@@ -168,40 +168,25 @@ return [
 
 # Styling
 
-Copy-paste this into your `app.css` file to match filament's look and feel.
+If you're [building a custom Filament theme](https://filamentphp.com/docs/2.x/admin/appearance#building-themes), you need one more step to make the calendar theme match your custom theme.
+
+Add this line to your `resources/css/filament.css` file (or whatever file you're using).
 
 ```css
-.fc .fc-button {
-    @apply transition-colors outline-none rounded-lg font-medium text-sm text-white min-h-[2.25rem] px-4 py-1 shadow;
-}
+@import '../../vendor/saade/filament-fullcalendar/resources/css/filament-fullcalendar.css';
+```
 
-.fc .fc-button-primary {
-    @apply bg-primary-600 border-primary-600
-}
+the final contents of this file should look simmilar to this
 
-.fc .fc-button-primary:hover {
-    @apply bg-primary-500 border-primary-600
-}
+```diff
+@import '../../vendor/filament/forms/dist/module.esm.css';
++ @import '../../vendor/saade/filament-fullcalendar/resources/css/filament-fullcalendar.css';
+@import 'tippy.js/dist/tippy.css';
 
-.fc .fc-button-primary:disabled {
-    @apply bg-primary-600 opacity-70 border-primary-600;
-}
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
-.fc .fc-button-primary:not(:disabled).fc-button-active, .fc .fc-button-primary:not(:disabled):active {
-    @apply bg-primary-500 border-primary-600 shadow-none;
-}
-
-.fc .fc-button-primary:focus, .fc .fc-button-primary:not(:disabled):focus, .fc .fc-button-primary:not(:disabled).fc-button-active:focus, .fc .fc-button-primary:not(:disabled):active:focus {
-    @apply bg-primary-700 outline-none ring-2 ring-inset ring-offset-2 ring-offset-primary-700 ring-white shadow-none;
-}
-
-.fc .fc-daygrid-day.fc-day-today {
-    @apply bg-primary-50;
-}
-
-.dark .fc .fc-daygrid-day.fc-day-today {
-    @apply bg-primary-900;
-}
 ```
 
 <br>
