@@ -2,6 +2,14 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.6.0 - 2022-09-25
+
+### What's Changed
+
+- v1.6.0 by @saade in https://github.com/saade/filament-fullcalendar/pull/55
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.5.1...v1.6.0
+
 ## v.1.5.1 - 2022-09-18
 
 ### What's Changed
