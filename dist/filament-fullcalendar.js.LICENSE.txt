@@ -1,0 +1,19 @@
+/*!
+FullCalendar v5.11.3
+Docs & License: https://fullcalendar.io/
+(c) 2022 Adam Shaw
+*/
+
+//! Copyright (c) JS Foundation and other contributors
+
+//! github.com/moment/moment-timezone
+
+//! license : MIT
+
+//! moment-timezone.js
+
+//! moment.js
+
+//! moment.js locale configuration
+
+//! version : 0.5.37
