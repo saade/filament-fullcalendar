@@ -121,7 +121,7 @@ class CalendarWidget extends FullCalendarWidget
 
 > **Warning**
 >
-> You should use only one of the functions above, using both can cause duplicates.
+> You should use `getViewData` to display initial data, and `fetchEvents` to fetch new events while paginating the calendar.
 
 > Both methods should retun an array of [EventObject](https://fullcalendar.io/docs/event-object).
 
