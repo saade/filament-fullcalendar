@@ -50,6 +50,7 @@
                             .then(events => {
                                 if(events.length == 0) return Object.values($data.cachedEvents)
                                 if(events[0].id) {
+                                    $data.cachedEvents = {};
                                     events.forEach((event) => $data.cachedEvents[event.id] = event)
                                     successCallback(Object.values($data.cachedEvents))
                                 } else{
