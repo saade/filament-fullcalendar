@@ -29,6 +29,9 @@
                     {{ $this->getEditEventModalCloseButtonLabel() }}
                 </x-filament::button>
             @endif
+                <x-filament::button color="danger" x-on:click="isOpen = false; Livewire.emit('onDeleteEvent')">
+                    Delete
+                </x-filament::button>
         </x-slot>
     </x-filament::modal>
 </x-filament::form>
