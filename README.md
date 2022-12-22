@@ -458,6 +458,7 @@ If you want to filter your events based on the days that are currently shown in 
  *
  * @see https://fullcalendar.io/docs/events-function
  * @param array $fetchInfo start and end date of the current view
+ */
 public function fetchEvents(array $fetchInfo): array
 {
     return [];
