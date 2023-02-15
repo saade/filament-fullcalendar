@@ -2,6 +2,21 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.7.0 - 2023-02-15
+
+### What's Changed
+
+- L10 support by @saade
+- Fix missing syntax error by @chengkangzai in https://github.com/saade/filament-fullcalendar/pull/65
+- added resource-timeline plugin by @steveadamsfixedit in https://github.com/saade/filament-fullcalendar/pull/66
+
+### New Contributors
+
+- @chengkangzai made their first contribution in https://github.com/saade/filament-fullcalendar/pull/65
+- @steveadamsfixedit made their first contribution in https://github.com/saade/filament-fullcalendar/pull/66
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.6.0...v1.7.0
+
 ## v1.6.0 - 2022-09-25
 
 ### What's Changed
