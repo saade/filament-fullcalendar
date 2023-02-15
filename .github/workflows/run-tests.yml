@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        php: [8.0 8.1]
-        laravel: [8.* 9.* 10.*]
+        php: [8.0, 8.1]
+        laravel: [8.*, 9.*, 10.*]
         stability: [prefer-lowest, prefer-stable]
         include:
           - laravel: 8.*
