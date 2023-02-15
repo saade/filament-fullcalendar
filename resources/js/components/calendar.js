@@ -2,6 +2,7 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
+import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import interactionPlugin from '@fullcalendar/interaction';
 import momentPlugin from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
@@ -32,7 +33,7 @@ export default (Alpine) => {
 
                 init: function () {
                     this.calendar = new Calendar(this.$refs.calendar, {
-                        plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, momentPlugin, momentTimezonePlugin],
+                        plugins: [dayGridPlugin, timeGridPlugin, listPlugin, resourceTimelinePlugin, interactionPlugin, momentPlugin, momentTimezonePlugin],
                         ...config,
                         locales,
                         locale,
