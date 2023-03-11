@@ -23,8 +23,9 @@ export default (Alpine) => {
             handleEventClickUsing,
             handleEventDropUsing,
             handleEventResizeUsing,
-            handleDateClickUsing,
             handleEventReceiveUsing,
+            handleDropUsing,
+            handleDateClickUsing,
             handleSelectUsing,
             fetchEventsUsing
         }) => {
@@ -44,6 +45,7 @@ export default (Alpine) => {
                         eventClick: handleEventClickUsing,
                         eventDrop: handleEventDropUsing,
                         eventReceive: handleEventReceiveUsing,
+                        drop: handleDropUsing,
                         eventResize: handleEventResizeUsing,
                         dateClick: handleDateClickUsing,
                         select: handleSelectUsing,
