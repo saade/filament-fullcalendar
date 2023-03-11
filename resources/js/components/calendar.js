@@ -14,6 +14,7 @@ export default (Alpine) => {
         ({
             key,
             config,
+            userConfig,
             locale,
             events,
             initialView,
@@ -23,6 +24,7 @@ export default (Alpine) => {
             handleEventDropUsing,
             handleEventResizeUsing,
             handleDateClickUsing,
+            handleEventReceiveUsing,
             handleSelectUsing,
             fetchEventsUsing
         }) => {
@@ -32,13 +34,16 @@ export default (Alpine) => {
                 cachedEvents: new Object(),
 
                 init: function () {
+
                     this.calendar = new Calendar(this.$refs.calendar, {
                         plugins: [dayGridPlugin, timeGridPlugin, listPlugin, resourceTimelinePlugin, interactionPlugin, momentPlugin, momentTimezonePlugin],
                         ...config,
+                        ...userConfig,
                         locales,
                         locale,
                         eventClick: handleEventClickUsing,
                         eventDrop: handleEventDropUsing,
+                        eventReceive: handleEventReceiveUsing,
                         eventResize: handleEventResizeUsing,
                         dateClick: handleDateClickUsing,
                         select: handleSelectUsing,
