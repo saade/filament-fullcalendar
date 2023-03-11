@@ -51,4 +51,9 @@ trait FiresEvents
     {
         return method_exists(static::class, 'onEventResize');
     }
+
+    public static function isListeningReceiveEvent(): bool
+    {
+        return method_exists(static::class, 'onEventReceive');
+    }
 }

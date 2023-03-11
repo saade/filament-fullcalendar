@@ -1,11 +1,14 @@
 @php($locale = strtolower(str_replace('_', '-', $this->config('locale', config('app.locale')))))
 
 <x-filament::widget>
+
     <x-filament::card>
-        <div
-            wire:ignore
-            x-ref="calendar"
-            x-data="calendarComponent({
+        <div class="flex flex-row gap-x-2">
+
+            <div
+                wire:ignore
+                x-ref="calendar"
+                x-data="calendarComponent({
                 key: @js($this->getKey()),
                 config: {{ json_encode($this->getConfig(), JSON_PRETTY_PRINT) }},
                 locale: '{{ $locale }}',
@@ -22,6 +25,11 @@
 
                     @if ($this::isListeningClickEvent())
                         $wire.onEventClick(event)
+                    @endif
+                },
+                handleEventReceiveUsing: async ({ event }) => {
+                    @if($this::isListeningReceiveEvent())
+                        $wire.onEventReceive(event)
                     @endif
                 },
                 handleEventDropUsing: async ({ event, oldEvent, relatedEvents }) => {
@@ -62,7 +70,7 @@
                     @endif
                 },
             })"
-            x-on:filament-fullcalendar--refresh.window="
+                x-on:filament-fullcalendar--refresh.window="
                 @if( $this::canFetchEvents() )
                     $data.calendar.refetchEvents();
                 @else
@@ -70,8 +78,35 @@
                     event.detail.data.map(event => $data.calendar.addEvent(event));
                 @endif
             "
-            class="filament-fullcalendar--calendar"
-        ></div>
+                class="filament-fullcalendar--calendar flex-auto"
+            ></div>
+            <div id='external-events' class="flex-auto w-20" >
+                <p>
+                    <strong>Draggable Events</strong>
+                </p>
+
+                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+                    <div class='fc-event-main'>My Event 1</div>
+                </div>
+                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+                    <div class='fc-event-main'>My Event 2</div>
+                </div>
+                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+                    <div class='fc-event-main'>My Event 3</div>
+                </div>
+                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+                    <div class='fc-event-main'>My Event 4</div>
+                </div>
+                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+                    <div class='fc-event-main'>My Event 5</div>
+                </div>
+
+                <p>
+                    <input type='checkbox' id='drop-remove' />
+                    <label for='drop-remove'>remove after drop</label>
+                </p>
+            </div>
+        </div>
     </x-filament::card>
 
     @if($this::canCreate())
