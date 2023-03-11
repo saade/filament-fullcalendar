@@ -3,7 +3,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
-import interactionPlugin from '@fullcalendar/interaction';
+import interactionPlugin, {Draggable} from '@fullcalendar/interaction';
 import momentPlugin from '@fullcalendar/moment';
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 import locales from '@fullcalendar/core/locales-all';
@@ -60,6 +60,17 @@ export default (Alpine) => {
                                 localStorage.setItem('fullcalendar.view.' + key, view.type);
                                 localStorage.setItem('fullcalendar.date.' + key, start.toISOString());
                             },
+                        }
+                    });
+
+                    let containerEl = document.getElementById('external-events');
+
+                    new Draggable(containerEl, {
+                        itemSelector: '.fc-event',
+                        eventData: function(eventEl) {
+                            return {
+                                title: eventEl.innerText
+                            };
                         }
                     });
 
