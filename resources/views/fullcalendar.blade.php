@@ -11,6 +11,7 @@
                 x-data="calendarComponent({
                 key: @js($this->getKey()),
                 config: {{ json_encode($this->getConfig(), JSON_PRETTY_PRINT) }},
+                userConfig: {{ json_encode($this::getUserConfiguration(), JSON_PRETTY_PRINT) }},
                 locale: '{{ $locale }}',
                 events: {{ json_encode($events) }},
                 initialView: @js($this->config('initialView')),
@@ -80,32 +81,17 @@
             "
                 class="filament-fullcalendar--calendar flex-auto"
             ></div>
-            <div id='external-events' class="flex-auto w-20" >
+            @if($this::isListeningReceiveEvent())
+            <div id='external-events' class="flex-auto w-20 ltr:pl-5 rtl:pr-5"  dir="rtl">
                 <p>
                     <strong>Draggable Events</strong>
                 </p>
+                @foreach($this::getExternalDraggableData() as $event)
+                    <x-filament-fullcalendar::draggable-event :event="$event['title']" :extra="$event['extra']" />
+                @endforeach
 
-                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-                    <div class='fc-event-main'>My Event 1</div>
-                </div>
-                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-                    <div class='fc-event-main'>My Event 2</div>
-                </div>
-                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-                    <div class='fc-event-main'>My Event 3</div>
-                </div>
-                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-                    <div class='fc-event-main'>My Event 4</div>
-                </div>
-                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-                    <div class='fc-event-main'>My Event 5</div>
-                </div>
-
-                <p>
-                    <input type='checkbox' id='drop-remove' />
-                    <label for='drop-remove'>remove after drop</label>
-                </p>
             </div>
+            @endif
         </div>
     </x-filament::card>
 

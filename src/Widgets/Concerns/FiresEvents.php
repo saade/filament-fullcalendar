@@ -47,6 +47,17 @@ trait FiresEvents
     //     //
     // }
 
+    /**
+     * Triggered when external event is dropped .
+     *
+     * Event dragging panel is shown once getExternalDraggableData is implemented.
+     * @see https://fullcalendar.io/docs/eventReceive
+     */
+//    public function onEventReceive($event): void
+//    {
+//
+//    }
+
     public static function isListeningResizeEvent(): bool
     {
         return method_exists(static::class, 'onEventResize');
@@ -54,6 +65,6 @@ trait FiresEvents
 
     public static function isListeningReceiveEvent(): bool
     {
-        return method_exists(static::class, 'onEventReceive');
+        return method_exists(static::class, 'getExternalDraggableData');
     }
 }

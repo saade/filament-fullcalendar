@@ -44,6 +44,7 @@ trait CanManageEvents
         );
     }
 
+   
     public function onEventClick($event): void
     {
         if (! static::canView($event)) {

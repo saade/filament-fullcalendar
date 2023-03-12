@@ -24,11 +24,16 @@ class FullCalendarWidget extends Widget implements HasForms
 
     protected static string $view = 'filament-fullcalendar::fullcalendar';
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public function mount(): void
     {
         $this->setUpForms();
+    }
+
+    public function getUserConfiguration(): array
+    {
+        return [];
     }
 
     public function render(): View
@@ -43,4 +48,5 @@ class FullCalendarWidget extends Widget implements HasForms
     {
         return $this->key ?? 'default';
     }
+
 }

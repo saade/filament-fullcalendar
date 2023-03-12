@@ -64,16 +64,18 @@ export default (Alpine) => {
                     });
 
                     let containerEl = document.getElementById('external-events');
+                    if(containerEl != null) {
+                        new Draggable(containerEl, {
+                            itemSelector: '.fc-event',
+                            eventData: function (eventEl) {
+                                return {
+                                    title: eventEl.innerText,
+                                    extra: eventEl.getAttribute('data-event')
 
-                    new Draggable(containerEl, {
-                        itemSelector: '.fc-event',
-                        eventData: function(eventEl) {
-                            return {
-                                title: eventEl.innerText
-                            };
-                        }
-                    });
-
+                                };
+                            }
+                        });
+                    }
                     this.calendar.render();
                 },
             }
