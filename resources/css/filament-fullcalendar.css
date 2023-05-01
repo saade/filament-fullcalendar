@@ -1,8 +1,16 @@
 @tailwind components;
 @tailwind utilities;
 
+.fc-toolbar-chunk {
+    @apply space-y-1
+}
+
+.fc-toolbar-title {
+    @apply !text-lg leading-5 md:!text-3xl
+}
+
 .filament-fullcalendar--calendar.fc .fc-button {
-    @apply transition-colors outline-none rounded-lg font-medium text-sm text-white min-h-[2.25rem] px-4 py-1 shadow;
+    @apply transition-colors outline-none rounded-lg font-medium text-sm text-white min-h-[2.25rem] px-[6px] md:px-4 py-1 shadow;
 }
 
 .filament-fullcalendar--calendar.fc .fc-button-primary {
