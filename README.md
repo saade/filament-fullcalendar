@@ -238,6 +238,7 @@ To customise the modal, override the following properties in your widget:
 
 - `protected string $modalWidth`
 - `protected string $modalLabel`
+- `protected bool $modalSlideover`
 
 The process of saving and editing the event is up to you, since this plugin does not rely on a Model to save the calendar events.
 
