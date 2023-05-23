@@ -2,6 +2,25 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.7.1 - 2023-05-23
+
+### What's Changed
+
+- Bump dependabot/fetch-metadata from 1.3.6 to 1.4.0 by @dependabot in https://github.com/saade/filament-fullcalendar/pull/76
+- Fix responsiveness issue by @mansoorkhan96 in https://github.com/saade/filament-fullcalendar/pull/78
+- Bump dependabot/fetch-metadata from 1.4.0 to 1.5.0 by @dependabot in https://github.com/saade/filament-fullcalendar/pull/83
+- Add editEventForm->fill() if canView() by @miguelurtado in https://github.com/saade/filament-fullcalendar/pull/85
+- Added support for Slideover on modal by @billmn in https://github.com/saade/filament-fullcalendar/pull/82
+- Added support for UUID as Event ID by @billmn in https://github.com/saade/filament-fullcalendar/pull/81
+
+### New Contributors
+
+- @mansoorkhan96 made their first contribution in https://github.com/saade/filament-fullcalendar/pull/78
+- @miguelurtado made their first contribution in https://github.com/saade/filament-fullcalendar/pull/85
+- @billmn made their first contribution in https://github.com/saade/filament-fullcalendar/pull/82
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.7.0...v1.7.1
+
 ## v1.7.0 - 2023-02-15
 
 ### What's Changed
