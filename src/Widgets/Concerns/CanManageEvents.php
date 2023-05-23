@@ -34,7 +34,7 @@ trait CanManageEvents
         if (static::canEdit()) {
             $this->editEventForm->fill();
         }
-        
+
         if (static::canView()) {
             $this->editEventForm->fill();
         }
