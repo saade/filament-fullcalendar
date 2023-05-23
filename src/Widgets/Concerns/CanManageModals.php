@@ -8,6 +8,8 @@ trait CanManageModals
 
     protected string $modalWidth = 'sm';
 
+    protected bool $modalSlideover = false;
+
     protected function getModalLabel(): string
     {
         return $this->modalLabel;
@@ -16,6 +18,11 @@ trait CanManageModals
     protected function getModalWidth(): string
     {
         return $this->modalWidth;
+    }
+
+    protected function getModalSlideover(): bool
+    {
+        return $this->modalSlideover;
     }
 
     public function isListeningCancelledEditModal(): bool
