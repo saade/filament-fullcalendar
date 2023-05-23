@@ -22,7 +22,7 @@ trait CanManageEvents
     use EditEventForm;
     use EvaluateClosures;
 
-    public ?string $event_id = null;
+    public int | string | null $event_id = null;
     public ?Model $event = null;
 
     protected function setUpForms(): void
