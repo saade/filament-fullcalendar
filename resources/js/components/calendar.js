@@ -1,4 +1,5 @@
 import { Calendar } from '@fullcalendar/core';
+import rrulePlugin from '@fullcalendar/rrule';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
@@ -33,7 +34,7 @@ export default (Alpine) => {
 
                 init: function () {
                     this.calendar = new Calendar(this.$refs.calendar, {
-                        plugins: [dayGridPlugin, timeGridPlugin, listPlugin, resourceTimelinePlugin, interactionPlugin, momentPlugin, momentTimezonePlugin],
+                        plugins: [rrulePlugin, dayGridPlugin, timeGridPlugin, listPlugin, resourceTimelinePlugin, interactionPlugin, momentPlugin, momentTimezonePlugin],
                         ...config,
                         locales,
                         locale,
