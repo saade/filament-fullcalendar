@@ -2,6 +2,15 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v1.9.0 - 2023-07-05
+
+### What's Changed
+
+- add esbuild by @saade in https://github.com/saade/filament-fullcalendar/pull/94
+- enable/ disable plugins by @saade in https://github.com/saade/filament-fullcalendar/pull/95
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.8.0...v1.9.0
+
 ## v1.8.0 - 2023-06-21
 
 ### What's Changed
