@@ -9,9 +9,9 @@
 
 # Features
 
-- Accepts all configurations from [FullCalendar](https://fullcalendar.io/docs#toc)
-- Event click and drop events
-- Modals for creating and editing events <sup>New in v1.0</sup>
+-   Accepts all configurations from [FullCalendar](https://fullcalendar.io/docs#toc)
+-   Event click and drop events
+-   Modals for creating and editing events <sup>New in v1.0</sup>
 
 <br>
 
@@ -25,18 +25,18 @@
 
 # Table of contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Styling](#styling)
-- [Listening for events](#listening-for-events)
-- [Creating and Editing events with modals.](#creating-and-editing-events-with-modals)
-  * [Creating Events](#creating-events)
-  * [Editing Events](#editing-events)
-  * [Authorizing actions](#authorizing-actions)
-  * [Listening for cancelled modal](#listening-for-cancelled-modal)
-- [Refreshing calendar events](#refreshing-calendar-events)
-- [Filtering events based on the calendar view](#filtering-events-based-on-the-calendar-view)
+-   [Installation](#installation)
+-   [Usage](#usage)
+-   [Configuration](#configuration)
+-   [Styling](#styling)
+-   [Listening for events](#listening-for-events)
+-   [Creating and Editing events with modals.](#creating-and-editing-events-with-modals)
+    -   [Creating Events](#creating-events)
+    -   [Editing Events](#editing-events)
+    -   [Authorizing actions](#authorizing-actions)
+    -   [Listening for cancelled modal](#listening-for-cancelled-modal)
+-   [Refreshing calendar events](#refreshing-calendar-events)
+-   [Filtering events based on the calendar view](#filtering-events-based-on-the-calendar-view)
 
 <br>
 
@@ -59,7 +59,6 @@ php artisan vendor:publish --tag="filament-fullcalendar-config"
 # Usage
 
 Since the package **does not** automatically add the `FullCalendarWidget` widget to your Filament panel, you are free to extend the widget and customise it yourself.
-
 
 1. First, create a [Filament Widget](https://filamentadmin.com/docs/2.x/admin/dashboard#getting-started):
 
@@ -125,14 +124,18 @@ class CalendarWidget extends FullCalendarWidget
 
 > Both methods should retun an array of [EventObject](https://fullcalendar.io/docs/event-object).
 
-
 <br>
 
 # Configuration
+
 This is the contents of the default config file.
 
 You can use any property that FullCalendar uses on its root object.
 Please refer to: [FullCalendar Docs](https://fullcalendar.io/docs#toc) to see the available options. It supports most of them.
+
+### Plugins
+
+You can enable or disable plugins by setting the `plugins` property to `true` or `false`. By default, all non-standard plugins are disabled.
 
 ```php
 <?php
@@ -147,6 +150,11 @@ return [
     'timeZone' => config('app.timezone'),
 
     'locale' => config('app.locale'),
+
+    'plugins' => [
+        'rrule' => false,
+        'resourceTimeline' => false,
+    ],
 
     'headerToolbar' => [
         'left'   => 'prev,next today',
@@ -236,19 +244,18 @@ Since [v1.0.0](https://github.com/saade/filament-fullcalendar/releases/tag/v1.0.
 
 To customise the modal, override the following properties in your widget:
 
-- `protected string $modalWidth`
-- `protected string $modalLabel`
-- `protected bool $modalSlideover`
+-   `protected string $modalWidth`
+-   `protected string $modalLabel`
+-   `protected bool $modalSlideover`
 
 The process of saving and editing the event is up to you, since this plugin does not rely on a Model to save the calendar events.
-
 
 ## Creating Events
 
 Events can be created in two ways.
 
-- Clicking on a day (default)
-- Selecting a date range (click and drag across calendar days) (you need to opt-in for this, set `selectable => true` in the config file.)
+-   Clicking on a day (default)
+-   Selecting a date range (click and drag across calendar days) (you need to opt-in for this, set `selectable => true` in the config file.)
 
 This will open the Create Event modal.
 
@@ -278,21 +285,23 @@ protected static function getCreateEventFormSchema(): array
 ```
 
 You can override the `getCreateEventModalTitle()` method to change the modal title to a custom one:
+
 ```php
-public function getCreateEventModalTitle(): string 
+public function getCreateEventModalTitle(): string
 {
     return __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
 }
 ```
 
 You can override the `getCreateEventModalSubmitButtonLabel()` and `getCreateEventModalCloseButtonLabel()` methods to change the modal button labels to custom labels:
+
 ```php
-public function getCreateEventModalSubmitButtonLabel(): string 
+public function getCreateEventModalSubmitButtonLabel(): string
 {
     return __('filament::resources/pages/create-record.form.actions.create.label');
 }
 
-public function getCreateEventModalCloseButtonLabel(): string 
+public function getCreateEventModalCloseButtonLabel(): string
 {
     return __('filament::resources/pages/create-record.form.actions.cancel.label');
 }
@@ -354,21 +363,23 @@ protected static function getEditEventFormSchema(): array
 ```
 
 You can override the `getEditEventModalTitle()` method to change the modal title to a custom one:
+
 ```php
-public function getCreateEventModalTitle(): string 
+public function getCreateEventModalTitle(): string
 {
     return __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
 }
 ```
 
 You can override the `getEditEventModalSubmitButtonLabel()` and `getEditEventModalCloseButtonLabel()` methods to change the modal button labels to custom labels:
+
 ```php
-public function getEditEventModalSubmitButtonLabel(): string 
+public function getEditEventModalSubmitButtonLabel(): string
 {
     return __('filament::resources/pages/edit-record.form.actions.save.label');
 }
 
-public function getEditEventModalCloseButtonLabel(): string 
+public function getEditEventModalCloseButtonLabel(): string
 {
     return $this->editEventForm->isDisabled()
         ? __('filament-support::actions/view.single.modal.actions.close.label')
@@ -389,7 +400,7 @@ public static function canView(?array $event = null): bool
     if ($event === null) {
         return true;
     }
-    
+
     // Returning 'false' will not show the event Modal.
     return true;
 }
@@ -469,6 +480,7 @@ public function fetchEvents(array $fetchInfo): array
 you can filter events based on the timespan `$fetchInfo['start']` and `$fetchInfo['end']`.
 
 example:
+
 ```php
 public function fetchEvents(array $fetchInfo): array
 {
@@ -507,8 +519,8 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Saade](https://github.com/saade)
-- [All Contributors](../../contributors)
+-   [Saade](https://github.com/saade)
+-   [All Contributors](../../contributors)
 
 ## License
 

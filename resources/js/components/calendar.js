@@ -1,13 +1,13 @@
-import { Calendar } from '@fullcalendar/core';
-import rrulePlugin from '@fullcalendar/rrule';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import listPlugin from '@fullcalendar/list';
-import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
-import interactionPlugin from '@fullcalendar/interaction';
-import momentPlugin from '@fullcalendar/moment';
-import momentTimezonePlugin from '@fullcalendar/moment-timezone';
-import locales from '@fullcalendar/core/locales-all';
+import { Calendar } from '@fullcalendar/core'
+import rrulePlugin from '@fullcalendar/rrule'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import listPlugin from '@fullcalendar/list'
+import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
+import interactionPlugin from '@fullcalendar/interaction'
+import momentPlugin from '@fullcalendar/moment'
+import momentTimezonePlugin from '@fullcalendar/moment-timezone'
+import locales from '@fullcalendar/core/locales-all'
 
 export default (Alpine) => {
     Alpine.data(
@@ -25,7 +25,7 @@ export default (Alpine) => {
             handleEventResizeUsing,
             handleDateClickUsing,
             handleSelectUsing,
-            fetchEventsUsing
+            fetchEventsUsing,
         }) => {
             return {
                 calendar: null,
@@ -34,8 +34,17 @@ export default (Alpine) => {
 
                 init: function () {
                     this.calendar = new Calendar(this.$refs.calendar, {
-                        plugins: [rrulePlugin, dayGridPlugin, timeGridPlugin, listPlugin, resourceTimelinePlugin, interactionPlugin, momentPlugin, momentTimezonePlugin],
                         ...config,
+                        plugins: [
+                            dayGridPlugin,
+                            timeGridPlugin,
+                            listPlugin,
+                            interactionPlugin,
+                            momentPlugin,
+                            momentTimezonePlugin,
+                            ...(config.plugins.rrule ? [rrulePlugin] : []),
+                            ...(config.plugins.resourceTimeline ? [resourceTimelinePlugin] : []),
+                        ],
                         locales,
                         locale,
                         eventClick: handleEventClickUsing,
@@ -43,21 +52,34 @@ export default (Alpine) => {
                         eventResize: handleEventResizeUsing,
                         dateClick: handleDateClickUsing,
                         select: handleSelectUsing,
-                        eventSources: [
-                            { events },
-                            fetchEventsUsing
-                        ],
-                        ...shouldSaveState && {
-                            initialView: localStorage.getItem('fullcalendar.view.' + key) ?? initialView ?? undefined,
-                            initialDate: localStorage.getItem('fullcalendar.date.' + key) ?? initialDate ?? undefined,
+                        eventSources: [{ events }, fetchEventsUsing],
+                        ...(shouldSaveState && {
+                            initialView:
+                                localStorage.getItem(
+                                    'fullcalendar.view.' + key,
+                                ) ??
+                                initialView ??
+                                undefined,
+                            initialDate:
+                                localStorage.getItem(
+                                    'fullcalendar.date.' + key,
+                                ) ??
+                                initialDate ??
+                                undefined,
                             datesSet: function ({ start, view }) {
-                                localStorage.setItem('fullcalendar.view.' + key, view.type);
-                                localStorage.setItem('fullcalendar.date.' + key, start.toISOString());
+                                localStorage.setItem(
+                                    'fullcalendar.view.' + key,
+                                    view.type,
+                                )
+                                localStorage.setItem(
+                                    'fullcalendar.date.' + key,
+                                    start.toISOString(),
+                                )
                             },
-                        }
-                    });
+                        }),
+                    })
 
-                    this.calendar.render();
+                    this.calendar.render()
                 },
             }
         },

@@ -11,6 +11,11 @@ return [
 
     'locale' => config('app.locale'),
 
+    'plugins' => [
+        'rrule' => false,
+        'resourceTimeline' => false,
+    ],
+
     'headerToolbar' => [
         'left' => 'prev,next today',
         'center' => 'title',
