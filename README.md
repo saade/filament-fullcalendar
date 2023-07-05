@@ -152,8 +152,12 @@ return [
     'locale' => config('app.locale'),
 
     'plugins' => [
-        'rrule' => false,
-        'resourceTimeline' => false,
+        'dayGrid' => true,
+        'timeGrid' => true,
+        'interaction' => true,
+        'list' => true,
+        'rrule' => true,
+        'resourceTimeline' => true,
     ],
 
     'headerToolbar' => [
