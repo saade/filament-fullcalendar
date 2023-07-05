@@ -1,39 +1,52 @@
-@tailwind components;
+@import '../../node_modules/@fullcalendar/common/main.css';
+@import '../../node_modules/@fullcalendar/daygrid/main.css';
+@import '../../node_modules/@fullcalendar/timegrid/main.css';
+@import '../../node_modules/@fullcalendar/list/main.css';
+@import '../../node_modules/@fullcalendar/resource-timeline/main.css';
+
 @tailwind utilities;
 
 .fc-toolbar-chunk {
-    @apply space-y-1
+    @apply space-y-1;
 }
 
 .fc-toolbar-title {
-    @apply !text-lg leading-5 md:!text-3xl
+    @apply !text-lg leading-5 md:!text-3xl;
 }
 
 .filament-fullcalendar--calendar.fc .fc-button {
-    @apply transition-colors outline-none rounded-lg font-medium text-sm text-white min-h-[2.25rem] px-[6px] md:px-4 py-1 shadow;
+    @apply min-h-[2.25rem] rounded-lg px-[6px] py-1 text-sm font-medium text-white shadow outline-none transition-colors md:px-4;
 }
 
 .filament-fullcalendar--calendar.fc .fc-button-primary {
-    @apply bg-primary-600 border-primary-600
+    @apply border-primary-600 bg-primary-600;
 }
 
 .filament-fullcalendar--calendar.fc .fc-button-primary:hover {
-    @apply bg-primary-500 border-primary-600
+    @apply border-primary-600 bg-primary-500;
 }
 
 .filament-fullcalendar--calendar.fc .fc-button-primary:disabled {
-    @apply bg-primary-600 opacity-70 border-primary-600;
+    @apply border-primary-600 bg-primary-600 opacity-70;
 }
 
-.filament-fullcalendar--calendar.fc .fc-button-primary:not(:disabled).fc-button-active, .filament-fullcalendar--calendar.fc .fc-button-primary:not(:disabled):active {
-    @apply bg-primary-500 border-primary-600 shadow-none;
+.filament-fullcalendar--calendar.fc
+    .fc-button-primary:not(:disabled).fc-button-active,
+.filament-fullcalendar--calendar.fc .fc-button-primary:not(:disabled):active {
+    @apply border-primary-600 bg-primary-500 shadow-none;
 }
 
-.filament-fullcalendar--calendar.fc .fc-button-primary:focus, .filament-fullcalendar--calendar.fc .fc-button-primary:not(:disabled):focus, .filament-fullcalendar--calendar.fc .fc-button-primary:not(:disabled).fc-button-active:focus, .filament-fullcalendar--calendar.fc .fc-button-primary:not(:disabled):active:focus {
-    @apply bg-primary-700 outline-none ring-2 ring-inset ring-offset-2 ring-offset-primary-700 ring-white shadow-none;
+.filament-fullcalendar--calendar.fc .fc-button-primary:focus,
+.filament-fullcalendar--calendar.fc .fc-button-primary:not(:disabled):focus,
+.filament-fullcalendar--calendar.fc
+    .fc-button-primary:not(:disabled).fc-button-active:focus,
+.filament-fullcalendar--calendar.fc
+    .fc-button-primary:not(:disabled):active:focus {
+    @apply bg-primary-700 shadow-none outline-none ring-2 ring-inset ring-white ring-offset-2 ring-offset-primary-700;
 }
 
-.filament-fullcalendar--calendar.fc .fc-daygrid-day.fc-day-today, .filament-fullcalendar--calendar.fc .fc-highlight {
+.filament-fullcalendar--calendar.fc .fc-daygrid-day.fc-day-today,
+.filament-fullcalendar--calendar.fc .fc-highlight {
     @apply bg-primary-50;
 }
 
