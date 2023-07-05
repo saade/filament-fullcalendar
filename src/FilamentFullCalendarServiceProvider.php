@@ -8,8 +8,6 @@ use Spatie\LaravelPackageTools\Package;
 
 class FilamentFullCalendarServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'filament-fullcalendar';
-
     protected array $beforeCoreScripts = [
         'filament-fullcalendar-scripts' => __DIR__ . '/../dist/filament-fullcalendar.js',
     ];
@@ -21,7 +19,7 @@ class FilamentFullCalendarServiceProvider extends PluginServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name(self::$name)
+            ->name('filament-fullcalendar')
             ->hasConfigFile()
             ->hasViews()
             ->hasCommand(UpgradeFilamentFullCalendarCommand::class);
