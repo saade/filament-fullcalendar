@@ -3,6 +3,7 @@
 /**
  * Consider this file the root configuration object for FullCalendar.
  * Any configuration added here, will be added to the calendar.
+ *
  * @see https://fullcalendar.io/docs#toc
  */
 
@@ -12,8 +13,12 @@ return [
     'locale' => config('app.locale'),
 
     'plugins' => [
-        'rrule' => false,
-        'resourceTimeline' => false,
+        'dayGrid' => true,
+        'timeGrid' => true,
+        'interaction' => true,
+        'list' => true,
+        'rrule' => true,
+        'resourceTimeline' => true,
     ],
 
     'headerToolbar' => [
