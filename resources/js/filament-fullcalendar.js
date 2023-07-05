@@ -1,5 +1,5 @@
-import calendarComponent from './components/calendar';
+import calendarComponent from './components/calendar'
 
 document.addEventListener('alpine:init', () => {
-    window.Alpine.plugin(calendarComponent);
-});
+    window.Alpine.plugin(calendarComponent)
+})
