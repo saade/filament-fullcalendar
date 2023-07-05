@@ -6,8 +6,8 @@
         "build:styles": "npx tailwindcss -i resources/css/filament-fullcalendar.css -o dist/filament-fullcalendar.css --postcss --minify",
         "build:scripts": "esbuild resources/js/filament-fullcalendar.js --bundle --minify --outfile=dist/filament-fullcalendar.js",
         "purge": "filament-purge -i dist/filament-fullcalendar.css -o dist/filament-fullcalendar.css",
-        "dev": "npm-run-all --parallel dev:*",
-        "build": "npm-run-all build:*"
+        "dev": "npm run dev:scripts & npm run dev:styles",
+        "build": "npm run build:scripts && npm run build:styles"
     },
     "devDependencies": {
         "@awcodes/filament-plugin-purge": "^1.1.1",
@@ -24,8 +24,8 @@
         "esbuild": "^0.8.57",
         "moment": "^2.29.4",
         "moment-timezone": "^0.5.43",
-        "npm-run-all": "^4.1.5",
         "postcss": "^8.4.24",
+        "postcss-import": "^15.1.0",
         "prettier": "^2.7.1",
         "prettier-plugin-tailwindcss": "^0.1.13",
         "rrule": "^2.7.2",
