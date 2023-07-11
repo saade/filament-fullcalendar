@@ -3,11 +3,11 @@
     "scripts": {
         "dev:styles": "npx tailwindcss -i resources/css/filament-fullcalendar.css -o dist/filament-fullcalendar.css --postcss --watch",
         "dev:scripts": "esbuild resources/js/filament-fullcalendar.js --bundle --sourcemap=inline --outfile=dist/filament-fullcalendar.js --watch",
-        "build:styles": "npx tailwindcss -i resources/css/filament-fullcalendar.css -o dist/filament-fullcalendar.css --postcss --minify",
+        "build:styles": "npx tailwindcss -i resources/css/filament-fullcalendar.css -o dist/filament-fullcalendar.css --postcss --minify && npm run purge",
         "build:scripts": "esbuild resources/js/filament-fullcalendar.js --bundle --minify --outfile=dist/filament-fullcalendar.js",
         "purge": "filament-purge -i dist/filament-fullcalendar.css -o dist/filament-fullcalendar.css",
-        "dev": "npm run dev:scripts & npm run dev:styles",
-        "build": "npm run build:scripts && npm run build:styles"
+        "dev": "npm run dev:styles & npm run dev:scripts",
+        "build": "npm run build:styles && npm run build:scripts"
     },
     "devDependencies": {
         "@awcodes/filament-plugin-purge": "^1.1.1",

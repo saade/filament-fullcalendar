@@ -1,9 +1,3 @@
-@import '../../node_modules/@fullcalendar/common/main.css';
-@import '../../node_modules/@fullcalendar/daygrid/main.css';
-@import '../../node_modules/@fullcalendar/timegrid/main.css';
-@import '../../node_modules/@fullcalendar/list/main.css';
-@import '../../node_modules/@fullcalendar/resource-timeline/main.css';
-
 @tailwind utilities;
 
 .fc-toolbar-chunk {
