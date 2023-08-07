@@ -8,17 +8,15 @@
     ],
     "homepage": "https://github.com/saade/filament-fullcalendar",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Saade",
-            "email": "saade@outlook.com.br",
-            "role": "Developer"
-        }
-    ],
+    "authors": [{
+        "name": "Saade",
+        "email": "saade@outlook.com.br",
+        "role": "Developer"
+    }],
     "require": {
         "php": "^8.0",
-        "filament/filament": "^2.0",
-        "illuminate/contracts": "^9.0|^10.0",
+        "filament/filament": "^3.0",
+        "illuminate/contracts": "^9.0|^10.0|^11.0",
         "spatie/laravel-package-tools": "^1.11"
     },
     "require-dev": {

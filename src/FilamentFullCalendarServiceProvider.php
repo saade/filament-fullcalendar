@@ -2,24 +2,29 @@
 
 namespace Saade\FilamentFullCalendar;
 
-use Filament\PluginServiceProvider;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
 use Saade\FilamentFullCalendar\Commands\UpgradeFilamentFullCalendarCommand;
 use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class FilamentFullCalendarServiceProvider extends PluginServiceProvider
+class FilamentFullCalendarServiceProvider extends PackageServiceProvider
 {
-    protected array $beforeCoreScripts = [
-        'filament-fullcalendar-scripts' => __DIR__ . '/../dist/filament-fullcalendar.js',
-    ];
+    public static string $name = 'filament-fullcalendar';
 
-    protected array $styles = [
-        'filament-fullcalendar-styles' => __DIR__ . '/../dist/filament-fullcalendar.css',
-    ];
+    public function packageBooted(): void
+    {
+        FilamentAsset::register([
+            Css::make('filament-fullcalendar-styles', __DIR__ . '/../dist/filament-fullcalendar.css'),
+            Js::make('filament-fullcalendar-scripts', __DIR__ . '/../dist/filament-fullcalendar.js'),
+        ], 'saade/filament-fullcalendar');
+    }
 
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('filament-fullcalendar')
+            ->name(self::$name)
             ->hasConfigFile()
             ->hasViews()
             ->hasCommand(UpgradeFilamentFullCalendarCommand::class);
