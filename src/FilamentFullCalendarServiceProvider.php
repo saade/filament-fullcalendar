@@ -2,14 +2,14 @@
 
 namespace Saade\FilamentFullCalendar;
 
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Assets\Css;
-use Filament\Support\Assets\Js;
 use Saade\FilamentFullCalendar\Commands\UpgradeFilamentFullCalendarCommand;
+use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Assets\Css;
+use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Package;
-use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class FilamentFullCalendarServiceProvider extends PluginServiceProvider
+class FilamentFullCalendarServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'filament-fullcalendar';
 
@@ -22,17 +22,11 @@ class FilamentFullCalendarServiceProvider extends PluginServiceProvider
             ->hasCommand(UpgradeFilamentFullCalendarCommand::class);
     }
 
-    protected function getStyles(): array
+    public function packageBooted(): void
     {
-        return [
-            'filament-fullcalendar-styles' => __DIR__ . '/../dist/filament-fullcalendar.css',
-        ];
-    }
-
-    protected function getBeforeCoreScripts(): array
-    {
-        return [
-            'filament-fullcalendar-scripts' => __DIR__ . '/../dist/filament-fullcalendar.js',
-        ];
+        FilamentAsset::register([
+            Css::make('filament-fullcalendar-styles', __DIR__ . '/../dist/filament-fullcalendar.css')->loadedOnRequest(),
+            AlpineComponent::make('filament-fullcalendar-scripts', __DIR__ . '/../dist/filament-fullcalendar.js'),
+        ], 'saade/filament-fullcalendar');
     }
 }
