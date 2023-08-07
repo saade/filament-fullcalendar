@@ -34,4 +34,6 @@ return [
     'selectable' => false,
 
     'dayMaxEvents' => true,
+
+    'initialView' => 'dayGridMonth'
 ];

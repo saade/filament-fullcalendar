@@ -7,19 +7,11 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Saade\FilamentFullCalendar\Commands\UpgradeFilamentFullCalendarCommand;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Filament\PluginServiceProvider;
 
-class FilamentFullCalendarServiceProvider extends PackageServiceProvider
+class FilamentFullCalendarServiceProvider extends PluginServiceProvider
 {
     public static string $name = 'filament-fullcalendar';
-
-    public function packageBooted(): void
-    {
-        FilamentAsset::register([
-            Css::make('filament-fullcalendar-styles', __DIR__ . '/../dist/filament-fullcalendar.css'),
-            Js::make('filament-fullcalendar-scripts', __DIR__ . '/../dist/filament-fullcalendar.js'),
-        ], 'saade/filament-fullcalendar');
-    }
 
     public function configurePackage(Package $package): void
     {
@@ -28,5 +20,19 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasCommand(UpgradeFilamentFullCalendarCommand::class);
+    }
+
+    protected function getStyles(): array
+    {
+        return [
+            'filament-fullcalendar-styles' => __DIR__ . '/../dist/filament-fullcalendar.css',
+        ];
+    }
+
+    protected function getBeforeCoreScripts(): array
+    {
+        return [
+            'filament-fullcalendar-scripts' => __DIR__ . '/../dist/filament-fullcalendar.js',
+        ];
     }
 }
