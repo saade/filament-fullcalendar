@@ -21,12 +21,4 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
             ->hasViews()
             ->hasCommand(UpgradeFilamentFullCalendarCommand::class);
     }
-
-    public function packageBooted(): void
-    {
-        FilamentAsset::register([
-            Css::make('filament-fullcalendar-styles', __DIR__ . '/../dist/filament-fullcalendar.css')->loadedOnRequest(),
-            AlpineComponent::make('filament-fullcalendar-scripts', __DIR__ . '/../dist/filament-fullcalendar.js'),
-        ], 'saade/filament-fullcalendar');
-    }
 }

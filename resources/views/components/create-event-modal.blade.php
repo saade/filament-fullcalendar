@@ -1,4 +1,4 @@
-<x-filament::form wire:submit.prevent="onCreateEventSubmit">
+<x-filament-panels::form wire:submit.prevent="onCreateEventSubmit">
     <x-filament::modal id="fullcalendar--create-event-modal" :width="$this->getModalWidth()" :slide-over="$this->getModalSlideover()">
         <x-slot name="header">
             <x-filament::modal.heading>
@@ -28,4 +28,4 @@
             @endif
         </x-slot>
     </x-filament::modal>
-</x-filament::form>
+</x-filament-panels::form>

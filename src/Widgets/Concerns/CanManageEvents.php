@@ -64,7 +64,7 @@ trait CanManageEvents
             $this->event_id = $event['id'] ?? null;
         }
 
-        $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--edit-event-modal']);
+        $this->dispatch('open-modal', id: 'fullcalendar--edit-event-modal');
     }
 
     public function onCreateEventClick(array $date): void
@@ -77,7 +77,7 @@ trait CanManageEvents
             'date' => $date,
         ]);
 
-        $this->dispatchBrowserEvent('open-modal', ['id' => 'fullcalendar--create-event-modal']);
+        $this->dispatch('open-modal', id: 'fullcalendar--create-event-modal');
     }
 
     protected function handleCreateEventClickUsing(): Closure
