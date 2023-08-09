@@ -7,7 +7,6 @@ use Filament\Panel;
 
 class FilamentFullCalendarPlugin implements Plugin
 {
-
     public function getId(): string
     {
         return 'filament-fullcalendar';
