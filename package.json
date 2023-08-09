@@ -21,6 +21,7 @@
         "@fullcalendar/resource-timeline": "^5.11.3",
         "@fullcalendar/rrule": "^5.11.5",
         "@fullcalendar/timegrid": "^5.11.5",
+        "@shufo/prettier-plugin-blade": "^1.10.1",
         "@tailwindcss/forms": "^0.5.4",
         "@tailwindcss/typography": "^0.5.9",
         "autoprefixer": "^10.4.14",
@@ -29,7 +30,7 @@
         "moment-timezone": "^0.5.43",
         "postcss": "^8.4.24",
         "postcss-import": "^15.1.0",
-        "prettier": "^2.7.1",
+        "prettier": "^3.0.0",
         "prettier-plugin-tailwindcss": "^0.1.13",
         "rrule": "^2.7.2",
         "tailwindcss": "^3.3.2"

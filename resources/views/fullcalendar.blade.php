@@ -2,11 +2,7 @@
 
 <x-filament-widgets::widget>
     <x-filament::card>
-        <div
-            class="filament-fullcalendar--calendar"
-            wire:ignore
-            x-ref="calendar"
-            ax-load
+        <div class="filament-fullcalendar--calendar" wire:ignore x-ref="calendar" ax-load
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-fullcalendar-alpine', 'saade/filament-fullcalendar') }}"
             ax-load-css="{{ \Filament\Support\Facades\FilamentAsset::getStyleHref('filament-fullcalendar-styles', 'saade/filament-fullcalendar') }}"
             x-data="fullcalendar({
@@ -67,13 +63,16 @@
                 },
             })"
             x-on:filament-fullcalendar--refresh.window="
+                {{-- prettier-ignore-start --}}
                 @if ($this::canFetchEvents())
                     $data.calendar.refetchEvents();
                 @else
                     $data.calendar.removeAllEvents();
                     event.detail.data.map(event => $data.calendar.addEvent(event));
-                @endif"
-        ></div>
+                @endif
+                {{-- prettier-ignore-end --}}
+            ">
+        </div>
     </x-filament::card>
 
     @if ($this::canCreate())
