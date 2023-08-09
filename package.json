@@ -1,11 +1,12 @@
 {
     "private": true,
+    "type": "module",
     "scripts": {
         "dev:styles": "npx tailwindcss -i resources/css/filament-fullcalendar.css -o dist/filament-fullcalendar.css --postcss --watch",
-        "dev:scripts": "esbuild resources/js/filament-fullcalendar.js --bundle --sourcemap=inline --outfile=dist/filament-fullcalendar.js --watch",
-        "build:styles": "npx tailwindcss -i resources/css/filament-fullcalendar.css -o dist/filament-fullcalendar.css --postcss --minify && npm run purge",
-        "build:scripts": "esbuild resources/js/filament-fullcalendar.js --bundle --minify --outfile=dist/filament-fullcalendar.js",
-        "purge": "filament-purge -i dist/filament-fullcalendar.css -o dist/filament-fullcalendar.css",
+        "dev:scripts": "node bin/build.js --dev",
+        "build:styles": "npx tailwindcss -i resources/css/filament-fullcalendar.css -o dist/filament-fullcalendar.css --postcss --minify",
+        "build:scripts": "node bin/build.js",
+        "purge": "filament-purge -i dist/filament-fullcalendar.css -o dist/filament-fullcalendar.css -v 3.x",
         "dev": "npm run dev:styles & npm run dev:scripts",
         "build": "npm run build:styles && npm run build:scripts"
     },
@@ -20,8 +21,10 @@
         "@fullcalendar/resource-timeline": "^5.11.3",
         "@fullcalendar/rrule": "^5.11.5",
         "@fullcalendar/timegrid": "^5.11.5",
+        "@tailwindcss/forms": "^0.5.4",
+        "@tailwindcss/typography": "^0.5.9",
         "autoprefixer": "^10.4.14",
-        "esbuild": "^0.8.57",
+        "esbuild": "^0.19.0",
         "moment": "^2.29.4",
         "moment-timezone": "^0.5.43",
         "postcss": "^8.4.24",

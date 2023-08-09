@@ -50,13 +50,13 @@ trait EditEventForm
 
     public function getEditEventModalSubmitButtonLabel(): string
     {
-        return __('filament::resources/pages/edit-record.form.actions.save.label');
+        return __('filament-panels::resources/pages/edit-record.form.actions.save.label');
     }
 
     public function getEditEventModalCloseButtonLabel(): string
     {
         return $this->editEventForm->isDisabled()
-            ? __('filament::components/modal.actions.close.label')
+            ? __('filament-panels::components/modal.actions.close.label')
             : __('filament-panels::resources/pages/edit-record.form.actions.cancel.label');
     }
 }

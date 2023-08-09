@@ -43,16 +43,16 @@ trait CreateEventForm
 
     public function getCreateEventModalTitle(): string
     {
-        return __('filament::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
+        return __('filament-panels::resources/pages/create-record.title', ['label' => $this->getModalLabel()]);
     }
 
     public function getCreateEventModalSubmitButtonLabel(): string
     {
-        return __('filament::resources/pages/create-record.form.actions.create.label');
+        return __('filament-panels::resources/pages/create-record.form.actions.create.label');
     }
 
     public function getCreateEventModalCloseButtonLabel(): string
     {
-        return __('filament::resources/pages/create-record.form.actions.cancel.label');
+        return __('filament-panels::resources/pages/create-record.form.actions.cancel.label');
     }
 }

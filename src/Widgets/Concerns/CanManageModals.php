@@ -24,14 +24,4 @@ trait CanManageModals
     {
         return $this->modalSlideover;
     }
-
-    public function isListeningCancelledEditModal(): bool
-    {
-        return in_array('cancelledFullcalendarEditEventModal', $this->getEventsBeingListenedFor());
-    }
-
-    public function isListeningCancelledCreateModal(): bool
-    {
-        return in_array('cancelledFullcalendarCreateEventModal', $this->getEventsBeingListenedFor());
-    }
 }

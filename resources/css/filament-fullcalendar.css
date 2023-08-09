@@ -1,4 +1,14 @@
+@import '@fullcalendar/common/main.css';
+@import '@fullcalendar/daygrid/main.css';
+@import '@fullcalendar/timegrid/main.css';
+@import '@fullcalendar/list/main.css';
+@import '@fullcalendar/resource-timeline/main.css';
+
 @tailwind utilities;
+
+html.dark {
+    --fc-border-color: theme(colors.white / 5%);
+}
 
 .fc-toolbar-chunk {
     @apply space-y-1;
@@ -13,21 +23,21 @@
 }
 
 .filament-fullcalendar--calendar.fc .fc-button-primary {
-    @apply border-primary-600 bg-primary-600;
+    @apply border-[color:rgba(var(--primary-600))] bg-[color:rgba(var(--primary-600))];
 }
 
 .filament-fullcalendar--calendar.fc .fc-button-primary:hover {
-    @apply border-primary-600 bg-primary-500;
+    @apply border-[color:rgba(var(--primary-600))] bg-[color:rgba(var(--primary-500))];
 }
 
 .filament-fullcalendar--calendar.fc .fc-button-primary:disabled {
-    @apply border-primary-600 bg-primary-600 opacity-70;
+    @apply border-[color:rgba(var(--primary-600))] bg-[color:rgba(var(--primary-600))] opacity-70;
 }
 
 .filament-fullcalendar--calendar.fc
     .fc-button-primary:not(:disabled).fc-button-active,
 .filament-fullcalendar--calendar.fc .fc-button-primary:not(:disabled):active {
-    @apply border-primary-600 bg-primary-500 shadow-none;
+    @apply border-[color:rgba(var(--primary-600))] bg-[color:rgba(var(--primary-500))] shadow-none;
 }
 
 .filament-fullcalendar--calendar.fc .fc-button-primary:focus,
@@ -36,14 +46,14 @@
     .fc-button-primary:not(:disabled).fc-button-active:focus,
 .filament-fullcalendar--calendar.fc
     .fc-button-primary:not(:disabled):active:focus {
-    @apply bg-primary-700 shadow-none outline-none ring-2 ring-inset ring-white ring-offset-2 ring-offset-primary-700;
+    @apply bg-[color:rgba(var(--primary-700))] shadow-none outline-none ring-2 ring-inset ring-white ring-offset-2 ring-offset-[color:rgba(var(--primary-700))];
 }
 
 .filament-fullcalendar--calendar.fc .fc-daygrid-day.fc-day-today,
 .filament-fullcalendar--calendar.fc .fc-highlight {
-    @apply bg-primary-50;
+    @apply bg-[color:rgba(var(--primary-500))];
 }
 
 .dark .filament-fullcalendar--calendar.fc .fc-daygrid-day.fc-day-today {
-    @apply bg-primary-900;
+    @apply bg-[color:rgba(var(--primary-900))];
 }

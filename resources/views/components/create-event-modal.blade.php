@@ -6,9 +6,7 @@
             </x-filament::modal.heading>
         </x-slot>
 
-        @if($this->isListeningCancelledCreateModal())
-            <div x-on:close-modal.window="if ($event.detail.id === 'fullcalendar--create-event-modal') Livewire.emit('cancelledFullcalendarCreateEventModal')"></div>
-        @endif
+        <div x-on:close-modal.window="if ($event.detail.id === 'fullcalendar--create-event-modal') Livewire.emit('cancelledFullcalendarCreateEventModal')"></div>
 
         {{ $this->createEventForm }}
 
@@ -17,15 +15,9 @@
                 {{ $this->getCreateEventModalSubmitButtonLabel() }}
             </x-filament::button>
 
-            @if($this->isListeningCancelledCreateModal())
-                <x-filament::button color="secondary" x-on:click="isOpen = false; Livewire.emit('cancelledFullcalendarCreateEventModal')">
-                    {{ $this->getCreateEventModalCloseButtonLabel() }}
-                </x-filament::button>
-            @else
-                <x-filament::button color="secondary" x-on:click="isOpen = false">
-                    {{ $this->getCreateEventModalCloseButtonLabel() }}
-                </x-filament::button>
-            @endif
+            <x-filament::button color="secondary" x-on:click="isOpen = false; Livewire.emit('cancelledFullcalendarCreateEventModal')">
+                {{ $this->getCreateEventModalCloseButtonLabel() }}
+            </x-filament::button>
         </x-slot>
     </x-filament::modal>
 </x-filament-panels::form>
