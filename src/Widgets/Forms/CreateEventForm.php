@@ -12,7 +12,7 @@ trait CreateEventForm
     {
         $this->createEvent($this->createEventForm->getState());
 
-        $this->dispatch('close-modal', ['id' => 'fullcalendar--create-event-modal']);
+        $this->dispatch('close-modal', id: 'fullcalendar--create-event-modal');
     }
 
     public function createEvent(array $data): void
