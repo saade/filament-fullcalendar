@@ -18,7 +18,7 @@ return [
         'interaction' => true,
         'list' => true,
         'rrule' => true,
-        'resourceTimeline' => true,
+        'resourceTimeline' => false,
     ],
 
     'headerToolbar' => [
