@@ -12,7 +12,7 @@
     },
     "devDependencies": {
         "@awcodes/filament-plugin-purge": "^1.1.1",
-        "@fullcalendar/core": "^5.11.5",
+        "@fullcalendar/core": "^6.1.8",
         "@fullcalendar/daygrid": "^5.11.5",
         "@fullcalendar/interaction": "^5.11.5",
         "@fullcalendar/list": "^5.11.5",
