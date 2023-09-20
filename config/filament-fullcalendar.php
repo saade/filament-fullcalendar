@@ -14,6 +14,7 @@ return [
 
     'plugins' => [
         'dayGrid' => true,
+        'multiMonth' => true,
         'timeGrid' => true,
         'interaction' => true,
         'list' => true,
@@ -24,7 +25,7 @@ return [
     'headerToolbar' => [
         'left' => 'prev,next today',
         'center' => 'title',
-        'right' => 'dayGridMonth,dayGridWeek,dayGridDay',
+        'right' => 'dayGridMonth,dayGridWeek,dayGridDay,multiMonthYear',
     ],
 
     'navLinks' => true,

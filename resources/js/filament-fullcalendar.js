@@ -1,6 +1,7 @@
 import { Calendar } from '@fullcalendar/core'
 import rrulePlugin from '@fullcalendar/rrule'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import multiMonthPlugin from '@fullcalendar/multimonth'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
@@ -34,6 +35,7 @@ export default function fullcalendar({
                 ...config,
                 plugins: [
                     ...(config.plugins.dayGrid ? [dayGridPlugin] : []),
+                    ...(config.plugins.multiMonth ? [multiMonthPlugin] : []),
                     ...(config.plugins.timeGrid ? [timeGridPlugin] : []),
                     ...(config.plugins.interaction ? [interactionPlugin] : []),
                     ...(config.plugins.list ? [listPlugin] : []),
