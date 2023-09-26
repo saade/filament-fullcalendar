@@ -18,7 +18,10 @@ trait InteractsWithEvents
             $this->record = $this->resolveRecord($event['id']);
         }
 
-        $this->mountAction('view', $event);
+        $this->mountAction('view', [
+            'type' => 'click',
+            'event' => $event
+        ]);
     }
 
     /**
@@ -31,7 +34,17 @@ trait InteractsWithEvents
      */
     public function onEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta): bool
     {
-        $this->mountAction('edit', ['start' => $event['start'], 'end' => $event['end']]);
+        if ($this->getModel()) {
+            $this->record = $this->resolveRecord($event['id']);
+        }
+
+        $this->mountAction('edit', [
+            'type' => 'drop',
+            'event' => $event,
+            'oldEvent' => $oldEvent,
+            'relatedEvents' => $relatedEvents,
+            'delta' => $delta
+        ]);
 
         return false;
     }
@@ -47,7 +60,18 @@ trait InteractsWithEvents
      */
     public function onEventResize(array $event, array $oldEvent, array $relatedEvents, array $startDelta, array $endDelta): bool
     {
-        $this->mountAction('edit', ['start' => $event['start'], 'end' => $event['end']]);
+        if ($this->getModel()) {
+            $this->record = $this->resolveRecord($event['id']);
+        }
+
+        $this->mountAction('edit', [
+            'type' => 'resize',
+            'event' => $event,
+            'oldEvent' => $oldEvent,
+            'relatedEvents' => $relatedEvents,
+            'startDelta' => $startDelta,
+            'endDelta' => $endDelta
+        ]);
 
         return false;
     }
@@ -63,7 +87,12 @@ trait InteractsWithEvents
     {
         [$start, $end] = $this->calculateTimezoneOffset($start, $end, $allDay);
 
-        $this->mountAction('create', ['start' => $start, 'end' => $end, 'allDay' => $allDay]);
+        $this->mountAction('create', [
+            'type' => 'select',
+            'start' => $start,
+            'end' => $end,
+            'allDay' => $allDay
+        ]);
     }
 
     public function refreshRecords(): void
@@ -81,7 +110,7 @@ trait InteractsWithEvents
             $end = Carbon::parse($end, $timezone);
         }
 
-        if (! is_null($end) && $allDay) {
+        if (!is_null($end) && $allDay) {
             /**
              * date is exclusive, read more https://fullcalendar.io/docs/select-callback
              * For example, if the selection is all-day and the last day is a Thursday, end will be Friday.
