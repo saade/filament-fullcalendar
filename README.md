@@ -1,9 +1,11 @@
-# The most popular javascript calendar as a Filament widget 💛
-
-![FullCalendar Widget](./art/fullcalendar-widget.png)
+# Filament FullCalendar
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/saade/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/saade/filament-fullcalendar)
 [![Total Downloads](https://img.shields.io/packagist/dt/saade/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/saade/filament-fullcalendar)
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/3.x/art/cover1.png" alt="Filament FullCalendar" style="width: 100%; max-width: 800px; border-radius: 10px" />
+</p>
 
 # Features
 
@@ -16,7 +18,7 @@
 
 # Table of contents
 
-- [The most popular javascript calendar as a Filament widget 💛](#the-most-popular-javascript-calendar-as-a-filament-widget-)
+- [Filament FullCalendar](#filament-fullcalendar)
 - [Features](#features)
 - [Table of contents](#table-of-contents)
 - [Installation](#installation)
