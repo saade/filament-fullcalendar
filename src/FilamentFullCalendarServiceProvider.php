@@ -19,13 +19,7 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasInstallCommand(function (InstallCommand $command) {
-                $command
-                    ->publishConfigFile()
-                    ->askToStarRepoOnGitHub('saade/filament-fullcalendar');
-            });
+            ->hasViews();
     }
 
     public function packageBooted(): void

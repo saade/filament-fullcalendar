@@ -2,45 +2,61 @@
 
 namespace Saade\FilamentFullCalendar\Widgets;
 
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Widgets\Widget;
-use Illuminate\View\View;
-use Saade\FilamentFullCalendar\Widgets\Concerns\CanFetchEvents;
-use Saade\FilamentFullCalendar\Widgets\Concerns\CanManageEvents;
-use Saade\FilamentFullCalendar\Widgets\Concerns\CanRefreshEvents;
-use Saade\FilamentFullCalendar\Widgets\Concerns\FiresEvents;
-use Saade\FilamentFullCalendar\Widgets\Concerns\UsesConfig;
+use Saade\FilamentFullCalendar\Actions;
+use Saade\FilamentFullCalendar\Widgets\Concerns;
 
-class FullCalendarWidget extends Widget implements HasForms
+class FullCalendarWidget extends Widget implements HasForms, HasActions
 {
-    use InteractsWithForms, CanManageEvents {
-        CanManageEvents::getForms insteadof InteractsWithForms;
-    }
-    use CanRefreshEvents;
-    use CanFetchEvents;
-    use FiresEvents;
-    use UsesConfig;
+    use InteractsWithForms;
+    use InteractsWithActions;
+    use Concerns\InteractsWithEvents;
+    use Concerns\InteractsWithRecords;
+    use Concerns\InteractsWithHeaderActions;
+    use Concerns\InteractsWithModalActions;
 
     protected static string $view = 'filament-fullcalendar::fullcalendar';
 
     protected int | string | array $columnSpan = 'full';
 
-    public function mount(): void
+    protected function headerActions(): array
     {
-        $this->setUpForms();
+        return [
+            Actions\CreateAction::make(),
+        ];
     }
 
-    public function render(): View
+    protected function modalActions(): array
     {
-        return view(static::$view)
-            ->with([
-                'events' => $this->getViewData(),
-            ]);
+        return [
+            Actions\EditAction::make(),
+            Actions\DeleteAction::make(),
+        ];
     }
 
-    public function getKey(): string
+    protected function viewAction(): Action
     {
-        return $this->key ?? 'default';
+        return Actions\ViewAction::make();
+    }
+
+    /** 
+     * FullCalendar will call this function whenever it needs new event data.
+     * This is triggered when the user clicks prev/next or switches views.
+     * @param array{start: string, end: string, timezone: string} $info
+     */
+    public function fetchEvents(array $info): array
+    {
+        return [];
+    }
+
+    public function getFormSchema(): array
+    {
+        return [];
     }
 }

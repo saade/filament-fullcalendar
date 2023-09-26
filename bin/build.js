@@ -40,12 +40,6 @@ const defaultOptions = {
                 }
             })
         }
-    },
-    {
-        name: 'empty-css-imports',
-        setup(build) {
-          build.onLoad({ filter: /\.css$/ }, () => ({ contents: '' }))
-        },
     }],
 }
 
