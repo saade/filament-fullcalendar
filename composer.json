@@ -59,10 +59,7 @@
         "laravel": {
             "providers": [
                 "Saade\\FilamentFullCalendar\\FilamentFullCalendarServiceProvider"
-            ],
-            "aliases": {
-                "FilamentFullCalendar": "Saade\\FilamentFullCalendar\\Facades\\FilamentFullCalendar"
-            }
+            ]
         }
     },
     "minimum-stability": "dev",
