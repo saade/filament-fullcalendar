@@ -20,7 +20,7 @@ trait InteractsWithEvents
 
         $this->mountAction('view', [
             'type' => 'click',
-            'event' => $event
+            'event' => $event,
         ]);
     }
 
@@ -43,7 +43,7 @@ trait InteractsWithEvents
             'event' => $event,
             'oldEvent' => $oldEvent,
             'relatedEvents' => $relatedEvents,
-            'delta' => $delta
+            'delta' => $delta,
         ]);
 
         return false;
@@ -70,7 +70,7 @@ trait InteractsWithEvents
             'oldEvent' => $oldEvent,
             'relatedEvents' => $relatedEvents,
             'startDelta' => $startDelta,
-            'endDelta' => $endDelta
+            'endDelta' => $endDelta,
         ]);
 
         return false;
@@ -91,7 +91,7 @@ trait InteractsWithEvents
             'type' => 'select',
             'start' => $start,
             'end' => $end,
-            'allDay' => $allDay
+            'allDay' => $allDay,
         ]);
     }
 
@@ -110,7 +110,7 @@ trait InteractsWithEvents
             $end = Carbon::parse($end, $timezone);
         }
 
-        if (!is_null($end) && $allDay) {
+        if (! is_null($end) && $allDay) {
             /**
              * date is exclusive, read more https://fullcalendar.io/docs/select-callback
              * For example, if the selection is all-day and the last day is a Thursday, end will be Friday.
