@@ -2,12 +2,13 @@
 
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
+use function Filament\Support\get_model_label;
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Livewire\Attributes\Locked;
 
-use function Filament\Support\get_model_label;
+use Livewire\Attributes\Locked;
 
 trait InteractsWithRecords
 {

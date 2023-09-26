@@ -10,7 +10,7 @@ trait InteractsWithEvents
     /**
      * Triggered when the user clicks an event.
      * @param array $event An Event Object that holds information about the event (date, title, etc).
-     * @return void 
+     * @return void
      */
     public function onEventClick(array $event): void
     {
@@ -57,7 +57,7 @@ trait InteractsWithEvents
      * @param string $start An ISO8601 string representation of the start date. It will have a timezone offset similar to the calendar’s timeZone. If selecting all-day cells, it won’t have a time nor timezone part.
      * @param string $end An ISO8601 string representation of the end date. It will have a timezone offset similar to the calendar’s timeZone. If selecting all-day cells, it won’t have a time nor timezone part.
      * @param bool $allDay Whether the selection happened on all-day cells.
-     * @return void 
+     * @return void
      */
     public function onDateSelect(string $start, ?string $end, bool $allDay): void
     {
@@ -81,7 +81,7 @@ trait InteractsWithEvents
             $end = Carbon::parse($end, $timezone);
         }
 
-        if (!is_null($end) && $allDay) {
+        if (! is_null($end) && $allDay) {
             /**
              * date is exclusive, read more https://fullcalendar.io/docs/select-callback
              * For example, if the selection is all-day and the last day is a Thursday, end will be Friday.

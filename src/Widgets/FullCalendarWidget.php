@@ -3,14 +3,12 @@
 namespace Saade\FilamentFullCalendar\Widgets;
 
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Widgets\Widget;
 use Saade\FilamentFullCalendar\Actions;
-use Saade\FilamentFullCalendar\Widgets\Concerns;
 
 class FullCalendarWidget extends Widget implements HasForms, HasActions
 {
@@ -45,7 +43,7 @@ class FullCalendarWidget extends Widget implements HasForms, HasActions
         return Actions\ViewAction::make();
     }
 
-    /** 
+    /**
      * FullCalendar will call this function whenever it needs new event data.
      * This is triggered when the user clicks prev/next or switches views.
      * @param array{start: string, end: string, timezone: string} $info
