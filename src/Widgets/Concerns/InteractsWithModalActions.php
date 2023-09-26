@@ -40,7 +40,7 @@ trait InteractsWithModalActions
                 continue;
             }
 
-            if (! $action instanceof Action) {
+            if (!$action instanceof Action) {
                 throw new InvalidArgumentException('Modal actions must be an instance of ' . Action::class . ', or ' . ActionGroup::class . '.');
             }
 
@@ -54,6 +54,10 @@ trait InteractsWithModalActions
      */
     public function getCachedModalActions(): array
     {
+        if (!$this->getModel()) {
+            return [];
+        }
+
         return $this->cachedModalActions;
     }
 

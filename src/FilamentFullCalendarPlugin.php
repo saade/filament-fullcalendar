@@ -7,7 +7,7 @@ use Filament\Panel;
 
 class FilamentFullCalendarPlugin implements Plugin
 {
-    protected array $plugins = ['dayGrid', 'timeGrid', 'interaction', 'list', 'rrule', 'resourceTimeline'];
+    protected array $plugins = ['dayGrid', 'timeGrid', 'interaction', 'list'];
 
     protected ?string $schedulerLicenseKey = null;
 
@@ -70,9 +70,9 @@ class FilamentFullCalendarPlugin implements Plugin
         return $this->schedulerLicenseKey;
     }
 
-    public function config(array $config, bool $merge = true): static
+    public function config(array $config): static
     {
-        $this->config = $merge ? array_merge($this->config, $config) : $config;
+        $this->config = $config;
 
         return $this;
     }
