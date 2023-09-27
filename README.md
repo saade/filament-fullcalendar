@@ -27,13 +27,13 @@
   - [The EventData class](#the-eventdata-class)
 - [Configuration](#configuration)
   - [Available methods](#available-methods)
-    - [`schedulerLicenseKey` (`string` | `null` $licenseKey)](#schedulerlicensekey-string--null-licensekey)
-    - [`selectable` (`bool` $selectable)](#selectable-bool-selectable)
-    - [`editable` (`bool` $editable)](#editable-bool-editable)
-    - [`timezone` (`string` | `null` $timezone)](#timezone-string--null-timezone)
-    - [`locale` (`string` | `null` $locale)](#locale-string--null-locale)
-    - [`plugins` (`array` $plugins, `bool` $merge)](#plugins-array-plugins-bool-merge)
-    - [`config` (`array` $config)](#config-array-config)
+    - [schedulerLicenseKey(`string` | `null` $licenseKey)](#schedulerlicensekeystring--null-licensekey)
+    - [selectable(`bool` $selectable)](#selectablebool-selectable)
+    - [editable(`bool` $editable)](#editablebool-editable)
+    - [timezone(`string` | `null` $timezone)](#timezonestring--null-timezone)
+    - [locale(`string` | `null` $locale)](#localestring--null-locale)
+    - [plugins(`array` $plugins, `bool` $merge)](#pluginsarray-plugins-bool-merge)
+    - [config(`array` $config)](#configarray-config)
 - [Interacting with actions](#interacting-with-actions)
     - [Customizing actions](#customizing-actions)
     - [Authorizing actions](#authorizing-actions)
@@ -214,38 +214,38 @@ class AdminPanelProvider extends PanelProvider
 
 ## Available methods
 
-### `schedulerLicenseKey` (`string` | `null` $licenseKey)
+### schedulerLicenseKey(`string` | `null` $licenseKey)
 Your [FullCalendar Premium License Key](https://fullcalendar.io/docs/premium). (Only required if you're using premium plugins)
 
 `licenceKey` (Default: `null`)
 
-### `selectable` (`bool` $selectable)
+### selectable(`bool` $selectable)
 Allows a user to highlight multiple days or timeslots by clicking and dragging. See: [selectable](https://fullcalendar.io/docs/selectable)
 
 `selectable` (Default: `false`)
 
-### `editable` (`bool` $editable)
+### editable(`bool` $editable)
 This determines if the events can be dragged and resized. See: [editable](https://fullcalendar.io/docs/editable)
 
 `editable` (Default: `false`)
 
-### `timezone` (`string` | `null` $timezone)
+### timezone(`string` | `null` $timezone)
 The timezone to use when displaying dates. See: [timezone](https://fullcalendar.io/docs/timeZone)
 
 `timezone` (Default: `config('app.timezone')`)
 
-### `locale` (`string` | `null` $locale)
+### locale(`string` | `null` $locale)
 The locale to use when displaying texts and dates. See: [locale](https://fullcalendar.io/docs/locale)
 
 `locale` (Default: `config('app.locale')`)
 
-### `plugins` (`array` $plugins, `bool` $merge)
+### plugins(`array` $plugins, `bool` $merge)
 The plugins to enable. You can add more plugins if you wish or replace the default ones by passing `true` as the second param for the function. See: [plugins](https://fullcalendar.io/docs/plugin-index)
 
 `plugins` Default: `['dayGrid', 'timeGrid']`
 `merge` Default: `true`
 
-### `config` (`array` $config)
+### config(`array` $config)
 The configuration of the calendar. Not all configurations have a dedicated fluent method to interact with it, therefore you can pass pretty much any configuration listed in the FullCalendar's TOC. See: [FullCalendar Docs](https://fullcalendar.io/docs#toc)
 
 `config` (Default: `[]`)
