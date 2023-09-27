@@ -38,11 +38,16 @@
     - [Customizing actions](#customizing-actions)
     - [Authorizing actions](#authorizing-actions)
 - [Intercepting events](#intercepting-events)
-  - [Changelog](#changelog)
-  - [Contributing](#contributing)
-  - [Security Vulnerabilities](#security-vulnerabilities)
-  - [Credits](#credits)
-  - [License](#license)
+- [Tricks](#tricks)
+  - [Editing event after drag and drop](#editing-event-after-drag-and-drop)
+  - [Creating events on day selection](#creating-events-on-day-selection)
+  - [Creating events with additional data](#creating-events-with-additional-data)
+  - [Share your tricks](#share-your-tricks)
+- [Changelog](#changelog)
+- [Contributing](#contributing)
+- [Security Vulnerabilities](#security-vulnerabilities)
+- [Credits](#credits)
+- [License](#license)
 
 <br>
 
@@ -358,24 +363,97 @@ If you want to intercept events, you can override the default methods that comes
 
 See the [InteractsWithEvents](https://github.com/saade/filament-fullcalendar/blob/3.x/src/Widgets/Concerns/InteractsWithEvents.php) for all the available event listeners.
 
-## Changelog
+<br>
+
+# Tricks
+
+## Editing event after drag and drop
+
+You can fill the form with the event's new data by using the `mountUsing` method on the `EditAction`.
+
+```php
+protected function modalActions(): array
+ {
+     return [
+         Actions\EditAction::make()
+             ->mountUsing(
+                 function (Event $record, Forms\Form $form, array $arguments) {
+                     $form->fill([
+                         'name' => $record->name,
+                         'starts_at' => $arguments['event']['start'] ?? $record->starts_at,
+                         'ends_at' => $arguments['event']['end'] ?? $record->ends_at
+                     ]);
+                 }
+             ),
+         Actions\DeleteAction::make(),
+     ];
+ }
+```
+
+## Creating events on day selection
+
+You can fill the form with the selected day's date by using the `mountUsing` method on the `CreateAction`.
+
+```php
+protected function headerActions(): array
+ {
+     return [
+         Actions\CreateAction::make()
+             ->mountUsing(
+                 function (Forms\Form $form, array $arguments) {
+                     $form->fill([
+                         'starts_at' => $arguments['start'] ?? null,
+                         'ends_at' => $arguments['end'] ?? null
+                     ]);
+                 }
+             )
+     ];
+ }
+```
+
+## Creating events with additional data
+
+You can add additional data to the event by using the `mutateFormDataUsing` method on the `CreateAction`.
+
+```php
+protected function headerActions(): array
+ {
+     return [
+         Actions\CreateAction::make()
+             ->mutateFormDataUsing(function (array $data): array {
+                 return [
+                     ...$data,
+                     'calendar_id' => $this->record->id
+                 ];
+             })
+     ];
+ }
+```
+
+## Share your tricks
+
+If you have any tricks that you want to share, please open a PR and add it to this section.
+
+<br>
+
+# Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
-## Contributing
+# Contributing
 
 Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
-## Security Vulnerabilities
+# Security Vulnerabilities
 
 Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
-## Credits
+# Credits
 
 -   [Saade](https://github.com/saade)
 -   [All Contributors](../../contributors)
 
-## License
+# License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
