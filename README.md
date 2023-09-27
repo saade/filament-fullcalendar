@@ -206,7 +206,7 @@ class AdminPanelProvider extends PanelProvider
                     ->timezone()
                     ->locale()
                     ->plugins()
-                    ->fullCalendarConfig()
+                    ->config()
             );
     }
 }
