@@ -42,6 +42,7 @@
   - [Editing event after drag and drop](#editing-event-after-drag-and-drop)
   - [Creating events on day selection](#creating-events-on-day-selection)
   - [Creating events with additional data](#creating-events-with-additional-data)
+  - [Adding the widget to a Blade view](#adding-the-widget-to-a-blade-view)
   - [Share your tricks](#share-your-tricks)
 - [Changelog](#changelog)
 - [Contributing](#contributing)
@@ -429,6 +430,10 @@ protected function headerActions(): array
      ];
  }
 ```
+
+## Adding the widget to a Blade view
+
+Follow the [Filament Docs](https://filamentphp.com/docs/3.x/widgets/adding-a-widget-to-a-blade-view) to know how to add the widget to a Blade view.
 
 ## Share your tricks
 
