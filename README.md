@@ -240,7 +240,7 @@ The locale to use when displaying texts and dates. See: [locale](https://fullcal
 `locale` (Default: `config('app.locale')`)
 
 ### plugins(`array` $plugins, `bool` $merge)
-The plugins to enable. You can add more plugins if you wish or replace the default ones by passing `true` as the second param for the function. See: [plugins](https://fullcalendar.io/docs/plugin-index)
+The plugins to enable. You can add more plugins if you wish, or replace the default ones by passing `false` as the second param for the method. See: [plugins](https://fullcalendar.io/docs/plugin-index)
 
 `plugins` Default: `['dayGrid', 'timeGrid']`
 `merge` Default: `true`
