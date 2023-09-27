@@ -255,7 +255,7 @@ The configuration of the calendar. Not all configurations have a dedicated fluen
 # Interacting with actions
 This packages leverages the power of [Filament Actions](https://filamentphp.com/docs/3.x/actions/overview) to allow you to view, create, edit and delete events.
 
-To get started, you'll need to tell the widget which model it should use to perform the actions, and define a form schema for the create and edit actions.
+To get started, you'll need to tell the widget which model it should use to perform the actions, and define a form schema for the view, create and edit actions.
 
 ```php
 <?php
