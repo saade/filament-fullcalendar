@@ -7,7 +7,7 @@ use Filament\Panel;
 
 class FilamentFullCalendarPlugin implements Plugin
 {
-    protected array $plugins = ['dayGrid', 'timeGrid', 'interaction', 'list'];
+    protected array $plugins = ['dayGrid', 'timeGrid', 'interaction', 'list', 'moment', 'momentTimezone'];
 
     protected ?string $schedulerLicenseKey = null;
 
