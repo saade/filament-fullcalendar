@@ -1,12 +1,12 @@
 {
-    "name": "saade/filament-fullcalendar",
+    "name": "raydotnl/filament-fullcalendar",
     "description": "The Most Popular JavaScript Calendar integrated with Filament 💛",
     "keywords": [
         "saade",
         "laravel",
         "filament-fullcalendar"
     ],
-    "homepage": "https://github.com/saade/filament-fullcalendar",
+    "homepage": "https://github.com/raydotnl/filament-fullcalendar",
     "license": "MIT",
     "authors": [
         {
