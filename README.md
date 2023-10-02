@@ -396,6 +396,11 @@ protected function modalActions(): array
 You can fill the form with the selected day's date by using the `mountUsing` method on the `CreateAction`.
 
 ```php
+use Saade\FilamentFullCalendar\Actions\CreateAction;
+...
+...
+...
+
 protected function headerActions(): array
  {
      return [
