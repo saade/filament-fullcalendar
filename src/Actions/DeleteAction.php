@@ -20,7 +20,10 @@ class DeleteAction extends BaseDeleteAction
         );
 
         $this->after(
-            fn (FullCalendarWidget $livewire) => $livewire->refreshRecords()
+            function (FullCalendarWidget $livewire) {
+                $livewire->record = null;
+                $livewire->refreshRecords();
+            }
         );
 
         $this->cancelParentActions();
