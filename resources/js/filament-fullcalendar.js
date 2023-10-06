@@ -69,13 +69,13 @@ export default function fullcalendar({
                         revert()
                     }
                 },
-                dateClick: ({ dateStr, allDay }) => {
+                dateClick: ({ dateStr, allDay, view }) => {
                     if (!selectable) return;
-                    this.$wire.onDateSelect(dateStr, null, allDay)
+                    this.$wire.onDateSelect(dateStr, null, allDay, view)
                 },
-                select: ({ startStr, endStr, allDay }) => {
+                select: ({ startStr, endStr, allDay, view }) => {
                     if (!selectable) return;
-                    this.$wire.onDateSelect(startStr, endStr, allDay)
+                    this.$wire.onDateSelect(startStr, endStr, allDay, view)
                 },
             })
 
