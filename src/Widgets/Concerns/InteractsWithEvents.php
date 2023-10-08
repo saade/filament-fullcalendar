@@ -81,9 +81,10 @@ trait InteractsWithEvents
      * @param string $start An ISO8601 string representation of the start date. It will have a timezone offset similar to the calendar’s timeZone. If selecting all-day cells, it won’t have a time nor timezone part.
      * @param string $end An ISO8601 string representation of the end date. It will have a timezone offset similar to the calendar’s timeZone. If selecting all-day cells, it won’t have a time nor timezone part.
      * @param bool $allDay Whether the selection happened on all-day cells.
+     * @param array $view A View array that contains information about a calendar view, such as title and date range.
      * @return void
      */
-    public function onDateSelect(string $start, ?string $end, bool $allDay): void
+    public function onDateSelect(string $start, ?string $end, bool $allDay, ?array $view): void
     {
         [$start, $end] = $this->calculateTimezoneOffset($start, $end, $allDay);
 
