@@ -1,28 +1,28 @@
-.static {
+.filament-fullcalendar .static {
   position: static;
 }
 
-.mb-4 {
+.filament-fullcalendar .mb-4 {
   margin-bottom: 1rem;
 }
 
-.flex {
+.filament-fullcalendar .flex {
   display: flex;
 }
 
-.flex-1 {
+.filament-fullcalendar .flex-1 {
   flex: 1 1 0%;
 }
 
-.shrink-0 {
+.filament-fullcalendar .shrink-0 {
   flex-shrink: 0;
 }
 
-.resize {
+.filament-fullcalendar .resize {
   resize: both;
 }
 
-.justify-end {
+.filament-fullcalendar .justify-end {
   justify-content: flex-end;
 }
 
