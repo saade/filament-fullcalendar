@@ -18,7 +18,8 @@ class FullCalendarWidget extends Widget implements HasForms, HasActions
     use Concerns\InteractsWithRecords;
     use Concerns\InteractsWithHeaderActions;
     use Concerns\InteractsWithModalActions;
-
+    use Concerns\InteractsWithConfig;
+    
     protected static string $view = 'filament-fullcalendar::fullcalendar';
 
     protected int | string | array $columnSpan = 'full';
@@ -57,4 +58,9 @@ class FullCalendarWidget extends Widget implements HasForms, HasActions
     {
         return [];
     }
+
+    public function getConfig(): array
+	{
+		return [];
+	}
 }
