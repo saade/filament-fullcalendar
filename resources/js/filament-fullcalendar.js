@@ -50,7 +50,8 @@ export default function fullcalendar({
                     jsEvent.preventDefault()
 
                     if (event.url) {
-                        return window.open(event.url, event.extendedProps.shouldOpenInNewTab ? '_blank' : '_self')
+                        const isNotPlainLeftClick = e => (e.which > 1) || (e.altKey) || (e.ctrlKey) || (e.metaKey) || (e.shiftKey)
+                        return window.open(event.url, (event.extendedProps.shouldOpenUrlInNewTab || isNotPlainLeftClick(jsEvent)) ? '_blank' : '_self')
                     }
 
                     this.$wire.onEventClick(event)
