@@ -71,7 +71,7 @@ export default function fullcalendar({
                     timeZone: t,
                     view: v
                 }) => {
-                    this.$wire.getActiveEvents({start: s,end: e, startStr: ss, endStr: es, timeZone: t, view: v})
+                    this.$wire.getActiveGrid({start: s,end: e, startStr: ss, endStr: es, timeZone: t, view: v})
                 },
                 eventResize: async ({ event, oldEvent, relatedEvents, startDelta, endDelta, revert }) => {
                     const shouldRevert = await this.$wire.onEventResize(event, oldEvent, relatedEvents, startDelta, endDelta)
