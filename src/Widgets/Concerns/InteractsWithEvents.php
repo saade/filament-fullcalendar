@@ -121,4 +121,9 @@ trait InteractsWithEvents
 
         return [$start, $end, $allDay];
     }
+
+    public function getActiveGrid($data){
+        
+        return $data;
+    }
 }
