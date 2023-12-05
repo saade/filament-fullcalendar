@@ -440,6 +440,17 @@ protected function headerActions(): array
 
 Follow the [Filament Docs](https://filamentphp.com/docs/3.x/widgets/adding-a-widget-to-a-blade-view) to know how to add the widget to a Blade view.
 
+## Return active grid data
+
+You can get the currently active grid data and view using the function `getActiveGrid($data))`. For more information about the contents of the parameter, visit [FullCalendar Docs](https://fullcalendar.io/docs/datesSet) 
+
+```php
+public function getActiveGrid($data)
+{
+    // Up to you
+}
+```
+
 ## Share your tricks
 
 If you have any tricks that you want to share, please open a PR and add it to this section.
