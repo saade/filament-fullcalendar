@@ -1,5 +1,5 @@
 @php
-    $plugin = \Saade\FilamentFullcalendar\FilamentFullCalendarPlugin::get();
+    $plugin = \Saade\FilamentFullCalendar\FilamentFullCalendarPlugin::get();
 @endphp
 
 <x-filament-widgets::widget>
