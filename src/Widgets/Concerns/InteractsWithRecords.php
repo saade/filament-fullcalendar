@@ -72,7 +72,7 @@ trait InteractsWithRecords
 
     protected function getEloquentQuery(): Builder
     {
-        $query =  app($this->getModel())::query();
+        $query = app($this->getModel())::query();
 
         // TODO: Scope query to tenant.
 
