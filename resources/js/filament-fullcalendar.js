@@ -10,6 +10,7 @@ import adaptivePlugin from '@fullcalendar/adaptive'
 import resourcePlugin from '@fullcalendar/resource'
 import resourceDayGridPlugin from '@fullcalendar/resource-daygrid'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
+import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import rrulePlugin from '@fullcalendar/rrule'
 import momentPlugin from '@fullcalendar/moment'
 import momentTimezonePlugin from '@fullcalendar/moment-timezone'
@@ -99,6 +100,7 @@ const availablePlugins = {
     'resource': resourcePlugin,
     'resourceDayGrid': resourceDayGridPlugin,
     'resourceTimeline': resourceTimelinePlugin,
+    'resourceTimeGrid': resourceTimeGridPlugin,
     'rrule': rrulePlugin,
     'moment': momentPlugin,
     'momentTimezone': momentTimezonePlugin,
