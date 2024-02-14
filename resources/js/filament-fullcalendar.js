@@ -57,8 +57,8 @@ export default function fullcalendar({
 
                     this.$wire.onEventClick(event)
                 },
-                eventDrop: async ({ event, oldEvent, relatedEvents, delta, revert }) => {
-                    const shouldRevert = await this.$wire.onEventDrop(event, oldEvent, relatedEvents, delta)
+                eventDrop: async ({ event, oldEvent, relatedEvents, delta, revert, oldResource, newResource }) => {
+                    const shouldRevert = await this.$wire.onEventDrop(event, oldEvent, relatedEvents, delta, oldResource, newResource)
 
                     if (typeof shouldRevert === 'boolean' && shouldRevert) {
                         revert()

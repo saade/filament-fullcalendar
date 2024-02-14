@@ -30,9 +30,11 @@ trait InteractsWithEvents
      * @param array $oldEvent An Event Object that holds information about the event before the drop.
      * @param array $relatedEvents An array of other related Event Objects that were also dropped. An event might have other recurring event instances or might be linked to other events with the same groupId
      * @param array $delta A Duration Object that represents the amount of time the event was moved by.
-     * @return bool Wether to revert the drop action.
+     * @param array|null $oldResource If the resource has changed, this is the Resource Object the event came from. If the resource has not changed, this will be undefined. For use with the resource plugins only.
+     * @param array|null $newResource If the resource has changed, this is the Resource Object the event went to. If the resource has not changed, this will be undefined. For use with the resource plugins only.
+     * @return bool Whether to revert the drop action.
      */
-    public function onEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta): bool
+    public function onEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta, ?array $oldResource, ?array $newResource): bool
     {
         if ($this->getModel()) {
             $this->record = $this->resolveRecord($event['id']);
@@ -44,6 +46,8 @@ trait InteractsWithEvents
             'oldEvent' => $oldEvent,
             'relatedEvents' => $relatedEvents,
             'delta' => $delta,
+            'oldResource' => $oldResource,
+            'newResource' => $newResource,
         ]);
 
         return false;
