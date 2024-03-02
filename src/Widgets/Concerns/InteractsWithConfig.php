@@ -8,9 +8,7 @@ trait CanBeConfigured
 {  
 	public function config(): array
 	{
-		$initConfig = FilamentFullCalendarPlugin::get()->getConfig();
-		$widgetConfig = $this->getConfig();
-		return self::mergeArraysRecursive($initConfig,$widgetConfig);
+		return [];
 	}
 
 	private static function mergeArraysRecursive($initial, $custom) {
