@@ -18,7 +18,7 @@ class FullCalendarWidget extends Widget implements HasForms, HasActions
     use Concerns\InteractsWithRecords;
     use Concerns\InteractsWithHeaderActions;
     use Concerns\InteractsWithModalActions;
-    use Concerns\InteractsWithConfig;
+    use Concerns\CanBeConfigured;
     
     protected static string $view = 'filament-fullcalendar::fullcalendar';
 
