@@ -13,8 +13,11 @@ trait CanBeConfigured
 
 
 
-	  protected function getConfig(): array
+    protected function getConfig(): array
     {
-        return [];
+        return array_merge_recursive(
+            FilamentFullCalendarPlugin::get()->getConfig(),
+            $this->config(),
+        );
     }
 }
