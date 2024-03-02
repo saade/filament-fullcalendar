@@ -19,6 +19,7 @@
                 config: @js($plugin->getConfig()),
                 editable: @json($plugin->isEditable()),
                 selectable: @json($plugin->isSelectable()),
+                eventDidMount: {!! $plugin->getEventDidMount() !!},
             })">
         </div>
     </x-filament::section>

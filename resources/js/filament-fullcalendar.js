@@ -24,6 +24,7 @@ export default function fullcalendar({
     config,
     editable,
     selectable,
+    eventDidMount,
 }) {
     return {
         init() {
@@ -42,6 +43,7 @@ export default function fullcalendar({
                 selectable,
                 ...config,
                 locales,
+                eventDidMount,
                 events: (info, successCallback, failureCallback) => {
                     this.$wire.fetchEvents({ start: info.startStr, end: info.endStr, timezone: info.timeZone })
                         .then(successCallback)
