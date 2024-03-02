@@ -58,9 +58,4 @@ class FullCalendarWidget extends Widget implements HasForms, HasActions
     {
         return [];
     }
-
-    public function getConfig(): array
-	{
-		return [];
-	}
 }
