@@ -229,7 +229,7 @@ class CalendarWidget extends FullCalendarWidget
 {
     public Model | string | null $model = Event::class;
 
-    public function getConfig(): array
+    public function config(): array
     {
         return [
             'firstDay' => 1,
