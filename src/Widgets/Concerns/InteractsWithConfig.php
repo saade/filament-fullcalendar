@@ -6,7 +6,7 @@ use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 trait CanBeConfigured
 {  
-	public function getFinalConfig()
+	public function config(): array
 	{
 		$initConfig = FilamentFullCalendarPlugin::get()->getConfig();
 		$widgetConfig = $this->getConfig();
