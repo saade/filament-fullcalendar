@@ -32,6 +32,7 @@
     - [editable(`bool` $editable)](#editablebool-editable)
     - [timezone(`string` | `null` $timezone)](#timezonestring--null-timezone)
     - [locale(`string` | `null` $locale)](#localestring--null-locale)
+    - [eventDidMount(`array` $eventDidMount)](#eventdidmountstring-eventdidmount)
     - [plugins(`array` $plugins, `bool` $merge)](#pluginsarray-plugins-bool-merge)
     - [config(`array` $config)](#configarray-config)
 - [Interacting with actions](#interacting-with-actions)
@@ -244,6 +245,11 @@ The timezone to use when displaying dates. See: [timezone](https://fullcalendar.
 The locale to use when displaying texts and dates. See: [locale](https://fullcalendar.io/docs/locale)
 
 `locale` (Default: `config('app.locale')`)
+
+### eventDidMount(`string` $eventDidMount)
+The eventDidMount to customize the rendering of event elements with the `eventDidMount` option (only javascript callback allowed). See: [`eventDidMount` Event Render Hooks](https://fullcalendar.io/docs/event-render-hooks)
+
+`eventDidMount` (Default: `null`)
 
 ### plugins(`array` $plugins, `bool` $merge)
 The plugins to enable. You can add more plugins if you wish, or replace the default ones by passing `false` as the second param for the method. See: [plugins](https://fullcalendar.io/docs/plugin-index)
