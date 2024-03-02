@@ -16,7 +16,7 @@
                 plugins: @js($plugin->getPlugins()),
                 schedulerLicenseKey: @js($plugin->getSchedulerLicenseKey()),
                 timeZone: @js($plugin->getTimezone()),
-                config: @js($this->getFinalConfig()),
+                config: @js($this->getConfig()),
                 editable: @json($plugin->isEditable()),
                 selectable: @json($plugin->isSelectable()),
             })">
