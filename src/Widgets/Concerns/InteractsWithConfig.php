@@ -4,7 +4,7 @@ namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
-trait InteractsWithConfig
+trait CanBeConfigured
 {  
 	public function getFinalConfig()
 	{
