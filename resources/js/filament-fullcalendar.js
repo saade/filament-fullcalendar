@@ -42,6 +42,17 @@ export default function fullcalendar({
                 selectable,
                 ...config,
                 locales,
+                eventContent: function(arg) {
+                    let divEl = document.createElement('div')
+                    let htmlTitle = arg.event._def.extendedProps['html'];
+                    if (arg.event.extendedProps.isHTML) {
+                        divEl.innerHTML = htmlTitle
+                    } else {
+                        divEl.innerHTML = arg.event.title
+                    }
+                    let arrayOfDomNodes = [ divEl ]
+                    return { domNodes: arrayOfDomNodes }
+                },
                 events: (info, successCallback, failureCallback) => {
                     this.$wire.fetchEvents({ start: info.startStr, end: info.endStr, timezone: info.timeZone })
                         .then(successCallback)

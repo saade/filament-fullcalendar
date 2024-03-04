@@ -180,6 +180,8 @@ class CalendarWidget extends FullCalendarWidget
 }
 ```
 
+To add HTML support for the title, you can simply map the event with `->html()` or add the extendedProp `isHTML`. Now add another extendedProp called `html`, this should contain the HTML content.
+
 <br>
 
 # Configuration
