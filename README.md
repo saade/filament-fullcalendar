@@ -32,7 +32,6 @@
     - [editable(`bool` $editable)](#editablebool-editable)
     - [timezone(`string` | `null` $timezone)](#timezonestring--null-timezone)
     - [locale(`string` | `null` $locale)](#localestring--null-locale)
-    - [eventDidMount(`array` $eventDidMount)](#eventdidmountstring-eventdidmount)
     - [plugins(`array` $plugins, `bool` $merge)](#pluginsarray-plugins-bool-merge)
     - [config(`array` $config)](#configarray-config)
 - [Interacting with actions](#interacting-with-actions)
@@ -43,6 +42,7 @@
   - [Editing event after drag and drop](#editing-event-after-drag-and-drop)
   - [Creating events on day selection](#creating-events-on-day-selection)
   - [Creating events with additional data](#creating-events-with-additional-data)
+  - [Event tooltip on hover](#event-tooltip-on-hover)
   - [Adding the widget to a Blade view](#adding-the-widget-to-a-blade-view)
   - [Share your tricks](#share-your-tricks)
 - [Changelog](#changelog)
@@ -246,11 +246,6 @@ The locale to use when displaying texts and dates. See: [locale](https://fullcal
 
 `locale` (Default: `config('app.locale')`)
 
-### eventDidMount(`string` $eventDidMount)
-The eventDidMount to customize the rendering of event elements with the `eventDidMount` option (only javascript callback allowed). See: [`eventDidMount` Event Render Hooks](https://fullcalendar.io/docs/event-render-hooks)
-
-`eventDidMount` (Default: `null`)
-
 ### plugins(`array` $plugins, `bool` $merge)
 The plugins to enable. You can add more plugins if you wish, or replace the default ones by passing `false` as the second param for the method. See: [plugins](https://fullcalendar.io/docs/plugin-index)
 
@@ -441,6 +436,24 @@ protected function headerActions(): array
      ];
  }
 ```
+
+## Event tooltip on hover
+
+You can add a tooltip to fully show the event title when the user hovers over the event via JavaScript on the `eventDidMount` method:
+
+```php
+public function eventDidMount() {
+    return <<<JS
+        function calendarEventTooltip(info){
+            info.el.setAttribute("x-tooltip", "tooltip");
+            info.el.setAttribute("x-data", "{ tooltip: '"+info.event.title+"' }");
+        }
+    JS;
+}
+
+```
+
+The JavaScript code returned by `eventDidMount()` will be added to [the FullCalendar's `eventDidMount` event render hook](https://fullcalendar.io/docs/event-render-hooks).
 
 ## Adding the widget to a Blade view
 

@@ -57,4 +57,10 @@ class FullCalendarWidget extends Widget implements HasForms, HasActions
     {
         return [];
     }
+
+    public function eventDidMount() {
+        return <<<JS
+            null
+        JS;
+    }
 }
