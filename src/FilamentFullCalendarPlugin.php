@@ -21,8 +21,6 @@ class FilamentFullCalendarPlugin implements Plugin
 
     protected ?bool $selectable = null;
 
-    protected ?string $eventDidMount = null;
-
     public function getId(): string
     {
         return 'filament-fullcalendar';
@@ -130,17 +128,5 @@ class FilamentFullCalendarPlugin implements Plugin
     public function isSelectable(): bool
     {
         return $this->selectable ?? data_get($this->config, 'selectable', false);
-    }
-
-    public function eventDidMount(string $eventDidMount): static
-    {
-        $this->eventDidMount = $eventDidMount;
-
-        return $this;
-    }
-
-    public function getEventDidMount(): string
-    {
-        return $this->eventDidMount ?? 'null';
     }
 }
