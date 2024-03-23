@@ -444,7 +444,7 @@ You can add a tooltip to fully show the event title when the user hovers over th
 ```php
 public function eventDidMount() {
     return <<<JS
-        function calendarEventTooltip(info){
+        function(info){
             info.el.setAttribute("x-tooltip", "tooltip");
             info.el.setAttribute("x-data", "{ tooltip: '"+info.event.title+"' }");
         }
