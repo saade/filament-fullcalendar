@@ -11,6 +11,8 @@ class EventData implements Arrayable
 
     protected int|string|null $groupId = null;
 
+    protected int|string|array|null $resourceId = null;
+
     protected bool $allDay = false;
 
     protected DateTimeInterface|string $start;
@@ -54,6 +56,17 @@ class EventData implements Arrayable
     public function groupId(int|string $groupId): static
     {
         $this->groupId = $groupId;
+
+        return $this;
+    }
+
+    /**
+     * Events can be associated with a resource when its resourceId property matches one of
+     * the resource object’s id field
+     */
+    public function resourceId(int|string|array $resourceId): static
+    {
+        $this->resourceId = $resourceId;
 
         return $this;
     }
@@ -168,6 +181,7 @@ class EventData implements Arrayable
             'start' => $this->start,
             'end' => $this->end,
             'title' => $this->title,
+            ...$this->resourceId ? ['resourceId' => $this->resourceId] : [],
             ...$this->url ? ['url' => $this->url, 'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab] : [],
             ...$this->groupId ? ['groupId' => $this->groupId] : [],
             ...$this->allDay ? ['allDay' => $this->allDay] : [],
