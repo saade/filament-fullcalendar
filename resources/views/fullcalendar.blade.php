@@ -19,6 +19,10 @@
                 config: @js($this->getConfig()),
                 editable: @json($plugin->isEditable()),
                 selectable: @json($plugin->isSelectable()),
+                eventClassNames: {!! htmlspecialchars($this->eventClassNames(), ENT_COMPAT) !!},
+                eventContent: {!! htmlspecialchars($this->eventContent(), ENT_COMPAT) !!},
+                eventDidMount: {!! htmlspecialchars($this->eventDidMount(), ENT_COMPAT) !!},
+                eventWillUnmount: {!! htmlspecialchars($this->eventWillUnmount(), ENT_COMPAT) !!},
             })">
         </div>
     </x-filament::section>

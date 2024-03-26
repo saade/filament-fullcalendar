@@ -42,6 +42,7 @@
   - [Editing event after drag and drop](#editing-event-after-drag-and-drop)
   - [Creating events on day selection](#creating-events-on-day-selection)
   - [Creating events with additional data](#creating-events-with-additional-data)
+  - [Event tooltip on hover](#event-tooltip-on-hover)
   - [Adding the widget to a Blade view](#adding-the-widget-to-a-blade-view)
   - [Share your tricks](#share-your-tricks)
 - [Changelog](#changelog)
@@ -460,6 +461,24 @@ protected function headerActions(): array
      ];
  }
 ```
+
+## Event tooltip on hover
+
+You can add a tooltip to fully show the event title when the user hovers over the event via JavaScript on the `eventDidMount` method:
+
+```php
+public function eventDidMount() {
+    return <<<JS
+        function(info){
+            info.el.setAttribute("x-tooltip", "tooltip");
+            info.el.setAttribute("x-data", "{ tooltip: '"+info.event.title+"' }");
+        }
+    JS;
+}
+
+```
+
+The JavaScript code returned by `eventDidMount()` will be added to [the FullCalendar's `eventDidMount` event render hook](https://fullcalendar.io/docs/event-render-hooks).
 
 ## Adding the widget to a Blade view
 
