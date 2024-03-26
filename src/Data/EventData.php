@@ -161,6 +161,13 @@ class EventData implements Arrayable
         return $this;
     }
 
+    public function html(bool $html = true): static
+    {
+        $this->extendedProps['isHTML'] = $html;
+
+        return $this; 
+    }
+
     public function toArray(): array
     {
         return [
