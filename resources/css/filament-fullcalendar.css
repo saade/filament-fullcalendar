@@ -2,8 +2,8 @@
 
 .filament-fullcalendar {
     --fc-small-font-size: 0.85em;
-    --fc-page-bg-color: #fff;
-    --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
+    --fc-page-bg-color: rgba(208, 208, 208, 0.3);
+    --fc-neutral-bg-color: rgba(var(--gray-50),var(--tw-bg-opacity)); /* rgba(208, 208, 208, 0.3) */
     --fc-neutral-text-color: #808080;
     --fc-border-color: rgba(var(--gray-200));
 
@@ -33,10 +33,13 @@
     --fc-highlight-color: rgba(var(--primary-500), 0.1);
     --fc-today-bg-color: rgba(var(--primary-500), 0.2);
     --fc-now-indicator-color: red;
+
+    --fc-list-event-hover-bg-color: rgba(var(--gray-50), var(--tw-bg-opacity));
 }
 
 html.dark .filament-fullcalendar {
-    --fc-border-color: rgba(var(--gray-800));
+    --fc-neutral-bg-color: rgba(var(--gray-800), .8);
+    --fc-border-color: rgba(var(--gray-700), .5);
 
     --fc-button-bg-color: rgba(var(--primary-500));
     --fc-button-border-color: rgba(var(--primary-600));
@@ -47,6 +50,8 @@ html.dark .filament-fullcalendar {
 
     --fc-event-bg-color: rgba(var(--primary-500));
     --fc-event-border-color: rgba(var(--primary-600));
+
+    --fc-list-event-hover-bg-color: rgba(var(--gray-800), .8);
 }
 
 .filament-fullcalendar .fc-toolbar-chunk {
@@ -71,6 +76,19 @@ html.dark .filament-fullcalendar {
 }
 
 .filament-fullcalendar .fc-view table,
-.filament-fullcalendar .fc-view table th {
+.filament-fullcalendar .fc-view:not(.fc-list) table th,
+.filament-fullcalendar .fc-list {
     @apply rounded-t-xl;
+}
+
+.filament-fullcalendar .fc-list {
+    @apply overflow-hidden;
+}
+
+.filament-fullcalendar .fc-list .fc-list-event-title a {
+    @apply cursor-pointer;
+}
+
+.filament-fullcalendar .fc-list-sticky .fc-list-day th {
+    @apply bg-inherit;
 }

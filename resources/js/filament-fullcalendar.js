@@ -10,6 +10,7 @@ import adaptivePlugin from '@fullcalendar/adaptive'
 import resourcePlugin from '@fullcalendar/resource'
 import resourceDayGridPlugin from '@fullcalendar/resource-daygrid'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
+import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import rrulePlugin from '@fullcalendar/rrule'
 import momentPlugin from '@fullcalendar/moment'
 import momentTimezonePlugin from '@fullcalendar/moment-timezone'
@@ -50,13 +51,14 @@ export default function fullcalendar({
                     jsEvent.preventDefault()
 
                     if (event.url) {
-                        return window.open(event.url, event.extendedProps.shouldOpenInNewTab ? '_blank' : '_self')
+                        const isNotPlainLeftClick = e => (e.which > 1) || (e.altKey) || (e.ctrlKey) || (e.metaKey) || (e.shiftKey)
+                        return window.open(event.url, (event.extendedProps.shouldOpenUrlInNewTab || isNotPlainLeftClick(jsEvent)) ? '_blank' : '_self')
                     }
 
                     this.$wire.onEventClick(event)
                 },
-                eventDrop: async ({ event, oldEvent, relatedEvents, delta, revert }) => {
-                    const shouldRevert = await this.$wire.onEventDrop(event, oldEvent, relatedEvents, delta)
+                eventDrop: async ({ event, oldEvent, relatedEvents, delta, oldResource, newResource, revert }) => {
+                    const shouldRevert = await this.$wire.onEventDrop(event, oldEvent, relatedEvents, delta, oldResource, newResource)
 
                     if (typeof shouldRevert === 'boolean' && shouldRevert) {
                         revert()
@@ -69,13 +71,13 @@ export default function fullcalendar({
                         revert()
                     }
                 },
-                dateClick: ({ dateStr, allDay, view }) => {
+                dateClick: ({ dateStr, allDay, view, resource }) => {
                     if (!selectable) return;
-                    this.$wire.onDateSelect(dateStr, null, allDay, view)
+                    this.$wire.onDateSelect(dateStr, null, allDay, view, resource)
                 },
-                select: ({ startStr, endStr, allDay, view }) => {
+                select: ({ startStr, endStr, allDay, view, resource }) => {
                     if (!selectable) return;
-                    this.$wire.onDateSelect(startStr, endStr, allDay, view)
+                    this.$wire.onDateSelect(startStr, endStr, allDay, view, resource)
                 },
             })
 
@@ -98,6 +100,7 @@ const availablePlugins = {
     'resource': resourcePlugin,
     'resourceDayGrid': resourceDayGridPlugin,
     'resourceTimeline': resourceTimelinePlugin,
+    'resourceTimeGrid': resourceTimeGridPlugin,
     'rrule': rrulePlugin,
     'moment': momentPlugin,
     'momentTimezone': momentTimezonePlugin,
