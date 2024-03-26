@@ -2,9 +2,9 @@
 
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
-use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
-
 use function Saade\FilamentFullCalendar\array_merge_recursive_unique;
+
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 trait CanBeConfigured
 {
