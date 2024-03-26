@@ -219,6 +219,31 @@ class AdminPanelProvider extends PanelProvider
 }
 ```
 
+```php
+<?php
+namespace App\Filament\Widgets;
+
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+use App\Models\Event;
+
+class CalendarWidget extends FullCalendarWidget
+{
+    public Model | string | null $model = Event::class;
+
+    public function config(): array
+    {
+        return [
+            'firstDay' => 1,
+            'headerToolbar' => [
+                'left' => 'dayGridWeek,dayGridDay',
+                'center' => 'title',
+                'right' => 'prev,next today',
+            ],
+        ];
+    }
+}
+```
+
 ## Available methods
 
 ### schedulerLicenseKey(`string` | `null` $licenseKey)
