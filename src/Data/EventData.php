@@ -11,6 +11,10 @@ class EventData implements Arrayable
 
     protected int|string|null $groupId = null;
 
+    protected int|string|null $resourceId = null;
+
+    protected ?array $resourceIds = null;
+
     protected bool $allDay = false;
 
     protected DateTimeInterface|string $start;
@@ -30,7 +34,6 @@ class EventData implements Arrayable
     protected ?string $textColor = null;
 
     protected ?array $extendedProps = null;
-
     protected array $extraProperties = [];
 
     public static function make(): static
@@ -59,7 +62,27 @@ class EventData implements Arrayable
     }
 
     /**
-     * Determines if the event is shown in the “all-day” section of relevant views. In addition, if true the time text is not displayed with the event.
+     * Events can be associated with a resource when its resourceId property matches one of
+     * the resource object’s id field
+     */
+    public function resourceId(int|string $resourceId): static
+    {
+        $this->resourceId = $resourceId;
+
+        return $this;
+    }
+    /**
+     * It is also possible to associate an event with multiple resources using the resourceIds property.
+     */
+    public function resourceIds(array $resourceIds): static
+    {
+        $this->resourceIds = $resourceIds;
+
+        return $this;
+    }
+    /**
+     * Determines if the event is shown in the “all-day” section of relevant views. In addition,
+     * if true the time text is not displayed with the event.
      */
     public function allDay(bool $allDay = true): static
     {
@@ -168,6 +191,8 @@ class EventData implements Arrayable
             'start' => $this->start,
             'end' => $this->end,
             'title' => $this->title,
+            ...$this->resourceId ? ['resourceId' => $this->resourceId] : [],
+            ...$this->resourceIds ? ['resourceIds' => $this->resourceIds] : [],
             ...$this->url ? ['url' => $this->url, 'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab] : [],
             ...$this->groupId ? ['groupId' => $this->groupId] : [],
             ...$this->allDay ? ['allDay' => $this->allDay] : [],

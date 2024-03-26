@@ -461,6 +461,39 @@ protected function headerActions(): array
  }
 ```
 
+## Showing events in a resource Timeline
+
+If you want to use the resource timeline view, you have to make the following adjustments:
+
+Add this to the `config` method of the `FilamentFullCalendarPlugin`:
+```php
+FilamentFullCalendarPlugin::make()
+->plugins(['resourceTimeline'])
+                    ->config([
+                       'initialView' => 'resourceTimelineMonth',
+                        'resourceAreaHeaderContent' => 'Resource overview',
+                        'headerToolbar' => [
+                            'left' => 'prev,next today',
+                            'center' => 'title',
+                            'right' => 'resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth',
+                        ],
+                        'resources' => [
+                            [   "id" => "1",
+                                "title" => "Resource 1",
+                                "eventColor" => "orange",
+                            ]
+                            ,
+                            [   "id" => "2",
+                                "title" => "Resource 2",
+                                "eventColor" => "green",
+                            ],
+                        ],
+```
+Add this to your event data:
+```php
+EventData::make()
+    ->resourceId($resource->id) // this should match with the id of the resource set in the config above
+```
 ## Adding the widget to a Blade view
 
 Follow the [Filament Docs](https://filamentphp.com/docs/3.x/widgets/adding-a-widget-to-a-blade-view) to know how to add the widget to a Blade view.
