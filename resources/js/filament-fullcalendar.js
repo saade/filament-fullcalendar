@@ -23,10 +23,14 @@ export default function fullcalendar({
     timeZone,
     config,
     editable,
-    selectable,
+    selectable,    
 }) {
     return {
         init() {
+
+            let cellsData;
+            let htmlTemplate;
+
             /** @type Calendar */
             const calendar = new Calendar(this.$el, {
                 headerToolbar: {
@@ -41,11 +45,28 @@ export default function fullcalendar({
                 editable,
                 selectable,
                 ...config,
-                locales,
+                locales,                
                 events: (info, successCallback, failureCallback) => {
                     this.$wire.fetchEvents({ start: info.startStr, end: info.endStr, timezone: info.timeZone })
                         .then(successCallback)
                         .catch(failureCallback)
+
+                        this.$wire.getCellTemplate()
+                        .then((data) => {
+                            htmlTemplate = data;                            
+                        })
+                        .catch(failureCallback)
+
+                        this.$wire.fetchCellsData({ start: info.startStr, end: info.endStr, timezone: info.timeZone })
+                        .then((data) => {
+                            cellsData = data;
+                            calendar.render()
+                        })
+                        .catch(failureCallback)
+
+
+                        
+
                 },
                 eventClick: ({ event, jsEvent }) => {
                     jsEvent.preventDefault()
@@ -79,6 +100,35 @@ export default function fullcalendar({
                     if (!selectable) return;
                     this.$wire.onDateSelect(startStr, endStr, allDay, view, resource)
                 },
+                dayCellContent: (dayData) => { 
+
+                    var innerBlock = document.createElement("div");
+                    innerBlock.setAttribute('class','calCellTopCnt')
+
+                    let id = (dayData.date.getMonth()+1) + 
+                        "_" + dayData.date.getDate();
+
+                    let template = htmlTemplate;
+
+                    if ((cellsData != undefined) && 
+                        (cellsData[id] != undefined))
+                    {
+
+                        template = template
+                        .replace('{{dayNumber}}', dayData.dayNumberText);
+
+                        Object.keys(cellsData[id]).map(function(k) {
+                            template = template
+                            .replace('{{'+k+'}}', cellsData[id][k]);
+                        });
+
+                        innerBlock.innerHTML = template;
+
+                    }
+
+                    return {domNodes:[innerBlock]};
+                },
+
             })
 
             calendar.render()

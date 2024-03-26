@@ -58,4 +58,13 @@ class FullCalendarWidget extends Widget implements HasForms, HasActions
     {
         return [];
     }
+
+    public function fetchCellsData(array $info): array {
+        return [];
+    }
+
+    public function getCellTemplate(): string {
+        return "";
+    }
+
 }
