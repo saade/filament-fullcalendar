@@ -30,6 +30,9 @@
         "spatie/laravel-ray": "^1.26"
     },
     "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
         "psr-4": {
             "Saade\\FilamentFullCalendar\\": "src"
         }
