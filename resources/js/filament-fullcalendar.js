@@ -92,6 +92,10 @@ export default function fullcalendar({
             calendar.render()
 
             window.addEventListener('filament-fullcalendar--refresh', () => calendar.refetchEvents())
+            window.addEventListener('filament-fullcalendar--prev', () => calendar.prev())
+            window.addEventListener('filament-fullcalendar--next', () => calendar.next())
+            window.addEventListener('filament-fullcalendar--today', () => calendar.today())
+            window.addEventListener('filament-fullcalendar--goto', (event) => calendar.gotoDate(event.detail.date))
         },
     }
 }

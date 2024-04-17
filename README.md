@@ -496,6 +496,30 @@ public function eventDidMount(): string
 }
 ```
 
+## Using Full Calendar Events Listener
+
+List of available events
+- filament-fullcalendar--refresh
+- filament-fullcalendar--prev
+- filament-fullcalendar--next
+- filament-fullcalendar--today
+- filament-fullcalendar--goto
+
+Usage
+```js
+    datePickerPreviousMonth() {
+        $dispatch('filament-fullcalendar--prev');
+    }
+```
+```js
+    datePickerNextMonth() {
+        $dispatch('filament-fullcalendar--next');
+    }
+```
+
+
+
+
 The JavaScript code returned by `eventDidMount()` will be added to [the FullCalendar's `eventDidMount` event render hook](https://fullcalendar.io/docs/event-render-hooks).
 
 ## Adding the widget to a Blade view
