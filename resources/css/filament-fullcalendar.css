@@ -54,10 +54,6 @@ html.dark .filament-fullcalendar {
     --fc-list-event-hover-bg-color: rgba(var(--gray-800), .8);
 }
 
-.filament-fullcalendar .fc-toolbar-chunk {
-    @apply space-y-1;
-}
-
 .filament-fullcalendar .fc-toolbar-title {
     @apply !text-lg leading-5 md:!text-3xl;
 }
