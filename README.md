@@ -422,6 +422,8 @@ For another example, see the [Event tooltip on hover](#event-tooltip-on-hover) t
 You can fill the form with the event's new data by using the `mountUsing` method on the `EditAction`.
 
 ```php
+use Saade\FilamentFullCalendar\Actions;
+
 protected function modalActions(): array
  {
      return [
