@@ -234,7 +234,7 @@ class CalendarWidget extends FullCalendarWidget
     public function config(): array
     {
         return [
-            'firstDay' => 1,
+            'firstDay' => 1,  // The default value depends on the current locale.
             'headerToolbar' => [
                 'left' => 'dayGridWeek,dayGridDay',
                 'center' => 'title',
