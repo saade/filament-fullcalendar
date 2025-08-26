@@ -1,10 +1,10 @@
 # Filament FullCalendar
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/saade/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/saade/filament-fullcalendar)
-[![Total Downloads](https://img.shields.io/packagist/dt/saade/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/saade/filament-fullcalendar)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/hetmann/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/hetmann/filament-fullcalendar)
+[![Total Downloads](https://img.shields.io/packagist/dt/hetmann/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/hetmann/filament-fullcalendar)
 
 <p align="center">
-            <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/main/art/cover.png" alt="Filament FullCalendar" style="width: 100%; max-width: 800px; border-radius: 10px" />
+            <img src="https://raw.githubusercontent.com/hetmann/filament-fullcalendar/main/art/cover.png" alt="Filament FullCalendar" style="width: 100%; max-width: 800px; border-radius: 10px" />
 </p>
 
 # Features
@@ -60,12 +60,12 @@ You can install the package via composer:
 
 **For Filament v4:**
 ```bash
-composer require saade/filament-fullcalendar:^2.0
+composer require hetmann/filament-fullcalendar:^2.0
 ```
 
 **For Filament v3:**
 ```bash
-composer require saade/filament-fullcalendar:^1.0
+composer require hetmann/filament-fullcalendar:^1.0
 ```
 
 <br>
@@ -105,8 +105,8 @@ class CalendarWidget extends FullCalendarWidget
     public function fetchEvents(array $fetchInfo): array
     {
         // You can use $fetchInfo to filter events by date.
-        // This method should return an array of event-like objects. See: https://github.com/saade/filament-fullcalendar/blob/main/#returning-events
-        // You can also return an array of EventData objects. See: https://github.com/saade/filament-fullcalendar/blob/main/#the-eventdata-class
+        // This method should return an array of event-like objects. See: https://github.com/hetmann/filament-fullcalendar/blob/main/#returning-events
+        // You can also return an array of EventData objects. See: https://github.com/hetmann/filament-fullcalendar/blob/main/#the-eventdata-class
         return [];
     }
 }
@@ -397,7 +397,7 @@ If you want to intercept events, you can override the default methods that comes
 > **Warning**
 > If you override any of the methods below, you'll need to call the parent method to keep the calendar working as expected.
 
-See the [InteractsWithEvents](https://github.com/saade/filament-fullcalendar/blob/main/src/Widgets/Concerns/InteractsWithEvents.php) for all the available event listeners.
+See the [InteractsWithEvents](https://github.com/hetmann/filament-fullcalendar/blob/main/src/Widgets/Concerns/InteractsWithEvents.php) for all the available event listeners.
 
 <br>
 
@@ -538,7 +538,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
 <p align="center">
-    <a href="https://github.com/sponsors/saade">
-        <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/main/art/sponsor.png" alt="Sponsor Saade" style="width: 100%; max-width: 800px;" />
+    <a href="https://github.com/sponsors/hetmann">
+        <img src="https://raw.githubusercontent.com/hetmann/filament-fullcalendar/main/art/sponsor.png" alt="Sponsor Hetmann" style="width: 100%; max-width: 800px;" />
     </a>
 </p>

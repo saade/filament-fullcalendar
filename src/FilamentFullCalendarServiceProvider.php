@@ -31,7 +31,7 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
 
     protected function getAssetPackageName(): ?string
     {
-        return 'saade/filament-fullcalendar';
+        return 'hetmann/filament-fullcalendar';
     }
 
     /**
