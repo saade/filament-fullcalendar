@@ -4,7 +4,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/saade/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/saade/filament-fullcalendar)
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/3.x/art/cover.png" alt="Filament FullCalendar" style="width: 100%; max-width: 800px; border-radius: 10px" />
+            <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/main/art/cover.png" alt="Filament FullCalendar" style="width: 100%; max-width: 800px; border-radius: 10px" />
 </p>
 
 # Features
@@ -58,8 +58,14 @@
 
 You can install the package via composer:
 
+**For Filament v4:**
 ```bash
-composer require saade/filament-fullcalendar:^3.0
+composer require saade/filament-fullcalendar:^2.0
+```
+
+**For Filament v3:**
+```bash
+composer require saade/filament-fullcalendar:^1.0
 ```
 
 <br>
@@ -99,8 +105,8 @@ class CalendarWidget extends FullCalendarWidget
     public function fetchEvents(array $fetchInfo): array
     {
         // You can use $fetchInfo to filter events by date.
-        // This method should return an array of event-like objects. See: https://github.com/saade/filament-fullcalendar/blob/3.x/#returning-events
-        // You can also return an array of EventData objects. See: https://github.com/saade/filament-fullcalendar/blob/3.x/#the-eventdata-class
+        // This method should return an array of event-like objects. See: https://github.com/saade/filament-fullcalendar/blob/main/#returning-events
+        // You can also return an array of EventData objects. See: https://github.com/saade/filament-fullcalendar/blob/main/#the-eventdata-class
         return [];
     }
 }
@@ -288,7 +294,7 @@ The configuration of the calendar. Not all configurations have a dedicated fluen
 <br>
 
 # Interacting with actions
-This packages leverages the power of [Filament Actions](https://filamentphp.com/docs/3.x/actions/overview) to allow you to view, create, edit and delete events.
+This packages leverages the power of [Filament Actions](https://filamentphp.com/docs/4.x/actions/overview) to allow you to view, create, edit and delete events.
 
 To get started, you'll need to tell the widget which model it should use to perform the actions, and define a form schema for the view, create and edit actions.
 
@@ -391,7 +397,7 @@ If you want to intercept events, you can override the default methods that comes
 > **Warning**
 > If you override any of the methods below, you'll need to call the parent method to keep the calendar working as expected.
 
-See the [InteractsWithEvents](https://github.com/saade/filament-fullcalendar/blob/3.x/src/Widgets/Concerns/InteractsWithEvents.php) for all the available event listeners.
+See the [InteractsWithEvents](https://github.com/saade/filament-fullcalendar/blob/main/src/Widgets/Concerns/InteractsWithEvents.php) for all the available event listeners.
 
 <br>
 
@@ -502,7 +508,7 @@ The JavaScript code returned by `eventDidMount()` will be added to [the FullCale
 
 ## Adding the widget to a Blade view
 
-Follow the [Filament Docs](https://filamentphp.com/docs/3.x/widgets/adding-a-widget-to-a-blade-view) to know how to add the widget to a Blade view.
+Follow the [Filament Docs](https://filamentphp.com/docs/4.x/widgets/adding-a-widget-to-a-blade-view) to know how to add the widget to a Blade view.
 
 ## Share your tricks
 
@@ -533,6 +539,6 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 <p align="center">
     <a href="https://github.com/sponsors/saade">
-        <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/3.x/art/sponsor.png" alt="Sponsor Saade" style="width: 100%; max-width: 800px;" />
+        <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/main/art/sponsor.png" alt="Sponsor Saade" style="width: 100%; max-width: 800px;" />
     </a>
 </p>
