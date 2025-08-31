@@ -13,7 +13,7 @@ trait CanBeConfigured
         return [];
     }
 
-    protected function getConfig(): array
+    public function getConfig(): array
     {
         return array_merge_recursive_unique(
             FilamentFullCalendarPlugin::get()->getConfig(),

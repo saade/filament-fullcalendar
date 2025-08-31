@@ -6,6 +6,8 @@
         "dev:scripts": "node bin/build.js --dev",
         "build:styles": "npx tailwindcss -i resources/css/filament-fullcalendar.css -o dist/filament-fullcalendar.css --postcss --minify && npm run purge",
         "build:scripts": "node bin/build.js",
+        "dev:vite": "vite",
+        "build:vite": "vite build",
         "purge": "filament-purge -i dist/filament-fullcalendar.css -o dist/filament-fullcalendar.css -v 3.x",
         "dev": "npm-run-all --parallel dev:*",
         "build": "npm-run-all build:*"
@@ -41,6 +43,7 @@
         "prettier": "^3.0.0",
         "prettier-plugin-tailwindcss": "^0.1.13",
         "rrule": "^2.7.2",
-        "tailwindcss": "^3.3.2"
+        "tailwindcss": "^3.3.2",
+        "vite": "^5.4.0"
     }
 }

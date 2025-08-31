@@ -59,14 +59,14 @@
 You can install the package via composer:
 
 ```bash
-composer require saade/filament-fullcalendar:^3.0
+composer require saade/filament-fullcalendar:^4.0
 ```
 
 <br>
 
 # Usage
 
-1. First, create a [Filament Widget](https://filamentadmin.com/docs/2.x/admin/dashboard#getting-started):
+1. First, create a Filament v4 Widget (see Filament v4 docs on widgets):
 
 ```bash
 php artisan make:filament-widget CalendarWidget
@@ -99,8 +99,8 @@ class CalendarWidget extends FullCalendarWidget
     public function fetchEvents(array $fetchInfo): array
     {
         // You can use $fetchInfo to filter events by date.
-        // This method should return an array of event-like objects. See: https://github.com/saade/filament-fullcalendar/blob/3.x/#returning-events
-        // You can also return an array of EventData objects. See: https://github.com/saade/filament-fullcalendar/blob/3.x/#the-eventdata-class
+        // This method should return an array of event-like objects. See: https://fullcalendar.io/docs/event-object
+        // You can also return an array of EventData objects (see README section below).
         return [];
     }
 }
@@ -186,7 +186,7 @@ class CalendarWidget extends FullCalendarWidget
 
 # Configuration
 
-Before you can configure the calendar, you'll need to add `FilamentFullcalendarPlugin` to your panel's `plugins` array.
+Before you can configure the calendar, add `FilamentFullcalendarPlugin` to your Panel `plugins()` in your PanelProvider. The plugin registers its Alpine component and CSS via `Panel->assets()`.
 
 ```php
 <?php
@@ -288,7 +288,7 @@ The configuration of the calendar. Not all configurations have a dedicated fluen
 <br>
 
 # Interacting with actions
-This packages leverages the power of [Filament Actions](https://filamentphp.com/docs/3.x/actions/overview) to allow you to view, create, edit and delete events.
+This package leverages [Filament Actions](https://filamentphp.com/docs/4.x/actions/overview) to allow you to view, create, edit and delete events.
 
 To get started, you'll need to tell the widget which model it should use to perform the actions, and define a form schema for the view, create and edit actions.
 
@@ -391,7 +391,7 @@ If you want to intercept events, you can override the default methods that comes
 > **Warning**
 > If you override any of the methods below, you'll need to call the parent method to keep the calendar working as expected.
 
-See the [InteractsWithEvents](https://github.com/saade/filament-fullcalendar/blob/3.x/src/Widgets/Concerns/InteractsWithEvents.php) for all the available event listeners.
+See the `src/Widgets/Concerns/InteractsWithEvents.php` for all the available event listeners.
 
 <br>
 

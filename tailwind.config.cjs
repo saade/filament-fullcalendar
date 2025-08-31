@@ -1,4 +1,10 @@
-const preset = require('./vendor/filament/filament/tailwind.config.preset')
+let preset = {}
+try {
+    // Use Filament preset when available (in consumer app). In package dev, vendor may be absent.
+    preset = require('./vendor/filament/filament/tailwind.config.preset')
+} catch (e) {
+    preset = {}
+}
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {

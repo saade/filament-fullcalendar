@@ -4,6 +4,8 @@ namespace Saade\FilamentFullCalendar;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Assets\Css;
 
 class FilamentFullCalendarPlugin implements Plugin
 {
@@ -38,7 +40,10 @@ class FilamentFullCalendarPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        //
+        $panel->assets([
+            AlpineComponent::make('filament-fullcalendar-alpine', __DIR__ . '/../dist/filament-fullcalendar.js'),
+            Css::make('filament-fullcalendar-styles', __DIR__ . '/../dist/filament-fullcalendar.css'),
+        ]);
     }
 
     public function boot(Panel $panel): void
@@ -103,7 +108,12 @@ class FilamentFullCalendarPlugin implements Plugin
 
     public function getLocale(): string
     {
-        return $this->locale ?? strtolower(str_replace('_', '-', app()->getLocale()));
+        // Use only the language part from locale (e.g., "it_IT" -> "it")
+        $locale = $this->locale ?? app()->getLocale();
+        $locale = str_replace('_', '-', strtolower($locale));
+        $language = explode('-', $locale)[0] ?? $locale;
+
+        return $language;
     }
 
     public function editable(bool $editable = true): static
