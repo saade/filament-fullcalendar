@@ -89,4 +89,42 @@ trait InteractsWithRawJS
             null
         JS;
     }
+
+    /**
+     * The URL for fetching calendar resources.
+     *
+     * @see https://fullcalendar.io/docs/resource-source
+     *
+     * @return string
+     */
+    public function getResourceUrl(): string
+    {
+        return '';
+    }
+
+    /**
+     * The HTTP method for fetching calendar resources.
+     *
+     * @see https://fullcalendar.io/docs/resource-source
+     *
+     * @return string
+     */
+    public function getResourceMethod(): string
+    {
+        return 'GET';
+    }
+
+    /**
+     * Extra parameters to pass when fetching calendar resources.
+     *
+     * @see https://fullcalendar.io/docs/resource-source
+     *
+     * @return string
+     */
+    public function getResourceExtraParams(): string
+    {
+        return <<<JS
+            null
+        JS;
+    }
 }

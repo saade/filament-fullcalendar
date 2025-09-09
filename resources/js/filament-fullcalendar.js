@@ -31,6 +31,9 @@ export default function fullcalendar({
     eventWillUnmount,
     eventMouseEnter,
     eventMouseLeave,
+    resourceUrl,
+    resourceMethod,
+    resourceExtraParams,
 }) {
     return {
         init() {
@@ -56,6 +59,16 @@ export default function fullcalendar({
                 eventWillUnmount,
                 eventMouseEnter,
                 eventMouseLeave,
+                ...(resourceUrl
+                    ? {
+                        resources: {
+                            url: resourceUrl,
+                            method: resourceMethod ?? 'GET',
+                            extraParams: resourceExtraParams,
+                        }
+                    }
+                    : {}
+                ),
                 events: (info, successCallback, failureCallback) => {
                     this.$wire.fetchEvents({ start: info.startStr, end: info.endStr, timezone: info.timeZone })
                         .then(successCallback)
