@@ -35,6 +35,9 @@
                 eventWillUnmount: {!! htmlspecialchars($this->eventWillUnmount(), ENT_COMPAT) !!},
                 eventMouseEnter: {!! htmlspecialchars($this->eventMouseEnter(), ENT_COMPAT) !!},
                 eventMouseLeave: {!! htmlspecialchars($this->eventMouseLeave(), ENT_COMPAT) !!},
+                resourceUrl: @js($this->getResourceUrl()),
+                resourceMethod: @js($this->getResourceMethod()),
+                resourceExtraParams: {!! htmlspecialchars($this->getResourceExtraParams(), ENT_COMPAT) !!},
             })">
         </div>
     </x-filament::section>
