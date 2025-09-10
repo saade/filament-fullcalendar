@@ -2,13 +2,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev:styles": "npx tailwindcss -i resources/css/filament-fullcalendar.css -o dist/filament-fullcalendar.css --postcss --watch",
-        "dev:scripts": "node bin/build.js --dev",
-        "build:styles": "npx tailwindcss -i resources/css/filament-fullcalendar.css -o dist/filament-fullcalendar.css --postcss --minify && npm run purge",
-        "build:scripts": "node bin/build.js",
-        "purge": "filament-purge -i dist/filament-fullcalendar.css -o dist/filament-fullcalendar.css -v 3.x",
-        "dev": "npm-run-all --parallel dev:*",
-        "build": "npm-run-all build:*"
+        "dev": "vite build",
+        "build": "vite build"
     },
     "devDependencies": {
         "@awcodes/filament-plugin-purge": "^1.1.1",
@@ -29,7 +24,7 @@
         "@fullcalendar/timegrid": "^6.1.9",
         "@fullcalendar/timeline": "^6.1.9",
         "@shufo/prettier-plugin-blade": "^1.10.1",
-        "@tailwindcss/forms": "^0.5.4",
+        "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/typography": "^0.5.9",
         "autoprefixer": "^10.4.14",
         "esbuild": "^0.19.0",
@@ -38,9 +33,13 @@
         "npm-run-all": "^4.1.5",
         "postcss": "^8.4.24",
         "postcss-import": "^15.1.0",
-        "prettier": "^3.0.0",
+        "prettier": "^3.6.2",
         "prettier-plugin-tailwindcss": "^0.1.13",
         "rrule": "^2.7.2",
-        "tailwindcss": "^3.3.2"
+        "vite": "^7.1.2"
+    },
+    "dependencies": {
+        "@tailwindcss/cli": "^4.1.12",
+        "tailwindcss": "^4.1.12"
     }
 }

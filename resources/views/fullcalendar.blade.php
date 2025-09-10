@@ -5,7 +5,7 @@
 <x-filament-widgets::widget>
     <x-filament::section>
         <div class="flex justify-end flex-1 mb-4">
-            <x-filament-actions::actions :actions="$this->getCachedHeaderActions()" class="shrink-0" />
+            <x-filament::actions :actions="$this->getCachedHeaderActions()" class="shrink-0" />
         </div>
 
         <div class="filament-fullcalendar" wire:ignore x-load
