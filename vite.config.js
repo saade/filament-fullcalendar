@@ -9,8 +9,8 @@ export default defineConfig({
         emptyOutDir: false,
         sourcemap: true,
         lib: {
-            entry: "resources/js/filament-fullcalendar.js",
-            name: "filament-fullcalendar",
+            entry: "resources/js/components/filament-fullcalendar.js",
+            name: "FullCalendar",
             formats: ["es"],
             fileName: () => "filament-fullcalendar.js"
         },
