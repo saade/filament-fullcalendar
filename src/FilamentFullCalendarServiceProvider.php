@@ -41,7 +41,6 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
     {
         return [
             AlpineComponent::make('filament-fullcalendar-alpine', __DIR__ . '/../dist/filament-fullcalendar.js'),
-            Css::make('filament-fullcalendar-styles', __DIR__ . '/../dist/filament-fullcalendar.css'),
         ];
     }
 }
