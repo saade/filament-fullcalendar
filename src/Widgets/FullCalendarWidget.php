@@ -7,6 +7,8 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Widgets\Widget;
 use Saade\FilamentFullCalendar\Actions;
 
@@ -16,8 +18,8 @@ class FullCalendarWidget extends Widget implements HasForms, HasActions
     use InteractsWithActions;
     use Concerns\InteractsWithEvents;
     use Concerns\InteractsWithRecords;
-    use Concerns\InteractsWithHeaderActions;
-    use Concerns\InteractsWithModalActions;
+    use InteractsWithHeaderActions;
+    use InteractsWithFormActions;
     use Concerns\InteractsWithRawJS;
     use Concerns\CanBeConfigured;
 
