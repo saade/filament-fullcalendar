@@ -1,4 +1,4 @@
-@theme{
+:root {
     --fc-small-font-size: 0.85em;
     --fc-page-bg-color: rgb(255 255 255);
     --fc-neutral-bg-color: oklch(98.5% 0.002 247.839);
