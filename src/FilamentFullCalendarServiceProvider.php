@@ -40,7 +40,7 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            AlpineComponent::make('filament-fullcalendar-alpine', __DIR__ . '/../dist/filament-fullcalendar.js'),
+            AlpineComponent::make('filament-fullcalendar-alpine', __DIR__ . '/../resources/dist/filament-fullcalendar.js'),
         ];
     }
 }
