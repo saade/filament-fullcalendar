@@ -29,7 +29,7 @@
     --fc-bg-event-color: rgb(143, 223, 130);
     --fc-bg-event-opacity: 0.3;
     --fc-highlight-color: var(--primary-100);
-    --fc-today-bg-color: var(--primary-100);
+    --fc-today-bg-color: var(--primary-50);
     --fc-now-indicator-color: red;
 
     --fc-list-event-hover-bg-color: rgba(var(--gray-50), var(--tw-bg-opacity));
