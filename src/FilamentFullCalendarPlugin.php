@@ -2,20 +2,24 @@
 
 namespace Saade\FilamentFullCalendar;
 
+use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentFullCalendarPlugin implements Plugin
 {
+    use EvaluatesClosures;
+
     protected array $plugins = ['dayGrid', 'timeGrid', 'interaction', 'list', 'moment', 'momentTimezone'];
 
     protected ?string $schedulerLicenseKey = null;
 
     protected array $config = [];
 
-    protected ?string $timezone = null;
+    protected string | Closure | null $timezone = null;
 
-    protected ?string $locale = null;
+    protected string | Closure | null $locale = null;
 
     protected ?bool $editable = null;
 
@@ -82,7 +86,7 @@ class FilamentFullCalendarPlugin implements Plugin
         return $this->config;
     }
 
-    public function timezone(string $timezone): static
+    public function timezone(string | Closure $timezone): static
     {
         $this->timezone = $timezone;
 
@@ -91,10 +95,10 @@ class FilamentFullCalendarPlugin implements Plugin
 
     public function getTimezone(): string
     {
-        return $this->timezone ?? config('app.timezone');
+        return $this->evaluate($this->timezone) ?? config('app.timezone');
     }
 
-    public function locale(string $locale): static
+    public function locale(string | Closure $locale): static
     {
         $this->locale = $locale;
 
@@ -103,7 +107,7 @@ class FilamentFullCalendarPlugin implements Plugin
 
     public function getLocale(): string
     {
-        return $this->locale ?? strtolower(str_replace('_', '-', app()->getLocale()));
+        return $this->evaluate($this->locale) ?? strtolower(str_replace('_', '-', app()->getLocale()));
     }
 
     public function editable(bool $editable = true): static
