@@ -137,7 +137,7 @@ class CalendarWidget extends FullCalendarWidget
                     'shouldOpenUrlInNewTab' => true
                 ]
             )
-            ->all();
+            ->toArray();
     }
 }
 ```
@@ -186,7 +186,7 @@ class CalendarWidget extends FullCalendarWidget
 
 # Configuration
 
-Before you can configure the calendar, you'll need to add `FilamentFullcalendarPlugin` to your panel's `plugins` array.
+Before you can configure the calendar, you'll need to add `FilamentFullCalendarPlugin` to your panel's `plugins` array.
 
 ```php
 <?php
@@ -342,7 +342,7 @@ class CalendarWidget extends FullCalendarWidget
 {
     public Model | string | null $model = Event::class;
 
-    protected function headerActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
@@ -397,7 +397,7 @@ See the [InteractsWithEvents](https://github.com/saade/filament-fullcalendar/blo
 
 # Render Hooks
 
-If you want to customize the calendar's event rendering, you can use Fullcalendar's built in [Render Hooks](https://fullcalendar.io/docs/event-render-hooks) for that. All the hooks are supported.
+If you want to customize the calendar's event rendering, you can use FullCalendar's built in [Render Hooks](https://fullcalendar.io/docs/event-render-hooks) for that. All the hooks are supported.
 
 Here's an example of how you can use the `eventDidMount` hook to add a custom implementation:
 ```php

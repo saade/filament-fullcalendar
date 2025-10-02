@@ -8,7 +8,7 @@
             <x-filament::actions :actions="$this->getCachedHeaderActions()" class="shrink-0" />
         </div>
 
-        <div class="filament-fullcalendar" wire:ignore x-load
+        <div wire:ignore x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-fullcalendar-alpine', 'saade/filament-fullcalendar') }}"
             x-ignore x-data="fullcalendar({
                 locale: @js($plugin->getLocale()),
@@ -23,6 +23,38 @@
                 eventDidMount: {!! htmlspecialchars($this->eventDidMount(), ENT_COMPAT) !!},
                 eventWillUnmount: {!! htmlspecialchars($this->eventWillUnmount(), ENT_COMPAT) !!},
             })">
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <x-filament::button.group>
+                        <x-filament::button icon="heroicon-o-chevron-left"
+                            x-on:click="$dispatch('filament-fullcalendar--prev')" />
+
+                        <x-filament::button icon="heroicon-o-chevron-right"
+                            x-on:click="$dispatch('filament-fullcalendar--next')" />
+                    </x-filament::button.group>
+
+                    <x-filament::button
+                        x-on:click="$dispatch('filament-fullcalendar--today')">Today</x-filament::button>
+                </div>
+
+                <div>
+                    <h1 class="text-lg font-semibold leading-5 md:text-2xl" x-text="title"></h1>
+                </div>
+
+                <x-filament::button.group>
+                    <x-filament::button
+                        x-on:click="$dispatch('filament-fullcalendar--view', { view: 'dayGridMonth' })">Month</x-filament::button>
+
+                    <x-filament::button
+                        x-on:click="$dispatch('filament-fullcalendar--view', { view: 'dayGridWeek' })">Week</x-filament::button>
+
+                    <x-filament::button
+                        x-on:click="$dispatch('filament-fullcalendar--view', { view: 'dayGridDay' })">Day</x-filament::button>
+                </x-filament::button.group>
+            </div>
+
+            <div class="filament-fullcalendar mt-4" x-ref="calendar"></div>
         </div>
     </x-filament::section>
 

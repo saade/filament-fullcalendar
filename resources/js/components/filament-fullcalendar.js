@@ -1,19 +1,4 @@
 import { Calendar } from '@fullcalendar/core'
-import interactionPlugin from '@fullcalendar/interaction'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import listPlugin from '@fullcalendar/list'
-import multiMonthPlugin from '@fullcalendar/multimonth'
-import scrollGridPlugin from '@fullcalendar/scrollgrid'
-import timelinePlugin from '@fullcalendar/timeline'
-import adaptivePlugin from '@fullcalendar/adaptive'
-import resourcePlugin from '@fullcalendar/resource'
-import resourceDayGridPlugin from '@fullcalendar/resource-daygrid'
-import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
-import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
-import rrulePlugin from '@fullcalendar/rrule'
-import momentPlugin from '@fullcalendar/moment'
-import momentTimezonePlugin from '@fullcalendar/moment-timezone'
 import locales from '@fullcalendar/core/locales-all'
 
 export default function fullcalendar({
@@ -30,28 +15,33 @@ export default function fullcalendar({
     eventWillUnmount,
 }) {
     return {
+        title: null,
+
+        /** @type Calendar */
+        calendar: null,
+
         init() {
-            /** @type Calendar */
-            const calendar = new Calendar(this.$el, {
-                headerToolbar: {
-                    'left': 'prev,next today',
-                    'center': 'title',
-                    'right': 'dayGridMonth,dayGridWeek,dayGridDay',
-                },
-                plugins: plugins.map(plugin => availablePlugins[plugin]),
+            this.calendar = new Calendar(this.$refs.calendar, {
+                plugins: plugins.map((plugin) => availablePlugins[plugin]),
                 locale,
-                schedulerLicenseKey,
+                ...(schedulerLicenseKey && { schedulerLicenseKey }),
                 timeZone,
                 editable,
                 selectable,
                 ...config,
+                headerToolbar: false,
                 locales,
                 eventClassNames,
                 eventContent,
                 eventDidMount,
                 eventWillUnmount,
                 events: (info, successCallback, failureCallback) => {
-                    this.$wire.fetchEvents({ start: info.startStr, end: info.endStr, timezone: info.timeZone })
+                    this.$wire
+                        .fetchEvents({
+                            start: info.startStr,
+                            end: info.endStr,
+                            timezone: info.timeZone,
+                        })
                         .then(successCallback)
                         .catch(failureCallback)
                 },
@@ -59,61 +49,154 @@ export default function fullcalendar({
                     jsEvent.preventDefault()
 
                     if (event.url) {
-                        const isNotPlainLeftClick = e => (e.which > 1) || (e.altKey) || (e.ctrlKey) || (e.metaKey) || (e.shiftKey)
-                        return window.open(event.url, (event.extendedProps.shouldOpenUrlInNewTab || isNotPlainLeftClick(jsEvent)) ? '_blank' : '_self')
+                        const isNotPlainLeftClick = (e) =>
+                            e.which > 1 ||
+                            e.altKey ||
+                            e.ctrlKey ||
+                            e.metaKey ||
+                            e.shiftKey
+                        return window.open(
+                            event.url,
+                            event.extendedProps.shouldOpenUrlInNewTab ||
+                                isNotPlainLeftClick(jsEvent)
+                                ? '_blank'
+                                : '_self',
+                        )
                     }
 
                     this.$wire.onEventClick(event)
                 },
-                eventDrop: async ({ event, oldEvent, relatedEvents, delta, oldResource, newResource, revert }) => {
-                    const shouldRevert = await this.$wire.onEventDrop(event, oldEvent, relatedEvents, delta, oldResource, newResource)
+                eventDrop: async ({
+                    event,
+                    oldEvent,
+                    relatedEvents,
+                    delta,
+                    oldResource,
+                    newResource,
+                    revert,
+                }) => {
+                    const shouldRevert = await this.$wire.onEventDrop(
+                        event,
+                        oldEvent,
+                        relatedEvents,
+                        delta,
+                        oldResource,
+                        newResource,
+                    )
 
                     if (typeof shouldRevert === 'boolean' && shouldRevert) {
                         revert()
                     }
                 },
-                eventResize: async ({ event, oldEvent, relatedEvents, startDelta, endDelta, revert }) => {
-                    const shouldRevert = await this.$wire.onEventResize(event, oldEvent, relatedEvents, startDelta, endDelta)
+                eventResize: async ({
+                    event,
+                    oldEvent,
+                    relatedEvents,
+                    startDelta,
+                    endDelta,
+                    revert,
+                }) => {
+                    const shouldRevert = await this.$wire.onEventResize(
+                        event,
+                        oldEvent,
+                        relatedEvents,
+                        startDelta,
+                        endDelta,
+                    )
 
                     if (typeof shouldRevert === 'boolean' && shouldRevert) {
                         revert()
                     }
                 },
                 dateClick: ({ dateStr, allDay, view, resource }) => {
-                    if (!selectable) return;
-                    this.$wire.onDateSelect(dateStr, null, allDay, view, resource)
+                    if (!selectable) return
+                    this.$wire.onDateSelect(
+                        dateStr,
+                        null,
+                        allDay,
+                        view,
+                        resource,
+                    )
                 },
                 select: ({ startStr, endStr, allDay, view, resource }) => {
-                    if (!selectable) return;
-                    this.$wire.onDateSelect(startStr, endStr, allDay, view, resource)
+                    if (!selectable) return
+                    this.$wire.onDateSelect(
+                        startStr,
+                        endStr,
+                        allDay,
+                        view,
+                        resource,
+                    )
                 },
             })
 
-            calendar.render()
+            this.calendar.render()
+            this.title = this.calendar.view.title
+            this.listenEvents()
+        },
 
-            window.addEventListener('filament-fullcalendar--refresh', () => calendar.refetchEvents())
-            window.addEventListener('filament-fullcalendar--prev', () => calendar.prev())
-            window.addEventListener('filament-fullcalendar--next', () => calendar.next())
-            window.addEventListener('filament-fullcalendar--today', () => calendar.today())
-            window.addEventListener('filament-fullcalendar--goto', (event) => calendar.gotoDate(event.detail.date))
+        listenEvents() {
+            this.calendar.on('datesSet', (info) => {
+                this.title = info.view.title
+            })
+
+            window.addEventListener('filament-fullcalendar--refresh', () =>
+                this.calendar.refetchEvents(),
+            )
+
+            window.addEventListener('filament-fullcalendar--prev', () =>
+                this.calendar.prev(),
+            )
+
+            window.addEventListener('filament-fullcalendar--next', () =>
+                this.calendar.next(),
+            )
+
+            window.addEventListener('filament-fullcalendar--today', () =>
+                this.calendar.today(),
+            )
+
+            window.addEventListener('filament-fullcalendar--view', (event) =>
+                this.calendar.changeView(event.detail.view),
+            )
+
+            window.addEventListener('filament-fullcalendar--goto', (event) =>
+                this.calendar.gotoDate(event.detail.date),
+            )
         },
     }
 }
 
+import interaction from '@fullcalendar/interaction'
+import dayGrid from '@fullcalendar/daygrid'
+import timeGrid from '@fullcalendar/timegrid'
+import list from '@fullcalendar/list'
+import multiMonth from '@fullcalendar/multimonth'
+import scrollGrid from '@fullcalendar/scrollgrid'
+import timeline from '@fullcalendar/timeline'
+import adaptive from '@fullcalendar/adaptive'
+import resource from '@fullcalendar/resource'
+import resourceDayGrid from '@fullcalendar/resource-daygrid'
+import resourceTimeline from '@fullcalendar/resource-timeline'
+import resourceTimeGrid from '@fullcalendar/resource-timegrid'
+import rrule from '@fullcalendar/rrule'
+import moment from '@fullcalendar/moment'
+import momentTimezone from '@fullcalendar/moment-timezone'
+
 const availablePlugins = {
-    'interaction': interactionPlugin,
-    'dayGrid': dayGridPlugin,
-    'timeGrid': timeGridPlugin,
-    'list': listPlugin,
-    'multiMonth': multiMonthPlugin,
-    'scrollGrid': scrollGridPlugin,
-    'timeline': timelinePlugin,
-    'adaptive': adaptivePlugin,
-    'resource': resourcePlugin,
-    'resourceDayGrid': resourceDayGridPlugin,
-    'resourceTimeline': resourceTimelinePlugin,
-    'resourceTimeGrid': resourceTimeGridPlugin,
-    'rrule': rrulePlugin,
-    'moment': momentPlugin,
-    'momentTimezone': momentTimezonePlugin,
+    interaction,
+    dayGrid,
+    timeGrid,
+    list,
+    multiMonth,
+    scrollGrid,
+    timeline,
+    adaptive,
+    resource,
+    resourceDayGrid,
+    resourceTimeline,
+    resourceTimeGrid,
+    rrule,
+    moment,
+    momentTimezone,
 }

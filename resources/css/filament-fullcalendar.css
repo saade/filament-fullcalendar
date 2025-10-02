@@ -1,79 +1,35 @@
 .filament-fullcalendar {
-    --fc-small-font-size: 0.85em;
-    --fc-page-bg-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
-    --fc-neutral-bg-color: rgba(249, 250, 251, var(--tw-bg-opacity));
-    --fc-neutral-text-color: #808080;
-    --fc-border-color: var(--gray-200);
+    --fc-small-font-size: var(--text-sm);
 
-    --fc-button-text-color: #fff;
-    --fc-button-bg-color: var(--primary-600);
-    --fc-button-border-color: var(--primary-600);
-    --fc-button-hover-bg-color: var(--primary-500);
-    --fc-button-hover-border-color: var(--primary-500);
-    --fc-button-active-bg-color: var(--primary-500);
-    --fc-button-active-border-color: var(--primary-500);
+    --fc-border-color: color-mix(
+        in oklab,
+        var(--color-gray-950) 10%,
+        transparent
+    );
 
-    --fc-event-bg-color: var(--primary-600);
-    --fc-event-border-color: var(--primary-600);
-    --fc-event-text-color: #fff;
-    --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
+    --fc-event-bg-color: var(--primary-400);
+    --fc-event-border-color: var(--primary-400);
+    --fc-event-text-color: var(--primary-900);
 
-    --fc-more-link-bg-color: #d0d0d0;
-    --fc-more-link-text-color: inherit;
+    --fc-highlight-color: color-mix(
+        in oklab,
+        var(--primary-500) 5%,
+        transparent
+    );
 
-    --fc-event-resizer-thickness: 8px;
-    --fc-event-resizer-dot-total-width: 8px;
-    --fc-event-resizer-dot-border-width: 1px;
-
-    --fc-non-business-color: rgba(215, 215, 215, 0.3);
-    --fc-bg-event-color: rgb(143, 223, 130);
-    --fc-bg-event-opacity: 0.3;
-    --fc-highlight-color: var(--primary-100);
-    --fc-today-bg-color: var(--primary-50);
-    --fc-now-indicator-color: red;
-
-    --fc-list-event-hover-bg-color: rgba(var(--gray-50), var(--tw-bg-opacity));
+    --fc-today-bg-color: color-mix(
+        in oklab,
+        var(--primary-500) 5%,
+        transparent
+    );
 }
 
 html.dark .filament-fullcalendar {
-    --fc-page-bg-color: rgba(var(--gray-900), var(--tw-bg-opacity, 1));
-    --fc-neutral-bg-color: rgba(var(--gray-800), 0.8);
-    --fc-border-color: rgba(var(--gray-700), 0.5);
+    --fc-border-color: color-mix(in oklab, var(--color-white) 10%, transparent);
 
-    --fc-button-bg-color: var(--primary-500);
-    --fc-button-border-color: var(--primary-600);
-    --fc-button-hover-bg-color: var(--primary-400);
-    --fc-button-hover-border-color: var(--primary-500);
-    --fc-button-active-bg-color: var(--primary-400);
-    --fc-button-active-border-color: var(--primary-500);
-
-    --fc-event-bg-color: var(--primary-500);
+    --fc-event-bg-color: var(--primary-600);
     --fc-event-border-color: var(--primary-600);
-
-    --fc-list-event-hover-bg-color: rgb(31, 41, 55, 0.8);
-}
-
-
-
-.filament-fullcalendar .fc-toolbar-chunk {
-    @apply space-y-1;
-}
-
-.filament-fullcalendar .fc-toolbar-title {
-    @apply !text-lg leading-5 md:!text-3xl;
-}
-
-.filament-fullcalendar.fc .fc-button {
-    @apply min-h-[2.25rem] rounded-lg px-[6px] py-1 text-sm font-medium shadow outline-none transition-colors md:px-4;
-}
-
-.filament-fullcalendar.fc .fc-button-primary:disabled {
-    @apply opacity-70;
-}
-
-.filament-fullcalendar.fc .fc-button-primary:not(:disabled).fc-button-active,
-.filament-fullcalendar.fc .fc-button-primary:not(:disabled):active {
-    @apply shadow-none;
+    --fc-event-text-color: var(--primary-950);
 }
 
 .filament-fullcalendar .fc-view table,
