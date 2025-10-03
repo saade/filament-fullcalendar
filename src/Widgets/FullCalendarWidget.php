@@ -9,11 +9,14 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Widgets\Widget;
 use Saade\FilamentFullCalendar\Actions;
+use Saade\FilamentFullCalendar\Widgets\Concerns\InteractsWithCustomButtons;
+use Saade\FilamentFullCalendar\Widgets\Contracts\HasCustomButtons;
 
-class FullCalendarWidget extends Widget implements HasForms, HasActions
+class FullCalendarWidget extends Widget implements HasForms, HasActions, HasCustomButtons
 {
     use InteractsWithForms;
     use InteractsWithActions;
+    use InteractsWithCustomButtons;
     use Concerns\InteractsWithEvents;
     use Concerns\InteractsWithRecords;
     use Concerns\InteractsWithHeaderActions;
