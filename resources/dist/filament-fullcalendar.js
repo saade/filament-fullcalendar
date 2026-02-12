@@ -462,8 +462,8 @@ function fi(t, e) {
     Tb(t, o, e);
   });
 };
-var Wi = typeof Symbol < "u" && Symbol.for && Symbol.for("react.element") || 60103, hi = /^(?:accent|alignment|arabic|baseline|cap|clip(?!PathU)|color|dominant|fill|flood|font|glyph(?!R)|horiz|image|letter|lighting|marker(?!H|W|U)|overline|paint|pointer|shape|stop|strikethrough|stroke|text(?!L)|transform|underline|unicode|units|v|vector|vert|word|writing|x(?!C))[A-Z]/, Ri = typeof document < "u", mi = function(t) {
-  return (typeof Symbol < "u" && typeof Symbol() == "symbol" ? /fil|che|rad/i : /fil|che|ra/i).test(t);
+var Wi = typeof Symbol < "u" && Symbol.for && /* @__PURE__ */ Symbol.for("react.element") || 60103, hi = /^(?:accent|alignment|arabic|baseline|cap|clip(?!PathU)|color|dominant|fill|flood|font|glyph(?!R)|horiz|image|letter|lighting|marker(?!H|W|U)|overline|paint|pointer|shape|stop|strikethrough|stroke|text(?!L)|transform|underline|unicode|units|v|vector|vert|word|writing|x(?!C))[A-Z]/, Ri = typeof document < "u", mi = function(t) {
+  return (typeof Symbol < "u" && typeof /* @__PURE__ */ Symbol() == "symbol" ? /fil|che|rad/i : /fil|che|ra/i).test(t);
 };
 E0.prototype.isReactComponent = {}, ["componentWillMount", "componentWillReceiveProps", "componentWillUpdate"].forEach(function(t) {
   Object.defineProperty(E0.prototype, t, { configurable: !0, get: function() {
@@ -5499,31 +5499,17 @@ function TO(t) {
   return o === void 0 && (o = P(t), bz[e] = o), o;
 }
 function BO(t, e) {
-  switch (e.type) {
-    case "CHANGE_VIEW_TYPE":
-      t = e.viewType;
-  }
-  return t;
+  return e.type === "CHANGE_VIEW_TYPE" && (t = e.viewType), t;
 }
 function SO(t, e) {
-  switch (e.type) {
-    case "CHANGE_DATE":
-      return e.dateMarker;
-    default:
-      return t;
-  }
+  return e.type === "CHANGE_DATE" ? e.dateMarker : t;
 }
 function EO(t, e, o) {
   let M = t.initialDate;
   return M != null ? e.createMarker(M) : o.getDateMarker();
 }
 function wO(t, e) {
-  switch (e.type) {
-    case "SET_OPTION":
-      return Object.assign(Object.assign({}, t), { [e.optionName]: e.rawOptionValue });
-    default:
-      return t;
-  }
+  return e.type === "SET_OPTION" ? Object.assign(Object.assign({}, t), { [e.optionName]: e.rawOptionValue }) : t;
 }
 function CO(t, e, o, M) {
   let b;
@@ -13651,14 +13637,7 @@ function k4(t, e, o, M) {
   return b ? Object.assign(Object.assign({}, t), { [e]: Object.assign(Object.assign({}, b), { extendedProps: Object.assign(Object.assign({}, b.extendedProps), { [o]: M }) }) }) : t;
 }
 function x4(t, e) {
-  if (!t || !e)
-    return {};
-  switch (e.type) {
-    case "SET_RESOURCE_ENTITY_EXPANDED":
-      return Object.assign(Object.assign({}, t), { [e.id]: e.isExpanded });
-    default:
-      return t;
-  }
+  return !t || !e ? {} : e.type === "SET_RESOURCE_ENTITY_EXPANDED" ? Object.assign(Object.assign({}, t), { [e.id]: e.isExpanded }) : t;
 }
 function _4(t, e, o) {
   let M = N4(t && t.resourceSource, e, o), b = E4(t && t.resourceStore, e, M, o), z = x4(t && t.resourceEntityExpansions, e);
@@ -14896,8 +14875,6 @@ var wq = function(t, e, o) {
         case "all":
         case "between":
           return e;
-        case "before":
-        case "after":
         default:
           return e.length ? e[e.length - 1] : null;
       }
@@ -16247,7 +16224,6 @@ function mf(t, e, o, M, b, z) {
       return a;
     case "before":
       return a.length && a[a.length - 1] || null;
-    case "after":
     default:
       return a.length && a[0] || null;
   }
@@ -16560,11 +16536,6 @@ var kf = a0({
   recurringTypes: [Sf],
   eventRefiners: Xf
 });
-//! moment.js
-//! version : 2.30.1
-//! authors : Tim Wood, Iskren Chernev, Moment.js contributors
-//! license : MIT
-//! momentjs.com
 var pc;
 function N() {
   return pc.apply(null, arguments);
@@ -18451,13 +18422,8 @@ t0(["yo"], function(t, e, o, M) {
 });
 function Th(t, e) {
   var o, M, b, z = this._eras || L1("en")._eras;
-  for (o = 0, M = z.length; o < M; ++o) {
-    switch (typeof z[o].since) {
-      case "string":
-        b = N(z[o].since).startOf("day"), z[o].since = b.valueOf();
-        break;
-    }
-    switch (typeof z[o].until) {
+  for (o = 0, M = z.length; o < M; ++o)
+    switch (typeof z[o].since === "string" && (b = N(z[o].since).startOf("day"), z[o].since = b.valueOf()), typeof z[o].until) {
       case "undefined":
         z[o].until = 1 / 0;
         break;
@@ -18465,7 +18431,6 @@ function Th(t, e) {
         b = N(z[o].until).startOf("day").valueOf(), z[o].until = b.valueOf();
         break;
     }
-  }
   return z;
 }
 function Bh(t, e, o) {
@@ -18745,7 +18710,7 @@ g.toObject = mh;
 g.toDate = hh;
 g.toISOString = ih;
 g.inspect = ah;
-typeof Symbol < "u" && Symbol.for != null && (g[Symbol.for("nodejs.util.inspect.custom")] = function() {
+typeof Symbol < "u" && Symbol.for != null && (g[/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")] = function() {
   return "Moment<" + this.format() + ">";
 });
 g.toJSON = gh;
@@ -19096,7 +19061,6 @@ t0("X", function(t, e, o) {
 t0("x", function(t, e, o) {
   o._d = new Date(U(t));
 });
-//! moment.js
 N.version = "2.30.1";
 xf(n0);
 N.fn = g;
@@ -19228,11 +19192,6 @@ const U6 = /* @__PURE__ */ H6(x6);
 var j6 = w2.exports, $z;
 function F6() {
   return $z || ($z = 1, (function(t) {
-    //! moment-timezone.js
-    //! version : 0.5.48
-    //! Copyright (c) JS Foundation and other contributors
-    //! license : MIT
-    //! github.com/moment/moment-timezone
     (function(e, o) {
       t.exports ? t.exports = o(U6) : o(e.moment);
     })(j6, function(e) {
