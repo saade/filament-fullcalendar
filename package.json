@@ -15,7 +15,7 @@
         "@fullcalendar/list": "^6.1.21",
         "@fullcalendar/moment": "^6.1.9",
         "@fullcalendar/moment-timezone": "^6.1.9",
-        "@fullcalendar/multimonth": "^6.1.9",
+        "@fullcalendar/multimonth": "^6.1.21",
         "@fullcalendar/resource": "^6.1.9",
         "@fullcalendar/resource-timegrid": "^6.1.9",
         "@fullcalendar/resource-timeline": "^6.1.9",
