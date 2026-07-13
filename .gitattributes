@@ -11,6 +11,17 @@
 /tests              export-ignore
 /.editorconfig      export-ignore
 /.php_cs.dist.php   export-ignore
+/.prettierrc        export-ignore
+/.claude            export-ignore
+/.cursor            export-ignore
+/.junie             export-ignore
+/CLAUDE.md          export-ignore
+/AGENTS.md          export-ignore
+/package.json       export-ignore
+/package-lock.json  export-ignore
+/pint.json          export-ignore
+/vite.config.js     export-ignore
+/resources/js       export-ignore
 /psalm.xml          export-ignore
 /psalm.xml.dist     export-ignore
 /testbench.yaml     export-ignore
