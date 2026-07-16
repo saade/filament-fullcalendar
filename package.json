@@ -20,7 +20,7 @@
         "@fullcalendar/resource-timegrid": "^6.1.9",
         "@fullcalendar/resource-timeline": "^6.1.9",
         "@fullcalendar/rrule": "^6.1.9",
-        "@fullcalendar/scrollgrid": "^6.1.9",
+        "@fullcalendar/scrollgrid": "^6.1.21",
         "@fullcalendar/timegrid": "^6.1.9",
         "@fullcalendar/timeline": "^6.1.9",
         "@shufo/prettier-plugin-blade": "^1.10.1",
