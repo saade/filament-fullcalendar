@@ -39,7 +39,7 @@
         "vite": "^7.1.2"
     },
     "dependencies": {
-        "@tailwindcss/cli": "^4.1.12",
+        "@tailwindcss/cli": "^4.3.2",
         "tailwindcss": "^4.1.12"
     }
 }
