@@ -19,7 +19,7 @@
         "@fullcalendar/resource": "^6.1.9",
         "@fullcalendar/resource-timegrid": "^6.1.9",
         "@fullcalendar/resource-timeline": "^6.1.9",
-        "@fullcalendar/rrule": "^6.1.9",
+        "@fullcalendar/rrule": "^7.0.0",
         "@fullcalendar/scrollgrid": "^6.1.21",
         "@fullcalendar/timegrid": "^6.1.21",
         "@fullcalendar/timeline": "^6.1.9",
