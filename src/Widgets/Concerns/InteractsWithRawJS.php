@@ -61,4 +61,72 @@ trait InteractsWithRawJS
             null
         JS;
     }
+
+    /**
+     * Triggered when the user mouses over an event. Similar to the native mouseenter.
+     *
+     * @see https://fullcalendar.io/docs/eventMouseEnter
+     *
+     * @return string
+     */
+    public function eventMouseEnter(): string
+    {
+        return <<<JS
+            null
+        JS;
+    }
+
+    /**
+     * Triggered when the user mouses out of an event. Similar to the native mouseleave.
+     *
+     * @see https://fullcalendar.io/docs/eventMouseLeave
+     *
+     * @return string
+     */
+    public function eventMouseLeave(): string
+    {
+        return <<<JS
+            null
+        JS;
+    }
+
+    /**
+     * The URL a json resource feed is fetched from. An empty string leaves the
+     * calendar without a resource source.
+     *
+     * @see https://fullcalendar.io/docs/resource-json-feed
+     *
+     * @return string
+     */
+    public function getResourceUrl(): string
+    {
+        return '';
+    }
+
+    /**
+     * The HTTP method used to fetch the resource feed.
+     *
+     * @see https://fullcalendar.io/docs/resource-json-feed
+     *
+     * @return string
+     */
+    public function getResourceMethod(): string
+    {
+        return 'GET';
+    }
+
+    /**
+     * Raw JavaScript holding the extra parameters sent along with the resource feed
+     * request. Either a plain object or a function returning one.
+     *
+     * @see https://fullcalendar.io/docs/resource-json-feed
+     *
+     * @return string
+     */
+    public function getResourceExtraParams(): string
+    {
+        return <<<JS
+            null
+        JS;
+    }
 }
