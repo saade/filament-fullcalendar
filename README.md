@@ -44,6 +44,8 @@
   - [Creating events on day selection](#creating-events-on-day-selection)
   - [Creating events with additional data](#creating-events-with-additional-data)
   - [Event tooltip on hover](#event-tooltip-on-hover)
+  - [Event Mouse Enter and Mouse Leave](#event-mouse-enter-and-mouse-leave)
+  - [Adding custom buttons](#adding-custom-buttons)
   - [Adding the widget to a Blade view](#adding-the-widget-to-a-blade-view)
   - [Share your tricks](#share-your-tricks)
 - [Changelog](#changelog)
@@ -501,6 +503,70 @@ public function eventDidMount(): string
 ```
 
 The JavaScript code returned by `eventDidMount()` will be added to [the FullCalendar's `eventDidMount` event render hook](https://fullcalendar.io/docs/event-render-hooks).
+
+## Event Mouse Enter and Mouse Leave
+
+You can add some custom behavior when the user hovers over the event via JavaScript on the `eventMouseEnter` and `eventMouseLeave` methods:
+
+```php
+public function eventMouseEnter(): string
+{
+    return <<<JS
+        function({ event, el, jsEvent, view }){
+            // Write your custom implementation here
+            // Will be triggered when the user hovers over the event
+        }
+    JS;
+}
+
+public function eventMouseLeave(): string
+{
+    return <<<JS
+        function({ event, el, jsEvent, view }){
+            // Write your custom implementation here
+            // Will be triggered when the user leaves the event
+        }
+    JS;
+}
+```
+
+The JavaScript code returned by `eventMouseEnter()` and `eventMouseLeave()` will be added to [the FullCalendar's `eventMouseEnter` and `eventMouseLeave` event hovering hook](https://fullcalendar.io/docs/event-clicking-hovering).
+
+
+## Adding custom buttons
+
+You can add [custom buttons](https://fullcalendar.io/docs/customButtons) to the calendar.
+
+```php
+public function customButtons(): array
+{
+    return [
+        'myCustomButton' => [
+            'text' => 'My Custom Button',
+            'click' => <<<JS
+                function() {
+                    alert('Hello, World!');
+                }
+            JS
+        ]
+    ];
+}
+```
+
+Then you can use the custom button in the `headerToolbar` configuration:
+
+```php
+public function config(): array
+{
+    return [
+        'headerToolbar' => [
+            'left' => 'prev,next today myCustomButton',
+            'center' => 'title',
+            'right' => 'dayGridMonth,timeGridWeek,timeGridDay'
+        ],
+    ];
+}
+```
 
 ## Adding the widget to a Blade view
 
