@@ -1,5 +1,8 @@
 @php
     $plugin = \Saade\FilamentFullCalendar\FilamentFullCalendarPlugin::get();
+
+    $customButtons = $this->customButtons();
+    $js = fn (string $expression): string => htmlspecialchars($expression, ENT_COMPAT);
 @endphp
 
 <x-filament-widgets::widget>
@@ -18,10 +21,27 @@
                 config: @js($this->getConfig()),
                 editable: @json($plugin->isEditable()),
                 selectable: @json($plugin->isSelectable()),
-                eventClassNames: {!! htmlspecialchars($this->eventClassNames(), ENT_COMPAT) !!},
-                eventContent: {!! htmlspecialchars($this->eventContent(), ENT_COMPAT) !!},
-                eventDidMount: {!! htmlspecialchars($this->eventDidMount(), ENT_COMPAT) !!},
-                eventWillUnmount: {!! htmlspecialchars($this->eventWillUnmount(), ENT_COMPAT) !!},
+                customButtons: {
+                    @foreach($customButtons as $customButtonKey => $customButton)
+                        @js($customButtonKey): Object.assign(
+                            @js(\Illuminate\Support\Arr::except($customButton, 'click')),
+                            @if(filled($this->getCustomButtonJsFunction($customButtonKey)))
+                                { click: {!! $js($this->getCustomButtonJsFunction($customButtonKey)) !!} },
+                            @else
+                                {},
+                            @endif
+                        ),
+                    @endforeach
+                },
+                eventClassNames: {!! $js($this->eventClassNames()) !!},
+                eventContent: {!! $js($this->eventContent()) !!},
+                eventDidMount: {!! $js($this->eventDidMount()) !!},
+                eventWillUnmount: {!! $js($this->eventWillUnmount()) !!},
+                eventMouseEnter: {!! $js($this->eventMouseEnter()) !!},eventContent:
+                eventMouseLeave: {!! $js($this->eventMouseLeave()) !!},
+                resourceUrl: @js($this->getResourceUrl()),
+                resourceMethod: @js($this->getResourceMethod()),
+                resourceExtraParams: {!! $js($this->getResourceExtraParams()) !!},
             })" class="filament-fullcalendar"></div>
     </x-filament::section>
 

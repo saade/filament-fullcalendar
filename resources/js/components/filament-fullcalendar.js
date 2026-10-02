@@ -9,10 +9,16 @@ export default function fullcalendar({
     config,
     editable,
     selectable,
+    customButtons,
     eventClassNames,
     eventContent,
     eventDidMount,
     eventWillUnmount,
+    eventMouseEnter,
+    eventMouseLeave,
+    resourceUrl,
+    resourceMethod,
+    resourceExtraParams,
 }) {
     return {
         /** @type Calendar */
@@ -28,10 +34,20 @@ export default function fullcalendar({
                 selectable,
                 ...config,
                 locales,
+                customButtons: { ...config?.customButtons, ...customButtons },
                 eventClassNames,
                 eventContent,
                 eventDidMount,
                 eventWillUnmount,
+                ...(eventMouseEnter !== undefined && { eventMouseEnter }),
+                ...(eventMouseLeave !== undefined && { eventMouseLeave }),
+                ...(resourceUrl && {
+                    resources: {
+                        url: resourceUrl,
+                        method: resourceMethod ?? 'GET',
+                        extraParams: resourceExtraParams,
+                    },
+                }),
                 events: (info, successCallback, failureCallback) => {
                     this.$wire
                         .fetchEvents({
@@ -129,9 +145,10 @@ export default function fullcalendar({
 
             this.calendar.render()
 
-            window.addEventListener('filament-fullcalendar--refresh', () =>
-                this.calendar.refetchEvents(),
-            )
+            window.addEventListener('filament-fullcalendar--refresh', () => {
+                this.calendar.refetchResources?.()
+                this.calendar.refetchEvents()
+            })
 
             window.addEventListener('filament-fullcalendar--prev', () =>
                 this.calendar.prev(),
