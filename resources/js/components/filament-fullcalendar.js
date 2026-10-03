@@ -24,6 +24,11 @@ export default function fullcalendar({
 
         init() {
             this.calendar = new Calendar(this.$el, {
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek,dayGridDay',
+                },
                 plugins: plugins.map((plugin) => availablePlugins[plugin]),
                 locale,
                 ...(schedulerLicenseKey && { schedulerLicenseKey }),

@@ -316,7 +316,7 @@ p = re.slice, m = { __e: function(e, t, n, r) {
 	this.__v && (this.__e = !0, e && this.__h.push(e), _e(this));
 }, pe.prototype.render = S, v = [], y = typeof Promise == "function" ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, ve.__r = 0, te = 0;
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/preact/hooks/dist/hooks.module.js
+//#region node_modules/preact/hooks/dist/hooks.module.js
 var je, Me, Ne, Pe = [], Fe = [], Ie = m.__b, Le = m.__r, Re = m.diffed, ze = m.__c, Be = m.unmount;
 function Ve() {
 	for (var e; e = Pe.shift();) if (e.__P && e.__H) try {
@@ -378,7 +378,7 @@ function Ge(e) {
 	e.__c = e.__(), je = t;
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/preact/compat/dist/compat.module.js
+//#region node_modules/preact/compat/dist/compat.module.js
 function Ke(e, t) {
 	for (var n in t) e[n] = t[n];
 	return e;
@@ -584,7 +584,7 @@ m.__r = function(e) {
 	_t && _t(e), e.__c;
 };
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/core/internal-common.js
+//#region node_modules/@fullcalendar/core/internal-common.js
 var vt = [], yt = /* @__PURE__ */ new Map();
 function bt(e) {
 	vt.push(e), yt.forEach((t) => {
@@ -5131,7 +5131,7 @@ function Tc(e, t) {
 	return e.eventRange.range.end > t.eventRange.range.end ? e : t;
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/core/index.js
+//#region node_modules/@fullcalendar/core/index.js
 var Ec = [], Dc = {
 	code: "en",
 	week: {
@@ -6778,7 +6778,7 @@ var nu = class extends Eo {
 	noEventsText: "Ingen arrangementer at vise"
 };
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/core/locales/de-at.js
+//#region node_modules/@fullcalendar/core/locales/de-at.js
 function yu(e) {
 	return e === "Tag" || e === "Monat" ? "r" : e === "Jahr" ? "s" : "";
 }
@@ -6828,12 +6828,12 @@ var bu = {
 	eventHint: "Ereignis"
 };
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/core/locales/de.js
+//#region node_modules/@fullcalendar/core/locales/de.js
 function xu(e) {
 	return e === "Tag" || e === "Monat" ? "r" : e === "Jahr" ? "s" : "";
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/core/locales-all.js
+//#region node_modules/@fullcalendar/core/locales-all.js
 var Su = [
 	ru,
 	iu,
@@ -8269,7 +8269,7 @@ var Su = [
 	}
 ];
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/interaction/index.js
+//#region node_modules/@fullcalendar/interaction/index.js
 gs.touchMouseIgnoreWait = 500;
 var Cu = 0, wu = 0, Tu = !1, Eu = class {
 	constructor(e) {
@@ -9923,7 +9923,7 @@ function zd(e) {
 }
 bt(":root{--fc-daygrid-event-dot-width:8px}.fc-daygrid-day-events:after,.fc-daygrid-day-events:before,.fc-daygrid-day-frame:after,.fc-daygrid-day-frame:before,.fc-daygrid-event-harness:after,.fc-daygrid-event-harness:before{clear:both;content:\"\";display:table}.fc .fc-daygrid-body{position:relative;z-index:1}.fc .fc-daygrid-day.fc-day-today{background-color:var(--fc-today-bg-color)}.fc .fc-daygrid-day-frame{min-height:100%;position:relative}.fc .fc-daygrid-day-top{display:flex;flex-direction:row-reverse}.fc .fc-day-other .fc-daygrid-day-top{opacity:.3}.fc .fc-daygrid-day-number{padding:4px;position:relative;z-index:4}.fc .fc-daygrid-month-start{font-size:1.1em;font-weight:700}.fc .fc-daygrid-day-events{margin-top:1px}.fc .fc-daygrid-body-balanced .fc-daygrid-day-events{left:0;position:absolute;right:0}.fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events{min-height:2em;position:relative}.fc .fc-daygrid-body-natural .fc-daygrid-day-events{margin-bottom:1em}.fc .fc-daygrid-event-harness{position:relative}.fc .fc-daygrid-event-harness-abs{left:0;position:absolute;right:0;top:0}.fc .fc-daygrid-bg-harness{bottom:0;position:absolute;top:0}.fc .fc-daygrid-day-bg .fc-non-business{z-index:1}.fc .fc-daygrid-day-bg .fc-bg-event{z-index:2}.fc .fc-daygrid-day-bg .fc-highlight{z-index:3}.fc .fc-daygrid-event{margin-top:1px;z-index:6}.fc .fc-daygrid-event.fc-event-mirror{z-index:7}.fc .fc-daygrid-day-bottom{font-size:.85em;margin:0 2px}.fc .fc-daygrid-day-bottom:after,.fc .fc-daygrid-day-bottom:before{clear:both;content:\"\";display:table}.fc .fc-daygrid-more-link{border-radius:3px;cursor:pointer;line-height:1;margin-top:1px;max-width:100%;overflow:hidden;padding:2px;position:relative;white-space:nowrap;z-index:4}.fc .fc-daygrid-more-link:hover{background-color:rgba(0,0,0,.1)}.fc .fc-daygrid-week-number{background-color:var(--fc-neutral-bg-color);color:var(--fc-neutral-text-color);min-width:1.5em;padding:2px;position:absolute;text-align:center;top:0;z-index:5}.fc .fc-more-popover .fc-popover-body{min-width:220px;padding:10px}.fc-direction-ltr .fc-daygrid-event.fc-event-start,.fc-direction-rtl .fc-daygrid-event.fc-event-end{margin-left:2px}.fc-direction-ltr .fc-daygrid-event.fc-event-end,.fc-direction-rtl .fc-daygrid-event.fc-event-start{margin-right:2px}.fc-direction-ltr .fc-daygrid-more-link{float:left}.fc-direction-ltr .fc-daygrid-week-number{border-radius:0 0 3px 0;left:0}.fc-direction-rtl .fc-daygrid-more-link{float:right}.fc-direction-rtl .fc-daygrid-week-number{border-radius:0 0 0 3px;right:0}.fc-liquid-hack .fc-daygrid-day-frame{position:static}.fc-daygrid-event{border-radius:3px;font-size:var(--fc-small-font-size);position:relative;white-space:nowrap}.fc-daygrid-block-event .fc-event-time{font-weight:700}.fc-daygrid-block-event .fc-event-time,.fc-daygrid-block-event .fc-event-title{padding:1px}.fc-daygrid-dot-event{align-items:center;display:flex;padding:2px 0}.fc-daygrid-dot-event .fc-event-title{flex-grow:1;flex-shrink:1;font-weight:700;min-width:0;overflow:hidden}.fc-daygrid-dot-event.fc-event-mirror,.fc-daygrid-dot-event:hover{background:rgba(0,0,0,.1)}.fc-daygrid-dot-event.fc-event-selected:before{bottom:-10px;top:-10px}.fc-daygrid-event-dot{border:calc(var(--fc-daygrid-event-dot-width)/2) solid var(--fc-event-border-color);border-radius:calc(var(--fc-daygrid-event-dot-width)/2);box-sizing:content-box;height:0;margin:0 4px;width:0}.fc-direction-ltr .fc-daygrid-event .fc-event-time{margin-right:3px}.fc-direction-rtl .fc-daygrid-event .fc-event-time{margin-left:3px}");
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/daygrid/index.js
+//#region node_modules/@fullcalendar/daygrid/index.js
 var Bd = P({
 	name: "@fullcalendar/daygrid",
 	initialView: "dayGridMonth",
@@ -10911,7 +10911,7 @@ function Nf(e, t) {
 }
 bt(".fc-v-event{background-color:var(--fc-event-bg-color);border:1px solid var(--fc-event-border-color);display:block}.fc-v-event .fc-event-main{color:var(--fc-event-text-color);height:100%}.fc-v-event .fc-event-main-frame{display:flex;flex-direction:column;height:100%}.fc-v-event .fc-event-time{flex-grow:0;flex-shrink:0;max-height:100%;overflow:hidden}.fc-v-event .fc-event-title-container{flex-grow:1;flex-shrink:1;min-height:0}.fc-v-event .fc-event-title{bottom:0;max-height:100%;overflow:hidden;top:0}.fc-v-event:not(.fc-event-start){border-top-left-radius:0;border-top-right-radius:0;border-top-width:0}.fc-v-event:not(.fc-event-end){border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-width:0}.fc-v-event.fc-event-selected:before{left:-10px;right:-10px}.fc-v-event .fc-event-resizer-start{cursor:n-resize}.fc-v-event .fc-event-resizer-end{cursor:s-resize}.fc-v-event:not(.fc-event-selected) .fc-event-resizer{height:var(--fc-event-resizer-thickness);left:0;right:0}.fc-v-event:not(.fc-event-selected) .fc-event-resizer-start{top:calc(var(--fc-event-resizer-thickness)/-2)}.fc-v-event:not(.fc-event-selected) .fc-event-resizer-end{bottom:calc(var(--fc-event-resizer-thickness)/-2)}.fc-v-event.fc-event-selected .fc-event-resizer{left:50%;margin-left:calc(var(--fc-event-resizer-dot-total-width)/-2)}.fc-v-event.fc-event-selected .fc-event-resizer-start{top:calc(var(--fc-event-resizer-dot-total-width)/-2)}.fc-v-event.fc-event-selected .fc-event-resizer-end{bottom:calc(var(--fc-event-resizer-dot-total-width)/-2)}.fc .fc-timegrid .fc-daygrid-body{z-index:2}.fc .fc-timegrid-divider{padding:0 0 2px}.fc .fc-timegrid-body{min-height:100%;position:relative;z-index:1}.fc .fc-timegrid-axis-chunk{position:relative}.fc .fc-timegrid-axis-chunk>table,.fc .fc-timegrid-slots{position:relative;z-index:1}.fc .fc-timegrid-slot{border-bottom:0;height:1.5em}.fc .fc-timegrid-slot:empty:before{content:\"\\00a0\"}.fc .fc-timegrid-slot-minor{border-top-style:dotted}.fc .fc-timegrid-slot-label-cushion{display:inline-block;white-space:nowrap}.fc .fc-timegrid-slot-label{vertical-align:middle}.fc .fc-timegrid-axis-cushion,.fc .fc-timegrid-slot-label-cushion{padding:0 4px}.fc .fc-timegrid-axis-frame-liquid{height:100%}.fc .fc-timegrid-axis-frame{align-items:center;display:flex;justify-content:flex-end;overflow:hidden}.fc .fc-timegrid-axis-cushion{flex-shrink:0;max-width:60px}.fc-direction-ltr .fc-timegrid-slot-label-frame{text-align:right}.fc-direction-rtl .fc-timegrid-slot-label-frame{text-align:left}.fc-liquid-hack .fc-timegrid-axis-frame-liquid{bottom:0;height:auto;left:0;position:absolute;right:0;top:0}.fc .fc-timegrid-col.fc-day-today{background-color:var(--fc-today-bg-color)}.fc .fc-timegrid-col-frame{min-height:100%;position:relative}.fc-media-screen.fc-liquid-hack .fc-timegrid-col-frame{bottom:0;height:auto;left:0;position:absolute;right:0;top:0}.fc-media-screen .fc-timegrid-cols{bottom:0;left:0;position:absolute;right:0;top:0}.fc-media-screen .fc-timegrid-cols>table{height:100%}.fc-media-screen .fc-timegrid-col-bg,.fc-media-screen .fc-timegrid-col-events,.fc-media-screen .fc-timegrid-now-indicator-container{left:0;position:absolute;right:0;top:0}.fc .fc-timegrid-col-bg{z-index:2}.fc .fc-timegrid-col-bg .fc-non-business{z-index:1}.fc .fc-timegrid-col-bg .fc-bg-event{z-index:2}.fc .fc-timegrid-col-bg .fc-highlight{z-index:3}.fc .fc-timegrid-bg-harness{left:0;position:absolute;right:0}.fc .fc-timegrid-col-events{z-index:3}.fc .fc-timegrid-now-indicator-container{bottom:0;overflow:hidden}.fc-direction-ltr .fc-timegrid-col-events{margin:0 2.5% 0 2px}.fc-direction-rtl .fc-timegrid-col-events{margin:0 2px 0 2.5%}.fc-timegrid-event-harness{position:absolute}.fc-timegrid-event-harness>.fc-timegrid-event{bottom:0;left:0;position:absolute;right:0;top:0}.fc-timegrid-event-harness-inset .fc-timegrid-event,.fc-timegrid-event.fc-event-mirror,.fc-timegrid-more-link{box-shadow:0 0 0 1px var(--fc-page-bg-color)}.fc-timegrid-event,.fc-timegrid-more-link{border-radius:3px;font-size:var(--fc-small-font-size)}.fc-timegrid-event{margin-bottom:1px}.fc-timegrid-event .fc-event-main{padding:1px 1px 0}.fc-timegrid-event .fc-event-time{font-size:var(--fc-small-font-size);margin-bottom:1px;white-space:nowrap}.fc-timegrid-event-short .fc-event-main-frame{flex-direction:row;overflow:hidden}.fc-timegrid-event-short .fc-event-time:after{content:\"\\00a0-\\00a0\"}.fc-timegrid-event-short .fc-event-title{font-size:var(--fc-small-font-size)}.fc-timegrid-more-link{background:var(--fc-more-link-bg-color);color:var(--fc-more-link-text-color);cursor:pointer;margin-bottom:1px;position:absolute;z-index:9999}.fc-timegrid-more-link-inner{padding:3px 2px;top:0}.fc-direction-ltr .fc-timegrid-more-link{right:0}.fc-direction-rtl .fc-timegrid-more-link{left:0}.fc .fc-timegrid-now-indicator-arrow,.fc .fc-timegrid-now-indicator-line{pointer-events:none}.fc .fc-timegrid-now-indicator-line{border-color:var(--fc-now-indicator-color);border-style:solid;border-width:1px 0 0;left:0;position:absolute;right:0;z-index:4}.fc .fc-timegrid-now-indicator-arrow{border-color:var(--fc-now-indicator-color);border-style:solid;margin-top:-5px;position:absolute;z-index:4}.fc-direction-ltr .fc-timegrid-now-indicator-arrow{border-bottom-color:transparent;border-top-color:transparent;border-width:5px 0 5px 6px;left:0}.fc-direction-rtl .fc-timegrid-now-indicator-arrow{border-bottom-color:transparent;border-top-color:transparent;border-width:5px 6px 5px 0;right:0}");
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/timegrid/index.js
+//#region node_modules/@fullcalendar/timegrid/index.js
 var Pf = P({
 	name: "@fullcalendar/timegrid",
 	initialView: "timeGridWeek",
@@ -11170,7 +11170,7 @@ function Gf(e) {
 }
 bt(":root{--fc-list-event-dot-width:10px;--fc-list-event-hover-bg-color:#f5f5f5}.fc-theme-standard .fc-list{border:1px solid var(--fc-border-color)}.fc .fc-list-empty{align-items:center;background-color:var(--fc-neutral-bg-color);display:flex;height:100%;justify-content:center}.fc .fc-list-empty-cushion{margin:5em 0}.fc .fc-list-table{border-style:hidden;width:100%}.fc .fc-list-table tr>*{border-left:0;border-right:0}.fc .fc-list-sticky .fc-list-day>*{background:var(--fc-page-bg-color);position:sticky;top:0}.fc .fc-list-table thead{left:-10000px;position:absolute}.fc .fc-list-table tbody>tr:first-child th{border-top:0}.fc .fc-list-table th{padding:0}.fc .fc-list-day-cushion,.fc .fc-list-table td{padding:8px 14px}.fc .fc-list-day-cushion:after{clear:both;content:\"\";display:table}.fc-theme-standard .fc-list-day-cushion{background-color:var(--fc-neutral-bg-color)}.fc-direction-ltr .fc-list-day-text,.fc-direction-rtl .fc-list-day-side-text{float:left}.fc-direction-ltr .fc-list-day-side-text,.fc-direction-rtl .fc-list-day-text{float:right}.fc-direction-ltr .fc-list-table .fc-list-event-graphic{padding-right:0}.fc-direction-rtl .fc-list-table .fc-list-event-graphic{padding-left:0}.fc .fc-list-event.fc-event-forced-url{cursor:pointer}.fc .fc-list-event:hover td{background-color:var(--fc-list-event-hover-bg-color)}.fc .fc-list-event-graphic,.fc .fc-list-event-time{white-space:nowrap;width:1px}.fc .fc-list-event-dot{border:calc(var(--fc-list-event-dot-width)/2) solid var(--fc-event-border-color);border-radius:calc(var(--fc-list-event-dot-width)/2);box-sizing:content-box;display:inline-block;height:0;width:0}.fc .fc-list-event-title a{color:inherit;text-decoration:none}.fc .fc-list-event.fc-event-forced-url:hover a{text-decoration:underline}");
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/list/index.js
+//#region node_modules/@fullcalendar/list/index.js
 var Kf = {
 	listDayFormat: qf,
 	listDaySideFormat: qf,
@@ -11442,7 +11442,7 @@ var dp = P({
 	viewContainerAppends: [cp]
 });
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/scrollgrid/internal.js
+//#region node_modules/@fullcalendar/scrollgrid/internal.js
 function fp(e) {
 	let t = e.getBoundingClientRect(), n = Yo(e);
 	return {
@@ -11893,7 +11893,7 @@ function Ip(e, t) {
 	return new yp(e, t);
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/scrollgrid/index.js
+//#region node_modules/@fullcalendar/scrollgrid/index.js
 var Lp = P({
 	name: "@fullcalendar/scrollgrid",
 	premiumReleaseDate: "2026-06-18",
@@ -12804,7 +12804,7 @@ function Em(e, t) {
 }
 bt(".fc .fc-timeline-body{min-height:100%;position:relative;z-index:1}.fc .fc-timeline-slots{bottom:0;position:absolute;top:0;z-index:1}.fc .fc-timeline-slots>table{height:100%}.fc .fc-timeline-slot-minor{border-style:dotted}.fc .fc-timeline-slot-frame{align-items:center;display:flex;justify-content:center}.fc .fc-timeline-header-row-chrono .fc-timeline-slot-frame{justify-content:flex-start}.fc .fc-timeline-header-row:last-child .fc-timeline-slot-frame{overflow:hidden}.fc .fc-timeline-slot-cushion{padding:4px 5px;white-space:nowrap}.fc-direction-ltr .fc-timeline-slot{border-right:0!important}.fc-direction-rtl .fc-timeline-slot{border-left:0!important}.fc .fc-timeline-now-indicator-container{bottom:0;left:0;position:absolute;right:0;top:0;width:0;z-index:4}.fc .fc-timeline-now-indicator-arrow,.fc .fc-timeline-now-indicator-line{border-color:var(--fc-now-indicator-color);border-style:solid;pointer-events:none;position:absolute;top:0}.fc .fc-timeline-now-indicator-arrow{border-left-color:transparent;border-right-color:transparent;border-width:6px 5px 0;margin:0 -6px}.fc .fc-timeline-now-indicator-line{border-width:0 0 0 1px;bottom:0;margin:0 -1px}.fc .fc-timeline-events{position:relative;width:0;z-index:3}.fc .fc-timeline-event-harness,.fc .fc-timeline-more-link{position:absolute;top:0}.fc-timeline-event{z-index:1}.fc-timeline-event.fc-event-mirror{z-index:2}.fc-timeline-event{align-items:center;border-radius:0;display:flex;font-size:var(--fc-small-font-size);margin-bottom:1px;padding:2px 1px;position:relative}.fc-timeline-event .fc-event-main{flex-grow:1;flex-shrink:1;min-width:0}.fc-timeline-event .fc-event-time{font-weight:700}.fc-timeline-event .fc-event-time,.fc-timeline-event .fc-event-title{padding:0 2px;white-space:nowrap}.fc-direction-ltr .fc-timeline-event.fc-event-end,.fc-direction-ltr .fc-timeline-more-link{margin-right:1px}.fc-direction-rtl .fc-timeline-event.fc-event-end,.fc-direction-rtl .fc-timeline-more-link{margin-left:1px}.fc-timeline-overlap-disabled .fc-timeline-event{margin-bottom:0;padding-bottom:5px;padding-top:5px}.fc-timeline-event:not(.fc-event-end):after,.fc-timeline-event:not(.fc-event-start):before{border-color:transparent #000;border-style:solid;border-width:5px;content:\"\";flex-grow:0;flex-shrink:0;height:0;margin:0 1px;opacity:.5;width:0}.fc-direction-ltr .fc-timeline-event:not(.fc-event-start):before,.fc-direction-rtl .fc-timeline-event:not(.fc-event-end):after{border-left:0}.fc-direction-ltr .fc-timeline-event:not(.fc-event-end):after,.fc-direction-rtl .fc-timeline-event:not(.fc-event-start):before{border-right:0}.fc-timeline-more-link{background:var(--fc-more-link-bg-color);color:var(--fc-more-link-text-color);cursor:pointer;font-size:var(--fc-small-font-size);padding:1px}.fc-timeline-more-link-inner{display:inline-block;left:0;padding:2px;right:0}.fc .fc-timeline-bg{bottom:0;left:0;position:absolute;right:0;top:0;width:0;z-index:2}.fc .fc-timeline-bg .fc-non-business{z-index:1}.fc .fc-timeline-bg .fc-bg-event{z-index:2}.fc .fc-timeline-bg .fc-highlight{z-index:3}.fc .fc-timeline-bg-harness{bottom:0;position:absolute;top:0}");
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/timeline/index.js
+//#region node_modules/@fullcalendar/timeline/index.js
 var Dm = P({
 	name: "@fullcalendar/timeline",
 	premiumReleaseDate: "2026-06-18",
@@ -12835,7 +12835,7 @@ var Dm = P({
 	}
 });
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/adaptive/index.js
+//#region node_modules/@fullcalendar/adaptive/index.js
 gs.COLLAPSIBLE_WIDTH_THRESHOLD = 1200;
 var Om = [], km = [];
 function Am(e) {
@@ -13421,7 +13421,7 @@ function _h(e, t) {
 	return e.spec === t.spec && e.value === t.value;
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/resource/index.js
+//#region node_modules/@fullcalendar/resource/index.js
 function vh(e, t, n) {
 	let r = t.dateSpan.resourceId, i = n.dateSpan.resourceId;
 	r && i && r !== i && (e.resourceMutation = {
@@ -13971,7 +13971,7 @@ function yg(e, t, n, r, i) {
 	return r ? new ih(a, n, i) : new rh(a, n, i);
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/resource-daygrid/index.js
+//#region node_modules/@fullcalendar/resource-daygrid/index.js
 var bg = P({
 	name: "@fullcalendar/resource-daygrid",
 	premiumReleaseDate: "2026-06-18",
@@ -14003,7 +14003,7 @@ var bg = P({
 	}
 });
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/resource-timeline/internal.js
+//#region node_modules/@fullcalendar/resource-timeline/internal.js
 function xg({ depth: e, hasChildren: t, isExpanded: n, onExpanderClick: r }) {
 	let i = [];
 	for (let t = 0; t < e; t += 1) i.push(b("span", { className: "fc-icon" }));
@@ -14849,7 +14849,7 @@ function Gg(e) {
 }
 bt(".fc .fc-resource-timeline-divider{cursor:col-resize;width:3px}.fc .fc-resource-group{font-weight:inherit;text-align:inherit}.fc .fc-resource-timeline .fc-resource-group:not([rowspan]){background:var(--fc-neutral-bg-color)}.fc .fc-timeline-lane-frame{position:relative}.fc .fc-timeline-overlap-enabled .fc-timeline-lane-frame .fc-timeline-events{box-sizing:content-box;padding-bottom:10px}.fc-timeline-body-expandrows td.fc-timeline-lane{position:relative}.fc-timeline-body-expandrows .fc-timeline-lane-frame{position:static}.fc-datagrid-cell-frame-liquid{height:100%}.fc-liquid-hack .fc-datagrid-cell-frame-liquid{bottom:0;height:auto;left:0;position:absolute;right:0;top:0}.fc .fc-datagrid-header .fc-datagrid-cell-frame{align-items:center;display:flex;justify-content:flex-start;position:relative}.fc .fc-datagrid-cell-resizer{bottom:0;cursor:col-resize;position:absolute;top:0;width:5px;z-index:1}.fc .fc-datagrid-cell-cushion{overflow:hidden;padding:8px;white-space:nowrap}.fc .fc-datagrid-expander{cursor:pointer;opacity:.65}.fc .fc-datagrid-expander .fc-icon{display:inline-block;width:1em}.fc .fc-datagrid-expander-placeholder{cursor:auto}.fc .fc-resource-timeline-flat .fc-datagrid-expander-placeholder{display:none}.fc-direction-ltr .fc-datagrid-cell-resizer{right:-3px}.fc-direction-rtl .fc-datagrid-cell-resizer{left:-3px}.fc-direction-ltr .fc-datagrid-expander{margin-right:3px}.fc-direction-rtl .fc-datagrid-expander{margin-left:3px}");
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/resource-timeline/index.js
+//#region node_modules/@fullcalendar/resource-timeline/index.js
 var Kg = P({
 	name: "@fullcalendar/resource-timeline",
 	premiumReleaseDate: "2026-06-18",
@@ -14968,7 +14968,7 @@ function Xg(e, t, n, r, i) {
 	return r ? new ih(a, n, i) : new rh(a, n, i);
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/resource-timegrid/index.js
+//#region node_modules/@fullcalendar/resource-timegrid/index.js
 var Zg = P({
 	name: "@fullcalendar/resource-timegrid",
 	premiumReleaseDate: "2026-06-18",
@@ -15187,7 +15187,7 @@ function L(e, t, n) {
 	return e.concat(a || Array.prototype.slice.call(t));
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/callbackiterresult.js
+//#region node_modules/rrule/dist/esm/callbackiterresult.js
 var R_ = function(e) {
 	I_(t, e);
 	function t(t, n, r) {
@@ -15610,7 +15610,7 @@ function G_(e, t) {
 	}
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/types.js
+//#region node_modules/rrule/dist/esm/types.js
 var R;
 (function(e) {
 	e[e.YEARLY = 0] = "YEARLY", e[e.MONTHLY = 1] = "MONTHLY", e[e.WEEKLY = 2] = "WEEKLY", e[e.DAILY = 3] = "DAILY", e[e.HOURLY = 4] = "HOURLY", e[e.MINUTELY = 5] = "MINUTELY", e[e.SECONDLY = 6] = "SECONDLY";
@@ -15619,7 +15619,7 @@ function K_(e) {
 	return e < R.HOURLY;
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/nlp/index.js
+//#region node_modules/rrule/dist/esm/nlp/index.js
 var q_ = function(e, t) {
 	return t === void 0 && (t = z_), new z(G_(e, t) || void 0);
 }, J_ = [
@@ -15717,7 +15717,7 @@ var Y_ = function(e, t, n, r) {
 	}, t;
 }(Z_);
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/parseoptions.js
+//#region node_modules/rrule/dist/esm/parseoptions.js
 function $_(e) {
 	for (var t = [], n = Object.keys(e), r = 0, i = n; r < i.length; r++) {
 		var a = i[r];
@@ -15788,7 +15788,7 @@ function tv(e) {
 	}), n;
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/parsestring.js
+//#region node_modules/rrule/dist/esm/parsestring.js
 function nv(e) {
 	var t = e.split("\n").map(iv).filter(function(e) {
 		return e !== null;
@@ -15872,7 +15872,7 @@ function cv(e) {
 	});
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/datewithzone.js
+//#region node_modules/rrule/dist/esm/datewithzone.js
 var lv = function() {
 	function e(e, t) {
 		if (isNaN(e.getTime())) throw RangeError("Invalid date passed to DateWithZone");
@@ -15894,7 +15894,7 @@ var lv = function() {
 	}, e;
 }();
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/optionstostring.js
+//#region node_modules/rrule/dist/esm/optionstostring.js
 function uv(e) {
 	for (var t = [], n = "", r = Object.keys(e), i = Object.keys(Wv), a = 0; a < r.length; a++) if (r[a] !== "tzid" && I(i, r[a])) {
 		var o = r[a].toUpperCase(), s = e[r[a]], c = "";
@@ -15936,7 +15936,7 @@ function dv(e, t) {
 	return e ? "DTSTART" + new lv(new Date(e), t).toString() : "";
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/cache.js
+//#region node_modules/rrule/dist/esm/cache.js
 function fv(e, t) {
 	return Array.isArray(e) ? !Array.isArray(t) || e.length !== t.length ? !1 : e.every(function(e, n) {
 		return e.getTime() === t[n].getTime();
@@ -16003,7 +16003,7 @@ var pv = function() {
 	return e;
 })();
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/iterinfo/yearinfo.js
+//#region node_modules/rrule/dist/esm/iterinfo/yearinfo.js
 function jv(e, t) {
 	var n = f_(e, 1, 1), r = __(e) ? 366 : 365, i = __(e + 1) ? 366 : 365, a = x_(n), o = w_(n), s = L_(L_({
 		yearlen: r,
@@ -16055,7 +16055,7 @@ function Mv(e) {
 	};
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/iterinfo/monthinfo.js
+//#region node_modules/rrule/dist/esm/iterinfo/monthinfo.js
 function Nv(e, t, n, r, i, a) {
 	var o = {
 		lastyear: e,
@@ -16074,14 +16074,14 @@ function Nv(e, t, n, r, i, a) {
 	return o;
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/iterinfo/easter.js
+//#region node_modules/rrule/dist/esm/iterinfo/easter.js
 function Pv(e, t) {
 	t === void 0 && (t = 0);
 	var n = e % 19, r = Math.floor(e / 100), i = e % 100, a = Math.floor(r / 4), o = r % 4, s = Math.floor((r + 8) / 25), c = Math.floor((r - s + 1) / 3), l = Math.floor(19 * n + r - a - c + 15) % 30, u = Math.floor(i / 4), d = i % 4, f = Math.floor(32 + 2 * o + 2 * u - l - d) % 7, p = Math.floor((n + 11 * l + 22 * f) / 451), m = Math.floor((l + f - 7 * p + 114) / 31), h = (l + f - 7 * p + 114) % 31 + 1, g = Date.UTC(e, m - 1, h + t);
 	return [Math.ceil((g - Date.UTC(e, 0, 1)) / (1e3 * 60 * 60 * 24))];
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/iterinfo/index.js
+//#region node_modules/rrule/dist/esm/iterinfo/index.js
 var Fv = function() {
 	function e(e) {
 		this.options = e;
@@ -16221,7 +16221,7 @@ var Fv = function() {
 	}, e;
 }();
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/iter/poslist.js
+//#region node_modules/rrule/dist/esm/iter/poslist.js
 function Iv(e, t, n, r, i, a) {
 	for (var o = [], s = 0; s < e.length; s++) {
 		var c = void 0, l = void 0, u = e[s];
@@ -16238,7 +16238,7 @@ function Iv(e, t, n, r, i, a) {
 	return k_(o), o;
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/iter/index.js
+//#region node_modules/rrule/dist/esm/iter/index.js
 function Lv(e, t) {
 	var n = t.dtstart, r = t.freq, i = t.interval, a = t.until, o = t.bysetpos, s = t.count;
 	if (s === 0 || i === 0) return Bv(e);
@@ -16291,7 +16291,7 @@ function Hv(e, t, n) {
 	return K_(r) ? tv(n) : r >= z.HOURLY && d_(i) && !I(i, t.hour) || r >= z.MINUTELY && d_(a) && !I(a, t.minute) || r >= z.SECONDLY && d_(o) && !I(o, t.second) ? [] : e.gettimeset(r)(t.hour, t.minute, t.second, t.millisecond);
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/rrule.js
+//#region node_modules/rrule/dist/esm/rrule.js
 var Uv = {
 	MO: new $g(0),
 	TU: new $g(1),
@@ -16387,7 +16387,7 @@ var Uv = {
 	], e.YEARLY = R.YEARLY, e.MONTHLY = R.MONTHLY, e.WEEKLY = R.WEEKLY, e.DAILY = R.DAILY, e.HOURLY = R.HOURLY, e.MINUTELY = R.MINUTELY, e.SECONDLY = R.SECONDLY, e.MO = Uv.MO, e.TU = Uv.TU, e.WE = Uv.WE, e.TH = Uv.TH, e.FR = Uv.FR, e.SA = Uv.SA, e.SU = Uv.SU, e.parseString = nv, e.optionsToString = uv, e;
 }();
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/iterset.js
+//#region node_modules/rrule/dist/esm/iterset.js
 function Kv(e, t, n, r, i, a) {
 	var o = {}, s = e.accept;
 	function c(e, t) {
@@ -16423,7 +16423,7 @@ function Kv(e, t, n, r, i, a) {
 	}
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/rrulestr.js
+//#region node_modules/rrule/dist/esm/rrulestr.js
 var qv = {
 	dtstart: null,
 	cache: !1,
@@ -16539,7 +16539,7 @@ function ry(e, t) {
 	});
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/rrule/dist/esm/rruleset.js
+//#region node_modules/rrule/dist/esm/rruleset.js
 function iy(e) {
 	var t = this;
 	return function(n) {
@@ -16624,7 +16624,7 @@ function cy(e, t, n) {
 	}).join(",")}`;
 }
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/rrule/index.js
+//#region node_modules/@fullcalendar/rrule/index.js
 var ly = {
 	parse(e, t) {
 		if (e.rrule != null) {
@@ -18582,7 +18582,7 @@ var sw, cw, lw, uw, dw, fw, pw, mw, hw, gw, _w, vw, yw, bw, xw, Sw, Cw, ww, Tw, 
 	};
 }));
 //#endregion
-//#region ../../../../../../../Users/saade/Filament/filament-fullcalendar/node_modules/@fullcalendar/moment/index.js
+//#region node_modules/@fullcalendar/moment/index.js
 fE();
 function pE(e, t, n, r) {
 	let i;
@@ -18895,6 +18895,11 @@ function kE({ locale: e, plugins: t, schedulerLicenseKey: n, timeZone: r, config
 		pendingDateSelection: null,
 		init() {
 			this.calendar = new nu(this.$el, {
+				headerToolbar: {
+					left: "prev,next today",
+					center: "title",
+					right: "dayGridMonth,dayGridWeek,dayGridDay"
+				},
 				plugins: t.map((e) => AE[e]),
 				locale: e,
 				...n && { schedulerLicenseKey: n },
