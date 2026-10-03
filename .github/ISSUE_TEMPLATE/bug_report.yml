@@ -1,0 +1,45 @@
+name: Bug report
+description: Report a reproducible bug in the package
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questions about how to use the package or how to configure FullCalendar belong in [Discussions](https://github.com/saade/filament-fullcalendar/discussions/new?category=q-a).
+  - type: input
+    id: package-version
+    attributes:
+      label: Package version
+      description: Run `composer show saade/filament-fullcalendar`.
+      placeholder: v4.0.0
+    validations:
+      required: true
+  - type: input
+    id: filament-version
+    attributes:
+      label: Filament version
+      placeholder: v5.9.0
+    validations:
+      required: true
+  - type: input
+    id: laravel-version
+    attributes:
+      label: Laravel version
+      placeholder: v12.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead. Include any error from the browser console or the Laravel log.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: How to reproduce
+      description: The widget class, or a link to a repository, that shows the problem.
+      render: php
+    validations:
+      required: true
