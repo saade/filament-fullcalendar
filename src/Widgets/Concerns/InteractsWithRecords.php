@@ -19,18 +19,13 @@ trait InteractsWithRecords
     protected ?string $modelLabel = null;
 
     #[Locked]
-    public Model | int | string | null $record;
+    public Model | int | string | null $record = null;
 
     protected static ?string $recordRouteKeyName = null;
 
     protected static bool $isScopedToTenant = true;
 
     protected static ?string $tenantOwnershipRelationshipName = null;
-
-    public function bootInteractsWithRecords(): void
-    {
-        $this->record ??= null;
-    }
 
     protected function resolveRecord(int | string $key): Model
     {
