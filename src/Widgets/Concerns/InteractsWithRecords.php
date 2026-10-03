@@ -2,6 +2,8 @@
 
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
+use Filament\Facades\Filament;
+
 use function Filament\Support\get_model_label;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -20,6 +22,10 @@ trait InteractsWithRecords
     public Model | int | string | null $record;
 
     protected static ?string $recordRouteKeyName = null;
+
+    protected static bool $isScopedToTenant = true;
+
+    protected static ?string $tenantOwnershipRelationshipName = null;
 
     public function bootInteractsWithRecords(): void
     {
@@ -78,9 +84,29 @@ trait InteractsWithRecords
     {
         $query = app($this->getModel())::query();
 
-        // TODO: Scope query to tenant.
+        if (static::$isScopedToTenant && ($tenant = Filament::getTenant())) {
+            $this->scopeEloquentQueryToTenant($query, $tenant);
+        }
 
         return $query;
+    }
+
+    protected function scopeEloquentQueryToTenant(Builder $query, Model $tenant): Builder
+    {
+        if ($query->getModel()::class === $tenant::class) {
+            return $query->whereKey($tenant);
+        }
+
+        $relationshipName = static::$tenantOwnershipRelationshipName ?? Filament::getTenantOwnershipRelationshipName();
+
+        if (! $query->getModel()->isRelation($relationshipName)) {
+            return $query;
+        }
+
+        return $query->whereHas(
+            $relationshipName,
+            fn (Builder $query) => $query->whereKey($tenant->getKey()),
+        );
     }
 
     protected function getRecordRouteKeyName(): ?string
