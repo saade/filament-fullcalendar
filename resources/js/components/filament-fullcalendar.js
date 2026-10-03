@@ -20,6 +20,8 @@ export default function fullcalendar({
 
         listeners: {},
 
+        pendingDateSelection: null,
+
         init() {
             this.calendar = new Calendar(this.$el, {
                 plugins: plugins.map((plugin) => availablePlugins[plugin]),
@@ -107,26 +109,22 @@ export default function fullcalendar({
                         revert()
                     }
                 },
-                dateClick: ({ dateStr, allDay, view, resource }) => {
-                    if (!selectable) return
-                    this.$wire.onDateSelect(
+                dateClick: ({ dateStr, allDay, view, resource }) =>
+                    this.queueDateSelection([
                         dateStr,
                         null,
                         allDay,
                         view,
                         resource,
-                    )
-                },
-                select: ({ startStr, endStr, allDay, view, resource }) => {
-                    if (!selectable) return
-                    this.$wire.onDateSelect(
+                    ]),
+                select: ({ startStr, endStr, allDay, view, resource }) =>
+                    this.queueDateSelection([
                         startStr,
                         endStr,
                         allDay,
                         view,
                         resource,
-                    )
-                },
+                    ]),
             })
 
             this.calendar.render()
@@ -155,6 +153,30 @@ export default function fullcalendar({
 
             this.calendar?.destroy()
             this.calendar = null
+        },
+
+        // A single click on a selectable calendar fires `select` and then, a
+        // few milliseconds later in a separate task, `dateClick`. A tap on a
+        // touch device only fires `dateClick`. Both are collected for a short
+        // window so the server is asked to create one event, preferring the
+        // `select` payload because it carries the end date.
+        queueDateSelection(selection) {
+            if (!selectable) return
+
+            const hasPendingSelection = this.pendingDateSelection !== null
+
+            if (!hasPendingSelection || selection[1] !== null) {
+                this.pendingDateSelection = selection
+            }
+
+            if (hasPendingSelection) return
+
+            setTimeout(() => {
+                const pendingSelection = this.pendingDateSelection
+                this.pendingDateSelection = null
+
+                this.$wire.onDateSelect(...pendingSelection)
+            }, 50)
         },
     }
 }
