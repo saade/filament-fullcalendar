@@ -4,10 +4,11 @@ namespace Saade\FilamentFullCalendar\Data;
 
 use DateTimeInterface;
 use Illuminate\Contracts\Support\Arrayable;
+use JsonSerializable;
 
-class EventData implements Arrayable
+class EventData implements Arrayable, JsonSerializable
 {
-    protected int|string $id;
+    protected int|string|null $id = null;
 
     protected int|string|null $groupId = null;
 
@@ -17,11 +18,11 @@ class EventData implements Arrayable
 
     protected bool $allDay = false;
 
-    protected DateTimeInterface|string $start;
+    protected DateTimeInterface|string|null $start = null;
 
     protected DateTimeInterface|string|null $end = null;
 
-    protected string $title;
+    protected ?string $title = null;
 
     protected ?string $url = null;
 
@@ -189,10 +190,10 @@ class EventData implements Arrayable
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'start' => $this->start,
-            'end' => $this->end,
-            'title' => $this->title,
+            ...filled($this->id) ? ['id' => $this->id] : [],
+            ...filled($this->start) ? ['start' => $this->formatDate($this->start)] : [],
+            'end' => $this->formatDate($this->end),
+            ...filled($this->title) ? ['title' => $this->title] : [],
             ...$this->resourceId ? ['resourceId' => $this->resourceId] : [],
             ...$this->resourceIds ? ['resourceIds' => $this->resourceIds] : [],
             ...$this->url ? ['url' => $this->url, 'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab] : [],
@@ -204,5 +205,19 @@ class EventData implements Arrayable
             ...$this->extendedProps ? ['extendedProps' => $this->extendedProps] : [],
             ...$this->extraProperties,
         ];
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
+
+    protected function formatDate(DateTimeInterface|string|null $date): ?string
+    {
+        if ($date instanceof DateTimeInterface) {
+            return $date->format(DateTimeInterface::ATOM);
+        }
+
+        return $date;
     }
 }
