@@ -2,6 +2,32 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## Unreleased
+
+### Fixed
+
+- A single click on a selectable calendar opened the create action twice.
+- The calendar and its window listeners were never cleaned up, so they piled up on every visit in SPA mode ([#311](https://github.com/saade/filament-fullcalendar/issues/311)).
+- `EventData` with a `DateTime` object was serialised as an object instead of an ISO 8601 string, and an array of `EventData` objects rendered nothing unless `toArray()` was called on each.
+- `EventData` threw when `id`, `title` or `start` was not set.
+- `$record` could be read before it was initialised ([#131](https://github.com/saade/filament-fullcalendar/issues/131)).
+- `schedulerLicenseKey()` threw when given `null`.
+- The JavaScript dependencies could not be installed because of a `moment-timezone` peer conflict, so the bundle could not be rebuilt.
+
+### Changed
+
+- The bundle is built with FullCalendar 6.1.21 and no longer ships a source map.
+
+### Added
+
+- A test suite, running against Filament 4 and 5.
+- An [upgrade guide](UPGRADING.md) from 3.x.
+
+## v4.0.0 - 2026-10-02
+
+- Support for Filament 4 and Filament 5, and for Laravel 13.
+- The stylesheet is now compiled with your panel's custom theme. See the [upgrade guide](UPGRADING.md).
+
 ## v1.9.2 - 2023-07-11
 
 **Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v1.9.1...v1.9.2

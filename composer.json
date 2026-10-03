@@ -4,6 +4,11 @@
     "keywords": [
         "saade",
         "laravel",
+        "filament",
+        "filament-plugin",
+        "fullcalendar",
+        "calendar",
+        "scheduler",
         "filament-fullcalendar"
     ],
     "homepage": "https://github.com/saade/filament-fullcalendar",
