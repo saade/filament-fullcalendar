@@ -18,6 +18,8 @@ export default function fullcalendar({
         /** @type Calendar */
         calendar: null,
 
+        listeners: {},
+
         init() {
             this.calendar = new Calendar(this.$el, {
                 plugins: plugins.map((plugin) => availablePlugins[plugin]),
@@ -129,29 +131,30 @@ export default function fullcalendar({
 
             this.calendar.render()
 
-            window.addEventListener('filament-fullcalendar--refresh', () =>
-                this.calendar.refetchEvents(),
+            this.listeners = {
+                'filament-fullcalendar--refresh': () =>
+                    this.calendar.refetchEvents(),
+                'filament-fullcalendar--prev': () => this.calendar.prev(),
+                'filament-fullcalendar--next': () => this.calendar.next(),
+                'filament-fullcalendar--today': () => this.calendar.today(),
+                'filament-fullcalendar--view': (event) =>
+                    this.calendar.changeView(event.detail.view),
+                'filament-fullcalendar--goto': (event) =>
+                    this.calendar.gotoDate(event.detail.date),
+            }
+
+            Object.entries(this.listeners).forEach(([name, listener]) =>
+                window.addEventListener(name, listener),
+            )
+        },
+
+        destroy() {
+            Object.entries(this.listeners).forEach(([name, listener]) =>
+                window.removeEventListener(name, listener),
             )
 
-            window.addEventListener('filament-fullcalendar--prev', () =>
-                this.calendar.prev(),
-            )
-
-            window.addEventListener('filament-fullcalendar--next', () =>
-                this.calendar.next(),
-            )
-
-            window.addEventListener('filament-fullcalendar--today', () =>
-                this.calendar.today(),
-            )
-
-            window.addEventListener('filament-fullcalendar--view', (event) =>
-                this.calendar.changeView(event.detail.view),
-            )
-
-            window.addEventListener('filament-fullcalendar--goto', (event) =>
-                this.calendar.gotoDate(event.detail.date),
-            )
+            this.calendar?.destroy()
+            this.calendar = null
         },
     }
 }
