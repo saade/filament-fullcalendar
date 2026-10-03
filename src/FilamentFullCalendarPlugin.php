@@ -62,7 +62,7 @@ class FilamentFullCalendarPlugin implements Plugin
         return $this->plugins;
     }
 
-    public function schedulerLicenseKey(string $schedulerLicenseKey): static
+    public function schedulerLicenseKey(?string $schedulerLicenseKey): static
     {
         $this->schedulerLicenseKey = $schedulerLicenseKey;
 
