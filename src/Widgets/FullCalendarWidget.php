@@ -5,11 +5,19 @@ namespace Saade\FilamentFullCalendar\Widgets;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+
+use function Filament\get_authorization_response;
+
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Widgets\Widget;
+use Illuminate\Auth\Access\Response;
 use Saade\FilamentFullCalendar\Actions;
 
 class FullCalendarWidget extends Widget implements HasForms, HasActions
@@ -64,5 +72,24 @@ class FullCalendarWidget extends Widget implements HasForms, HasActions
     public function getFormSchema(): array
     {
         return [];
+    }
+
+    public function getDefaultActionAuthorizationResponse(Action $action): ?Response
+    {
+        $model = $this->getModel();
+
+        if (blank($model)) {
+            return null;
+        }
+
+        $record = $action->getRecord();
+
+        return match (true) {
+            $action instanceof CreateAction => get_authorization_response('create', $model),
+            $action instanceof DeleteAction && $record => get_authorization_response('delete', $record),
+            $action instanceof EditAction && $record => get_authorization_response('update', $record),
+            $action instanceof ViewAction && $record => get_authorization_response('view', $record),
+            default => null,
+        };
     }
 }
