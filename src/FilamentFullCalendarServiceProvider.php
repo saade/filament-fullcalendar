@@ -3,6 +3,7 @@
 namespace Saade\FilamentFullCalendar;
 
 use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Assets\Asset;
 use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;

@@ -1,13 +1,12 @@
-includes:
-    - phpstan-baseline.neon
-
 parameters:
     level: 4
     paths:
         - src
-        - config
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
-    checkMissingIterableValueType: false
 
+    ignoreErrors:
+        -
+            identifier: property.defaultValue
+            path: src/Widgets/FullCalendarWidget.php

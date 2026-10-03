@@ -6,6 +6,9 @@ use DateTimeInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class EventData implements Arrayable, JsonSerializable
 {
     protected int|string|null $id = null;

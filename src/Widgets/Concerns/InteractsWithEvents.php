@@ -60,7 +60,7 @@ trait InteractsWithEvents
      * @param array $relatedEvents An array of other related Event Objects that were also dropped. An event might have other recurring event instances or might be linked to other events with the same groupId
      * @param array $startDelta A Duration Object that represents the amount of time the event’s start date was moved by.
      * @param array $endDelta A Duration Object that represents the amount of time the event’s end date was moved by.
-     * @return mixed Whether to revert the resize action.
+     * @return bool Whether to revert the resize action.
      */
     public function onEventResize(array $event, array $oldEvent, array $relatedEvents, array $startDelta, array $endDelta): bool
     {
