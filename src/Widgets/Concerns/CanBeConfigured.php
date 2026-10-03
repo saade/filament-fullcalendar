@@ -20,4 +20,14 @@ trait CanBeConfigured
             $this->config(),
         );
     }
+
+    public function isEditable(): bool
+    {
+        return (bool) (data_get($this->config(), 'editable') ?? FilamentFullCalendarPlugin::get()->isEditable());
+    }
+
+    public function isSelectable(): bool
+    {
+        return (bool) (data_get($this->config(), 'selectable') ?? FilamentFullCalendarPlugin::get()->isSelectable());
+    }
 }
