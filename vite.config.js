@@ -7,7 +7,8 @@ export default defineConfig({
     build: {
         outDir: "resources/dist",
         emptyOutDir: false,
-        sourcemap: true,
+        sourcemap: false,
+        minify: true,
         lib: {
             entry: "resources/js/components/filament-fullcalendar.js",
             name: "FullCalendar",
