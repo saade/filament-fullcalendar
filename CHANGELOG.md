@@ -2,6 +2,19 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## 5.x
+
+### Changed
+
+These change the behavior of existing calendars. See the [upgrade guide](UPGRADING.md#from-4x-to-5x).
+
+- The view, create, edit and delete actions follow the model's policy when it has one. In 4.x, any user who could see the widget could open, edit or delete any record of the model by id unless `authorize()` was called on each action.
+- Records are scoped to the current tenant in panels with tenancy.
+- The toolbar shows the month, week and day view buttons by default, as it did in 3.x.
+- Date selection uses the timezone configured on the panel plugin.
+- `selectable` and `editable` set in a widget's `config()` are respected by the date click and selection handlers.
+- `$record` is declared with a `null` default.
+
 ## Unreleased
 
 ### Fixed

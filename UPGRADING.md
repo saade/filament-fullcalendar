@@ -1,5 +1,59 @@
 # Upgrading
 
+## From 4.x to 5.x
+
+5.x supports the same Filament versions as 4.x (Filament 4 and 5) and needs no changes to how the package is installed:
+
+```bash
+composer require saade/filament-fullcalendar:"^5.0"
+php artisan filament:assets
+```
+
+It changes six behaviors. Check each one against your calendars.
+
+### Actions follow model policies
+
+The view, create, edit and delete actions now check the model's policy (`view`, `create`, `update`, `delete`) when it has one. Dragging and resizing open the edit action and date selection opens the create action, so they follow it too. In 4.x the calendar did not check policies unless you called `authorize()` yourself.
+
+Users who are not allowed no longer see the button, and the modal does not open. If your users should be able to do more on the calendar than the policy allows, call `authorize()` on the action with your own rule. Models without a policy are not affected.
+
+### Records are scoped to the current tenant
+
+In a panel with tenancy, records are looked up within the current tenant when the model has the panel's tenant ownership relationship. Set `$tenantOwnershipRelationshipName` on the widget if the relationship has another name, or turn the scope off:
+
+```php
+protected static bool $isScopedToTenant = false;
+```
+
+### The toolbar has view buttons by default
+
+Calendars that do not set `headerToolbar` now show month, week and day buttons, as they did in 3.x. Set `headerToolbar` in `config()` to keep the 4.x toolbar:
+
+```php
+public function config(): array
+{
+    return [
+        'headerToolbar' => [
+            'left' => 'title',
+            'center' => '',
+            'right' => 'today prev,next',
+        ],
+    ];
+}
+```
+
+### Date selection uses the panel's timezone
+
+The `start` and `end` passed to the create action after a date selection are now in the timezone set with `FilamentFullCalendarPlugin::timezone()`. In 4.x they were always in `config('app.timezone')`. If you did not set a timezone on the plugin, nothing changes.
+
+### `selectable` and `editable` in a widget's `config()` take effect
+
+In 4.x, a widget that set `'selectable' => true` in `config()` let users select dates but did not open the create action. It now does, and `'selectable' => false` on a widget turns selection off even when the panel plugin enables it. The same applies to `editable`.
+
+### `$record` defaults to `null`
+
+`FullCalendarWidget::$record` is now declared with a `null` default. A widget that also uses a trait declaring `$record` without a default, such as `Filament\Resources\Pages\Concerns\InteractsWithRecord`, no longer composes. Remove the trait from the widget and pass the owner record in under another property name.
+
 ## From 3.x to 4.x
 
 4.x supports Filament 4 and Filament 5. Upgrade Filament first by following the [Filament upgrade guide](https://filamentphp.com/docs/5.x/upgrade-guide), then update this package:

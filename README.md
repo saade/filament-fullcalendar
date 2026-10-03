@@ -2,10 +2,10 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/saade/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/saade/filament-fullcalendar)
 [![Total Downloads](https://img.shields.io/packagist/dt/saade/filament-fullcalendar.svg?style=flat-square)](https://packagist.org/packages/saade/filament-fullcalendar)
-[![Tests](https://img.shields.io/github/actions/workflow/status/saade/filament-fullcalendar/run-tests.yml?branch=4.x&label=tests&style=flat-square)](https://github.com/saade/filament-fullcalendar/actions/workflows/run-tests.yml)
+[![Tests](https://img.shields.io/github/actions/workflow/status/saade/filament-fullcalendar/run-tests.yml?branch=5.x&label=tests&style=flat-square)](https://github.com/saade/filament-fullcalendar/actions/workflows/run-tests.yml)
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/4.x/art/cover.png" alt="Filament FullCalendar" style="width: 100%; max-width: 800px; border-radius: 10px" />
+    <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/cover.png" alt="Filament FullCalendar" style="width: 100%; max-width: 800px; border-radius: 10px" />
 </p>
 
 [FullCalendar](https://fullcalendar.io) for [Filament](https://filamentphp.com) panels: show your models on a calendar and view, create, edit, drag and resize them with Filament actions.
@@ -14,11 +14,12 @@
 
 | Plugin | Filament | FullCalendar | Install |
 | ------ | -------- | ------------ | ------- |
+| 5.x    | 4.x, 5.x | 6.x          | `composer require saade/filament-fullcalendar:"^5.0"` |
 | 4.x    | 4.x, 5.x | 6.x          | `composer require saade/filament-fullcalendar:"^4.0"` |
 | 3.x    | 3.x      | 6.x          | `composer require saade/filament-fullcalendar:"^3.0"` |
 | 2.x    | 2.x      | 5.x          | `composer require saade/filament-fullcalendar:"^2.0"` |
 
-Upgrading from 3.x? Read the [upgrade guide](UPGRADING.md).
+Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
 
 # Table of contents
 
@@ -34,6 +35,7 @@ Upgrading from 3.x? Read the [upgrade guide](UPGRADING.md).
 - [Interacting with actions](#interacting-with-actions)
   - [Customizing actions](#customizing-actions)
   - [Authorizing actions](#authorizing-actions)
+  - [Multi-tenancy](#multi-tenancy)
 - [Intercepting events](#intercepting-events)
 - [Controlling the calendar](#controlling-the-calendar)
 - [Render hooks](#render-hooks)
@@ -49,7 +51,7 @@ Upgrading from 3.x? Read the [upgrade guide](UPGRADING.md).
 1. Install the package via composer:
 
 ```bash
-composer require saade/filament-fullcalendar:"^4.0"
+composer require saade/filament-fullcalendar:"^5.0"
 ```
 
 2. Add the plugin's styles to your panel's [custom theme](https://filamentphp.com/docs/5.x/styling/overview#creating-a-custom-theme). If the panel does not have a custom theme yet, create one first by following the Filament docs.
@@ -259,11 +261,11 @@ public function config(): array
         'firstDay' => 1,
         'slotMinTime' => '08:00:00',
         'slotMaxTime' => '20:00:00',
+        'selectable' => true,
+        'editable' => true,
     ];
 }
 ```
-
-The toolbar shows the title and the navigation buttons by default. Set `headerToolbar` as above to let users switch between views.
 
 Options people ask about most often:
 
@@ -369,51 +371,37 @@ protected function viewAction(): Action
 
 ## Authorizing actions
 
-The calendar does not check [policies](https://laravel.com/docs/authorization#creating-policies) on its own. Any user who can see the widget can view, create, edit and delete the model's records through it, so authorize the actions that need it with [`authorize()`](https://filamentphp.com/docs/5.x/actions/overview#authorization):
+When the model has a [policy](https://laravel.com/docs/authorization#creating-policies), the actions follow it:
+
+| Action | Policy method |
+| ------ | ------------- |
+| View (clicking an event) | `view` |
+| Create (the header button and date selection) | `create` |
+| Edit (the modal button, dragging and resizing) | `update` |
+| Delete | `delete` |
+
+A user who is not allowed does not see the button, and the modal does not open. Models without a policy, or without that policy method, are not restricted. To use different rules, call [`authorize()`](https://filamentphp.com/docs/5.x/actions/overview#authorization) on an action.
+
+Records are looked up through `getEloquentQuery()`. Override it to limit which records a user can open at all:
 
 ```php
-use Filament\Actions\Action;
-use Saade\FilamentFullCalendar\Actions;
-
-protected function headerActions(): array
-{
-    return [
-        Actions\CreateAction::make()
-            ->authorize('create'),
-    ];
-}
-
-protected function modalActions(): array
-{
-    return [
-        Actions\EditAction::make()
-            ->authorize('update'),
-
-        Actions\DeleteAction::make()
-            ->authorize('delete'),
-    ];
-}
-
-protected function viewAction(): Action
-{
-    return Actions\ViewAction::make()
-        ->authorize('view');
-}
-```
-
-Dragging and resizing open the edit action, and selecting dates opens the create action, so they follow the same rules.
-
-Records are looked up through `getEloquentQuery()`, which is not scoped to the user or, in a panel with [tenancy](https://filamentphp.com/docs/5.x/users/tenancy), to the current tenant. Override it to limit which records can be opened at all:
-
-```php
-use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 
 protected function getEloquentQuery(): Builder
 {
-    return parent::getEloquentQuery()->whereBelongsTo(Filament::getTenant());
+    return parent::getEloquentQuery()->whereBelongsTo(auth()->user());
 }
 ```
+
+## Multi-tenancy
+
+In a panel with [tenancy](https://filamentphp.com/docs/5.x/users/tenancy), records are scoped to the current tenant when the model has the panel's tenant ownership relationship. Set `$tenantOwnershipRelationshipName` on the widget if the relationship has another name, or `$isScopedToTenant = false` to turn the scope off:
+
+```php
+protected static ?string $tenantOwnershipRelationshipName = 'organization';
+```
+
+`fetchEvents()` is your own query, so scope it to the tenant as well.
 
 # Intercepting events
 
@@ -598,6 +586,6 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 <p align="center">
     <a href="https://github.com/sponsors/saade">
-        <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/4.x/art/sponsor.png" alt="Sponsor Saade" style="width: 100%; max-width: 800px;" />
+        <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/sponsor.png" alt="Sponsor Saade" style="width: 100%; max-width: 800px;" />
     </a>
 </p>
