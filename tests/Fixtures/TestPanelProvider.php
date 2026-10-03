@@ -15,6 +15,7 @@ class TestPanelProvider extends PanelProvider
             ->id('admin')
             ->plugin(
                 FilamentFullCalendarPlugin::make()
+                    ->timezone('America/Sao_Paulo')
                     ->selectable()
                     ->editable(),
             );

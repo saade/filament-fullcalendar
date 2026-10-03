@@ -109,7 +109,7 @@ trait InteractsWithEvents
 
     protected function calculateTimezoneOffset(string $start, ?string $end, bool $allDay): array
     {
-        $timezone = FilamentFullCalendarPlugin::make()->getTimezone();
+        $timezone = FilamentFullCalendarPlugin::get()->getTimezone();
 
         $start = Carbon::parse($start, $timezone);
 
@@ -125,6 +125,6 @@ trait InteractsWithEvents
             $end->subDay()->endOfDay();
         }
 
-        return [$start, $end, $allDay];
+        return [$start, $end];
     }
 }
