@@ -21,6 +21,11 @@ trait InteractsWithRecords
 
     protected static ?string $recordRouteKeyName = null;
 
+    public function bootInteractsWithRecords(): void
+    {
+        $this->record ??= null;
+    }
+
     protected function resolveRecord(int | string $key): Model
     {
         $record = $this->resolveRecordRouteBinding($key);
