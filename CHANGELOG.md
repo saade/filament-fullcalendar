@@ -2,6 +2,31 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v4.0.1 - 2026-10-06
+
+### Release Notes
+
+#### Changed
+
+* ci: fix dependency resolution in the test matrix in [`c5fcded`](https://github.com/saade/filament-fullcalendar/commit/c5fcded0cf45680d46add3b16ffdaaeffd87b3bb)
+* docs: add upgrade guide and changelog entries in [`5908699`](https://github.com/saade/filament-fullcalendar/commit/59086997e19690527dede2b3a59f29ac0b334956)
+* chore: replace the looping bug report link with an issue form in [`1513555`](https://github.com/saade/filament-fullcalendar/commit/151355579ed3d7bb9b563fb7615bfedbc9674426)
+* ci: run tests and phpstan on 4.x in [`ff16943`](https://github.com/saade/filament-fullcalendar/commit/ff16943b15f24f143a05f06be988842925382340)
+* chore: fix phpstan config and reported errors in [`e1c0fb8`](https://github.com/saade/filament-fullcalendar/commit/e1c0fb81a2906478497aac853dc24907d59c9f04)
+* build: minify the bundle, drop the source map and rebuild assets in [`d9ad32c`](https://github.com/saade/filament-fullcalendar/commit/d9ad32c96156bcbb0328fb30697467f90b45614a)
+* test: add pest and testbench harness in [`3864a52`](https://github.com/saade/filament-fullcalendar/commit/3864a5233c54abd2e9be969f2f5332fbb0f9bc10)
+* build: fix moment-timezone peer conflict and align fullcalendar to 6.1.21 in [`d2eb3b6`](https://github.com/saade/filament-fullcalendar/commit/d2eb3b6cd0db65f28dccf16acdba6e124119187c)
+
+#### Fixed
+
+* fix: open the create action once per click in [`9f71b03`](https://github.com/saade/filament-fullcalendar/commit/9f71b03426e5bb1ce9ef552cd00b5964c3fbb99b)
+* fix: destroy the calendar and its listeners on teardown in [`3d45db3`](https://github.com/saade/filament-fullcalendar/commit/3d45db3cba991a933244f52b33df57d6c6487bb4)
+* fix: accept a null scheduler license key in [`8162ec5`](https://github.com/saade/filament-fullcalendar/commit/8162ec52b1d5998dc8725a57235ff5c1a34cddb7)
+* fix: serialise event data dates and make id, title and start optional in [`b3b1167`](https://github.com/saade/filament-fullcalendar/commit/b3b11679f84291c1155e0d584b419ba2307b83e1)
+* fix: initialise the record property when it is unset in [`cbbff34`](https://github.com/saade/filament-fullcalendar/commit/cbbff3430064c1b4d71823497ad7f674d852b574)
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v4.0.0..v4.1.0
+
 ## Unreleased
 
 ### Fixed
