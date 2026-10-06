@@ -68,6 +68,14 @@ If your widget redeclared `$record` to work around the conflict, remove that pro
 
 The `$record` injected into action callbacks, as in `->mountUsing(function (Event $record) { ... })`, is Filament's and has not changed.
 
+### The panel plugin is optional, and its settings can be overridden per widget
+
+The widget no longer fails on a panel that does not register `FilamentFullCalendarPlugin`, or on a page outside a panel. It falls back to the default settings. Filament's own styles and scripts are still needed on such a page.
+
+`getTimezone()`, `getLocale()`, `getPlugins()` and `getSchedulerLicenseKey()` are new public methods on the widget. They return the panel plugin's values unless you override them. If your widget already has a method with one of these names, rename it or make it compatible.
+
+If you published or replaced the widget's Blade view, it should read these from `$this` instead of from `FilamentFullCalendarPlugin::get()`.
+
 ### `fetchEvents()` and the event handlers take info objects
 
 `fetchEvents()` now receives a `FetchInfo` object in place of an array. Change the type hint; reading `$info['start']`, `$info['end']` and `$info['timezone']` still returns the same strings as before, so the body can stay as it is.

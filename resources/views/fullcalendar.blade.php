@@ -1,7 +1,3 @@
-@php
-    $plugin = \Saade\FilamentFullCalendar\FilamentFullCalendarPlugin::get();
-@endphp
-
 <x-filament-widgets::widget>
     <x-filament::section>
         <div class="flex justify-end flex-1 mb-4">
@@ -11,10 +7,10 @@
         <div wire:ignore x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-fullcalendar-alpine', 'saade/filament-fullcalendar') }}"
             x-ignore x-data="fullcalendar({
-                locale: @js($plugin->getLocale()),
-                plugins: @js($plugin->getPlugins()),
-                schedulerLicenseKey: @js($plugin->getSchedulerLicenseKey()),
-                timeZone: @js($plugin->getTimezone()),
+                locale: @js($this->getLocale()),
+                plugins: @js($this->getPlugins()),
+                schedulerLicenseKey: @js($this->getSchedulerLicenseKey()),
+                timeZone: @js($this->getTimezone()),
                 config: @js($this->getConfig()),
                 editable: @json($this->isEditable()),
                 selectable: @json($this->isSelectable()),

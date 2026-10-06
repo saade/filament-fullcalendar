@@ -19,6 +19,7 @@ use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Saade\FilamentFullCalendar\FilamentFullCalendarServiceProvider;
+use Saade\FilamentFullCalendar\Tests\Fixtures\BarePanelProvider;
 use Saade\FilamentFullCalendar\Tests\Fixtures\TestPanelProvider;
 
 class TestCase extends Orchestra
@@ -41,6 +42,7 @@ class TestCase extends Orchestra
             WidgetsServiceProvider::class,
             FilamentFullCalendarServiceProvider::class,
             TestPanelProvider::class,
+            BarePanelProvider::class,
         ];
     }
 

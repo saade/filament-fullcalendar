@@ -29,6 +29,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [The EventData class](#the-eventdata-class)
   - [Showing the calendar on its own page](#showing-the-calendar-on-its-own-page)
   - [Showing the calendar on a resource page](#showing-the-calendar-on-a-resource-page)
+  - [Using the calendar outside a panel](#using-the-calendar-outside-a-panel)
 - [Configuration](#configuration)
   - [Plugin methods](#plugin-methods)
   - [Configuring a single widget](#configuring-a-single-widget)
@@ -67,7 +68,7 @@ composer require saade/filament-fullcalendar:"^5.0"
 
 Then rebuild your assets with `npm run build`.
 
-3. Register the plugin on every panel that shows a calendar. The widget does not work on a panel without it.
+3. Register the plugin on the panel to set options for all of its calendars. This step is optional: a calendar on a panel without the plugin uses the defaults.
 
 ```php
 use Filament\Panel;
@@ -255,11 +256,21 @@ class ProjectCalendarWidget extends FullCalendarWidget
 
 Return the widget from the page's `getHeaderWidgets()` or `getFooterWidgets()`. The event a user clicked, dragged or resized is kept separately in `$eventRecord`, so `$record` always stays the page's record.
 
+## Using the calendar outside a panel
+
+The calendar does not need a Filament panel, but it does need Filament. Its buttons, modals and forms are Filament components, so a page that shows it has to load Filament's styles and scripts, the same as any Filament form or action used on its own. Set that up by following [Installing the individual components](https://filamentphp.com/docs/5.x/introduction/installation#installing-the-individual-components) in the Filament docs, and import the calendar's CSS into that stylesheet as described under [Installation](#installation). Then render the widget like any Livewire component:
+
+```blade
+@livewire(\App\Filament\Widgets\CalendarWidget::class)
+```
+
+Outside a panel there is no plugin to read options from, so set them on the widget with `config()` and the methods under [Configuring a single widget](#configuring-a-single-widget). Policies are checked against the application's default guard.
+
 # Configuration
 
 ## Plugin methods
 
-Options set on the plugin apply to every calendar in the panel:
+Options set on the plugin are the defaults for every calendar in the panel. Each method except `plugins()` also accepts a closure:
 
 ```php
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
@@ -279,13 +290,13 @@ $panel->plugin(
 
 | Method | Default | Description |
 | ------ | ------- | ----------- |
-| `selectable(bool $selectable = true)` | `false` | Lets users click or drag over dates to create an event. See [selectable](https://fullcalendar.io/docs/selectable). |
-| `editable(bool $editable = true)` | `false` | Lets users drag and resize events. See [editable](https://fullcalendar.io/docs/editable). |
+| `selectable(bool \| Closure $selectable = true)` | `false` | Lets users click or drag over dates to create an event. See [selectable](https://fullcalendar.io/docs/selectable). |
+| `editable(bool \| Closure $editable = true)` | `false` | Lets users drag and resize events. See [editable](https://fullcalendar.io/docs/editable). |
 | `timezone(string \| Closure $timezone)` | `config('app.timezone')` | The time zone dates are displayed in. See [timeZone](https://fullcalendar.io/docs/timeZone). |
 | `locale(string \| Closure $locale)` | The app locale | The language of the calendar. See [locale](https://fullcalendar.io/docs/locale). |
 | `plugins(array $plugins, bool $merge = true)` | `interaction`, `dayGrid`, `timeGrid`, `list`, `moment`, `momentTimezone` | FullCalendar plugins to enable. Pass `false` as the second argument to replace the defaults. |
-| `schedulerLicenseKey(?string $key)` | `null` | Your FullCalendar Premium license key. See [Premium plugins and licensing](#premium-plugins-and-licensing). |
-| `config(array $config)` | `[]` | Any other [FullCalendar option](https://fullcalendar.io/docs#toc). |
+| `schedulerLicenseKey(string \| Closure \| null $key)` | `null` | Your FullCalendar Premium license key. See [Premium plugins and licensing](#premium-plugins-and-licensing). |
+| `config(array \| Closure $config)` | `[]` | Any other [FullCalendar option](https://fullcalendar.io/docs#toc). |
 
 Available plugins: `interaction`, `dayGrid`, `timeGrid`, `list`, `multiMonth`, `rrule`, `moment`, `momentTimezone`, and the premium `scrollGrid`, `timeline`, `adaptive`, `resource`, `resourceDayGrid`, `resourceTimeline`, `resourceTimeGrid`.
 
@@ -309,6 +320,30 @@ public function config(): array
         'selectable' => true,
         'editable' => true,
     ];
+}
+```
+
+The timezone, locale, plugins and license key are methods on the widget, so one calendar can differ from the rest of the panel:
+
+```php
+public function getTimezone(): string
+{
+    return auth()->user()->timezone;
+}
+
+public function getLocale(): string
+{
+    return 'pt-br';
+}
+
+public function getPlugins(): array
+{
+    return [...parent::getPlugins(), 'multiMonth'];
+}
+
+public function getSchedulerLicenseKey(): ?string
+{
+    return config('services.fullcalendar.license_key');
 }
 ```
 

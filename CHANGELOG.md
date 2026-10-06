@@ -21,6 +21,8 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 ### Added
 
 - `$startAttribute` and `$endAttribute` make the widget save a dragged or resized event's new dates, and `$shouldConfirmEventChanges` opens the edit action with them filled in.
+- The timezone, locale, plugins and license key can be overridden per widget, and the panel plugin's setters accept closures.
+- The calendar works on a panel that does not register the plugin and on Filament pages outside a panel ([#67](https://github.com/saade/filament-fullcalendar/issues/67)).
 - `onDateClick()` is called for a click or tap on a single day or time slot, separately from `onDateSelect()` for a dragged selection.
 - `FetchInfo::overlapping()` limits a query to the records that overlap the visible range.
 - `form(Schema $schema)` defines the fields for creating and editing, and `infolist(Schema $schema)` the entries shown when viewing an event.

@@ -4,9 +4,6 @@ namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterval;
-
-use function Filament\get_authorization_response;
-
 use LogicException;
 use Saade\FilamentFullCalendar\Data\DateClickInfo;
 use Saade\FilamentFullCalendar\Data\DateSelectInfo;
@@ -15,7 +12,6 @@ use Saade\FilamentFullCalendar\Data\EventDropInfo;
 use Saade\FilamentFullCalendar\Data\EventInfo;
 use Saade\FilamentFullCalendar\Data\EventResizeInfo;
 use Saade\FilamentFullCalendar\Data\FetchInfo;
-use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 trait InteractsWithEvents
 {
@@ -101,7 +97,7 @@ trait InteractsWithEvents
             return blank($this->mountedActions);
         }
 
-        if (get_authorization_response('update', $record)->denied()) {
+        if ($this->getAuthorizationResponse('update', $record)->denied()) {
             return true;
         }
 
@@ -191,7 +187,7 @@ trait InteractsWithEvents
      */
     public function handleFetchEvents(array $info): array
     {
-        return $this->fetchEvents(FetchInfo::fromArray($info, $this->getCalendarTimezone()));
+        return $this->fetchEvents(FetchInfo::fromArray($info, $this->getTimezone()));
     }
 
     /**
@@ -266,7 +262,7 @@ trait InteractsWithEvents
      */
     public function handleDateSelect(string $start, ?string $end, bool $allDay, ?array $view = null, ?array $resource = null): void
     {
-        $this->onDateSelect(DateSelectInfo::make($start, $end, $allDay, $view, $resource, $this->getCalendarTimezone()));
+        $this->onDateSelect(DateSelectInfo::make($start, $end, $allDay, $view, $resource, $this->getTimezone()));
     }
 
     /**
@@ -277,12 +273,7 @@ trait InteractsWithEvents
      */
     public function handleDateClick(string $date, bool $allDay, ?array $view = null, ?array $resource = null, ?string $selectionEnd = null): void
     {
-        $this->onDateClick(DateClickInfo::make($date, $allDay, $view, $resource, $selectionEnd, $this->getCalendarTimezone()));
-    }
-
-    protected function getCalendarTimezone(): string
-    {
-        return FilamentFullCalendarPlugin::get()->getTimezone();
+        $this->onDateClick(DateClickInfo::make($date, $allDay, $view, $resource, $selectionEnd, $this->getTimezone()));
     }
 
     /**
@@ -290,7 +281,7 @@ trait InteractsWithEvents
      */
     protected function makeEventInfo(array $event): EventInfo
     {
-        return EventInfo::fromArray($event, $this->getCalendarTimezone());
+        return EventInfo::fromArray($event, $this->getTimezone());
     }
 
     /**

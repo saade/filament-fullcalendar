@@ -4,8 +4,10 @@ namespace Saade\FilamentFullCalendar;
 
 use Closure;
 use Filament\Contracts\Plugin;
+use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Concerns\EvaluatesClosures;
+use Throwable;
 
 class FilamentFullCalendarPlugin implements Plugin
 {
@@ -13,17 +15,17 @@ class FilamentFullCalendarPlugin implements Plugin
 
     protected array $plugins = ['dayGrid', 'timeGrid', 'interaction', 'list', 'moment', 'momentTimezone'];
 
-    protected ?string $schedulerLicenseKey = null;
+    protected string | Closure | null $schedulerLicenseKey = null;
 
-    protected array $config = [];
+    protected array | Closure $config = [];
 
     protected string | Closure | null $timezone = null;
 
     protected string | Closure | null $locale = null;
 
-    protected ?bool $editable = null;
+    protected bool | Closure | null $editable = null;
 
-    protected ?bool $selectable = null;
+    protected bool | Closure | null $selectable = null;
 
     public function getId(): string
     {
@@ -33,6 +35,31 @@ class FilamentFullCalendarPlugin implements Plugin
     public static function make(): static
     {
         return app(static::class);
+    }
+
+    /**
+     * The plugin registered on the current panel, or one with the default
+     * settings when the calendar is used on a panel that does not register
+     * it or outside a panel altogether.
+     */
+    public static function current(): static
+    {
+        try {
+            $panel = Filament::getCurrentOrDefaultPanel();
+        } catch (Throwable) {
+            $panel = null;
+        }
+
+        $id = app(static::class)->getId();
+
+        if (! $panel?->hasPlugin($id)) {
+            return static::make();
+        }
+
+        /** @var static $plugin */
+        $plugin = $panel->getPlugin($id);
+
+        return $plugin;
     }
 
     public static function get(): static
@@ -65,7 +92,7 @@ class FilamentFullCalendarPlugin implements Plugin
         return $this->plugins;
     }
 
-    public function schedulerLicenseKey(?string $schedulerLicenseKey): static
+    public function schedulerLicenseKey(string | Closure | null $schedulerLicenseKey): static
     {
         $this->schedulerLicenseKey = $schedulerLicenseKey;
 
@@ -74,10 +101,10 @@ class FilamentFullCalendarPlugin implements Plugin
 
     public function getSchedulerLicenseKey(): ?string
     {
-        return $this->schedulerLicenseKey;
+        return $this->evaluate($this->schedulerLicenseKey);
     }
 
-    public function config(array $config): static
+    public function config(array | Closure $config): static
     {
         $this->config = $config;
 
@@ -86,7 +113,7 @@ class FilamentFullCalendarPlugin implements Plugin
 
     public function getConfig(): array
     {
-        return $this->config;
+        return $this->evaluate($this->config);
     }
 
     public function timezone(string | Closure $timezone): static
@@ -113,7 +140,7 @@ class FilamentFullCalendarPlugin implements Plugin
         return $this->evaluate($this->locale) ?? strtolower(str_replace('_', '-', app()->getLocale()));
     }
 
-    public function editable(bool $editable = true): static
+    public function editable(bool | Closure $editable = true): static
     {
         $this->editable = $editable;
 
@@ -122,10 +149,10 @@ class FilamentFullCalendarPlugin implements Plugin
 
     public function isEditable(): bool
     {
-        return $this->editable ?? data_get($this->config, 'editable', false);
+        return (bool) ($this->evaluate($this->editable) ?? data_get($this->getConfig(), 'editable', false));
     }
 
-    public function selectable(bool $selectable = true): static
+    public function selectable(bool | Closure $selectable = true): static
     {
         $this->selectable = $selectable;
 
@@ -134,6 +161,6 @@ class FilamentFullCalendarPlugin implements Plugin
 
     public function isSelectable(): bool
     {
-        return $this->selectable ?? data_get($this->config, 'selectable', false);
+        return (bool) ($this->evaluate($this->selectable) ?? data_get($this->getConfig(), 'selectable', false));
     }
 }

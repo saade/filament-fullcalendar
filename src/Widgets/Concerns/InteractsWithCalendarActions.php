@@ -9,6 +9,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 
 use function Filament\get_authorization_response;
 
@@ -16,6 +17,8 @@ use Filament\Schemas\Schema;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Gate;
+use Throwable;
 
 trait InteractsWithCalendarActions
 {
@@ -141,11 +144,36 @@ trait InteractsWithCalendarActions
         $record = $action->getRecord();
 
         return match (true) {
-            $action instanceof CreateAction => get_authorization_response('create', $model),
-            $action instanceof DeleteAction && $record => get_authorization_response('delete', $record),
-            $action instanceof EditAction && $record => get_authorization_response('update', $record),
-            $action instanceof ViewAction && $record => get_authorization_response('view', $record),
+            $action instanceof CreateAction => $this->getAuthorizationResponse('create', $model),
+            $action instanceof DeleteAction && $record => $this->getAuthorizationResponse('delete', $record),
+            $action instanceof EditAction && $record => $this->getAuthorizationResponse('update', $record),
+            $action instanceof ViewAction && $record => $this->getAuthorizationResponse('view', $record),
             default => null,
         };
+    }
+
+    /**
+     * Filament's own check needs a panel to know which guard to use, so
+     * outside a panel the default guard's gate is asked instead.
+     */
+    protected function getAuthorizationResponse(string $ability, Model | string $model): Response
+    {
+        try {
+            $hasPanel = Filament::getCurrentOrDefaultPanel() !== null;
+        } catch (Throwable) {
+            $hasPanel = false;
+        }
+
+        if ($hasPanel) {
+            return get_authorization_response($ability, $model);
+        }
+
+        $policy = Gate::getPolicyFor($model);
+
+        if (filled($policy) && method_exists($policy, $ability)) {
+            return Gate::inspect($ability, [$model]);
+        }
+
+        return Response::allow();
     }
 }
