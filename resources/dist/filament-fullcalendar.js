@@ -18888,7 +18888,7 @@ var vE = P({
 });
 //#endregion
 //#region resources/js/components/filament-fullcalendar.js
-function kE({ locale: e, plugins: t, schedulerLicenseKey: n, timeZone: r, config: i, editable: a, selectable: o, eventClassNames: s, eventContent: c, eventDidMount: l, eventWillUnmount: u }) {
+function kE({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, editable: o, selectable: s, eventClassNames: c, eventContent: l, eventDidMount: u, eventWillUnmount: d }) {
 	return {
 		calendar: null,
 		listeners: {},
@@ -18900,18 +18900,18 @@ function kE({ locale: e, plugins: t, schedulerLicenseKey: n, timeZone: r, config
 					center: "title",
 					right: "dayGridMonth,dayGridWeek,dayGridDay"
 				},
-				plugins: t.map((e) => AE[e]),
-				locale: e,
-				...n && { schedulerLicenseKey: n },
-				timeZone: r,
-				editable: a,
-				selectable: o,
-				...i,
+				plugins: n.map((e) => AE[e]),
+				locale: t,
+				...r && { schedulerLicenseKey: r },
+				timeZone: i,
+				editable: o,
+				selectable: s,
+				...a,
 				locales: Su,
-				eventClassNames: s,
-				eventContent: c,
-				eventDidMount: l,
-				eventWillUnmount: u,
+				eventClassNames: c,
+				eventContent: l,
+				eventDidMount: u,
+				eventWillUnmount: d,
 				events: (e, t, n) => {
 					this.$wire.handleFetchEvents({
 						start: e.startStr,
@@ -18944,20 +18944,24 @@ function kE({ locale: e, plugins: t, schedulerLicenseKey: n, timeZone: r, config
 					view: r,
 					resource: i
 				} })
-			}), this.calendar.render(), this.listeners = {
-				"filament-fullcalendar--refresh": () => this.calendar.refetchEvents(),
-				"filament-fullcalendar--prev": () => this.calendar.prev(),
-				"filament-fullcalendar--next": () => this.calendar.next(),
-				"filament-fullcalendar--today": () => this.calendar.today(),
-				"filament-fullcalendar--view": (e) => this.calendar.changeView(e.detail.view),
-				"filament-fullcalendar--goto": (e) => this.calendar.gotoDate(e.detail.date)
-			}, Object.entries(this.listeners).forEach(([e, t]) => window.addEventListener(e, t));
+			}), this.calendar.render();
+			let f = {
+				refresh: () => this.calendar.refetchEvents(),
+				prev: () => this.calendar.prev(),
+				next: () => this.calendar.next(),
+				today: () => this.calendar.today(),
+				view: ({ view: e }) => this.calendar.changeView(e),
+				goto: ({ date: e }) => this.calendar.gotoDate(e)
+			};
+			this.listeners = Object.fromEntries(Object.entries(f).map(([t, n]) => [`filament-fullcalendar--${t}`, ({ detail: t }) => {
+				t?.calendar && t.calendar !== e || n(t ?? {});
+			}])), Object.entries(this.listeners).forEach(([e, t]) => window.addEventListener(e, t));
 		},
 		destroy() {
 			Object.entries(this.listeners).forEach(([e, t]) => window.removeEventListener(e, t)), this.calendar?.destroy(), this.calendar = null;
 		},
 		queueDateInteraction(e) {
-			if (!o) return;
+			if (!s) return;
 			let t = this.pendingDateInteraction === null;
 			this.pendingDateInteraction = {
 				...this.pendingDateInteraction,

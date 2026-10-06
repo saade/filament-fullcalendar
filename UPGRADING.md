@@ -9,7 +9,7 @@ composer require saade/filament-fullcalendar:"^5.0"
 php artisan filament:assets
 ```
 
-It changes seven behaviors, changes the signature of `fetchEvents()` and the four event handlers, and deprecates one method and four classes. Check each one against your calendars.
+It changes eight behaviors, changes the signature of `fetchEvents()` and the four event handlers, and deprecates one method and four classes. Check each one against your calendars.
 
 ### Actions follow model policies
 
@@ -75,6 +75,12 @@ The widget no longer fails on a panel that does not register `FilamentFullCalend
 `getTimezone()`, `getLocale()`, `getPlugins()` and `getSchedulerLicenseKey()` are new public methods on the widget. They return the panel plugin's values unless you override them. If your widget already has a method with one of these names, rename it or make it compatible.
 
 If you published or replaced the widget's Blade view, it should read these from `$this` instead of from `FilamentFullCalendarPlugin::get()`.
+
+### A calendar only reacts to its own refresh and navigation
+
+The widget now has `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` next to `refreshRecords()`, and each of them only affects the calendar it is called on. In 4.x, `refreshRecords()` on one calendar made every calendar on the page fetch its events again.
+
+The `filament-fullcalendar--*` browser events still reach every calendar when dispatched as before. Add `calendar: $livewireId` to target one. If your widget defines its own `next()`, `previous()`, `today()`, `goToDate()` or `changeView()`, rename it or make it compatible.
 
 ### `fetchEvents()` and the event handlers take info objects
 

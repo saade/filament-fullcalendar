@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Support\Carbon;
+use Livewire\Livewire;
+use Saade\FilamentFullCalendar\Tests\Fixtures\EventCalendarWidget;
+
+it('addresses its own calendar when it controls it', function (string $method, array $arguments, string $event, array $detail) {
+    $component = Livewire::test(EventCalendarWidget::class);
+
+    $component
+        ->call($method, ...$arguments)
+        ->assertDispatched("filament-fullcalendar--{$event}", ...$detail, calendar: $component->instance()->getId());
+})->with([
+    'refreshRecords()' => ['refreshRecords', [], 'refresh', []],
+    'next()' => ['next', [], 'next', []],
+    'previous()' => ['previous', [], 'prev', []],
+    'today()' => ['today', [], 'today', []],
+    'changeView()' => ['changeView', ['timeGridWeek'], 'view', ['view' => 'timeGridWeek']],
+    'goToDate() with a string' => ['goToDate', ['2026-12-01'], 'goto', ['date' => '2026-12-01']],
+]);
+
+it('accepts a date object in goToDate()', function () {
+    $component = Livewire::test(EventCalendarWidget::class);
+
+    $component
+        ->call('goToDate', Carbon::parse('2026-12-01 10:00:00', 'America/Sao_Paulo'))
+        ->assertDispatched('filament-fullcalendar--goto', date: '2026-12-01T10:00:00-03:00', calendar: $component->instance()->getId());
+});
+
+it('gives every calendar a different id to listen for', function () {
+    $first = Livewire::test(EventCalendarWidget::class);
+    $second = Livewire::test(EventCalendarWidget::class);
+
+    expect($first->instance()->getId())->not->toBe($second->instance()->getId());
+
+    $first->assertSeeHtml($first->instance()->getId());
+});

@@ -4,6 +4,7 @@ namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterval;
+use DateTimeInterface;
 use LogicException;
 use Saade\FilamentFullCalendar\Data\DateClickInfo;
 use Saade\FilamentFullCalendar\Data\DateSelectInfo;
@@ -174,9 +175,52 @@ trait InteractsWithEvents
         ]);
     }
 
+    /**
+     * Fetch the events again.
+     */
     public function refreshRecords(): void
     {
-        $this->dispatch('filament-fullcalendar--refresh');
+        $this->dispatchCalendarEvent('refresh');
+    }
+
+    public function goToDate(DateTimeInterface | string $date): void
+    {
+        $this->dispatchCalendarEvent('goto', [
+            'date' => $date instanceof DateTimeInterface ? $date->format(DateTimeInterface::ATOM) : $date,
+        ]);
+    }
+
+    /**
+     * @param  string  $view  A FullCalendar view name, such as `dayGridMonth` or `timeGridWeek`.
+     */
+    public function changeView(string $view): void
+    {
+        $this->dispatchCalendarEvent('view', ['view' => $view]);
+    }
+
+    public function next(): void
+    {
+        $this->dispatchCalendarEvent('next');
+    }
+
+    public function previous(): void
+    {
+        $this->dispatchCalendarEvent('prev');
+    }
+
+    public function today(): void
+    {
+        $this->dispatchCalendarEvent('today');
+    }
+
+    /**
+     * Tell this calendar, and no other one on the page, to do something.
+     *
+     * @param  array<string, mixed>  $detail
+     */
+    protected function dispatchCalendarEvent(string $name, array $detail = []): void
+    {
+        $this->dispatch("filament-fullcalendar--{$name}", ...$detail, calendar: $this->getId());
     }
 
     /**

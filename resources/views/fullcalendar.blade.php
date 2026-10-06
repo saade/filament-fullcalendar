@@ -7,6 +7,7 @@
         <div wire:ignore x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-fullcalendar-alpine', 'saade/filament-fullcalendar') }}"
             x-ignore x-data="fullcalendar({
+                id: @js($this->getId()),
                 locale: @js($this->getLocale()),
                 plugins: @js($this->getPlugins()),
                 schedulerLicenseKey: @js($this->getSchedulerLicenseKey()),

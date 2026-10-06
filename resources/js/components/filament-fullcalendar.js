@@ -2,6 +2,7 @@ import { Calendar } from '@fullcalendar/core'
 import locales from '@fullcalendar/core/locales-all'
 
 export default function fullcalendar({
+    id,
     locale,
     plugins,
     schedulerLicenseKey,
@@ -126,17 +127,27 @@ export default function fullcalendar({
 
             this.calendar.render()
 
-            this.listeners = {
-                'filament-fullcalendar--refresh': () =>
-                    this.calendar.refetchEvents(),
-                'filament-fullcalendar--prev': () => this.calendar.prev(),
-                'filament-fullcalendar--next': () => this.calendar.next(),
-                'filament-fullcalendar--today': () => this.calendar.today(),
-                'filament-fullcalendar--view': (event) =>
-                    this.calendar.changeView(event.detail.view),
-                'filament-fullcalendar--goto': (event) =>
-                    this.calendar.gotoDate(event.detail.date),
+            const handlers = {
+                refresh: () => this.calendar.refetchEvents(),
+                prev: () => this.calendar.prev(),
+                next: () => this.calendar.next(),
+                today: () => this.calendar.today(),
+                view: ({ view }) => this.calendar.changeView(view),
+                goto: ({ date }) => this.calendar.gotoDate(date),
             }
+
+            // An event that names a calendar is only meant for that one.
+            // One that names none is for every calendar on the page.
+            this.listeners = Object.fromEntries(
+                Object.entries(handlers).map(([name, handler]) => [
+                    `filament-fullcalendar--${name}`,
+                    ({ detail }) => {
+                        if (detail?.calendar && detail.calendar !== id) return
+
+                        handler(detail ?? {})
+                    },
+                ]),
+            )
 
             Object.entries(this.listeners).forEach(([name, listener]) =>
                 window.addEventListener(name, listener),

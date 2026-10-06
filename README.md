@@ -622,9 +622,33 @@ The info classes are in `Saade\FilamentFullCalendar\Data`:
 
 # Controlling the calendar
 
-Call `refreshRecords()` on the widget to make the calendar fetch its events again. The built-in actions already do this after saving.
+The widget has methods to drive its calendar. Call them from the widget itself, for example in an action, or from the browser with `wire:click`:
 
-From any Livewire component or from JavaScript, dispatch these browser events:
+| Method | Effect |
+| ------ | ------ |
+| `refreshRecords()` | Fetches the events again. The built-in actions already do this after they run. |
+| `goToDate(DateTimeInterface \| string $date)` | Moves to a date |
+| `changeView(string $view)` | Switches view, for example to `timeGridWeek` |
+| `next()`, `previous()`, `today()` | Navigates |
+
+```php
+use Filament\Actions\Action;
+
+protected function headerActions(): array
+{
+    return [
+        Action::make('thisWeek')
+            ->action(function (): void {
+                $this->changeView('timeGridWeek');
+                $this->today();
+            }),
+    ];
+}
+```
+
+These only affect the calendar they are called on, so several calendars on one page stay independent.
+
+Other Livewire components and JavaScript can reach a calendar through browser events. An event without a `calendar` reaches every calendar on the page; pass a widget's Livewire id as `calendar` to reach only that one:
 
 | Event | Effect |
 | ----- | ------ |
@@ -634,8 +658,8 @@ From any Livewire component or from JavaScript, dispatch these browser events:
 | `filament-fullcalendar--view` with `view` | Switches view |
 
 ```php
+$this->dispatch('filament-fullcalendar--refresh');
 $this->dispatch('filament-fullcalendar--goto', date: '2026-12-01');
-$this->dispatch('filament-fullcalendar--view', view: 'timeGridWeek');
 ```
 
 # Render hooks

@@ -15,12 +15,14 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `selectable` and `editable` set in a widget's `config()` are respected by the date click and selection handlers.
 - The calendar refetches its events after any action other than viewing has run, not only after the package's own actions.
 - `fetchEvents()` receives a `FetchInfo` object, and `onEventClick()`, `onEventDrop()`, `onEventResize()` and `onDateSelect()` each receive a typed info object in place of several arrays. See the upgrade guide for the new signatures.
+- `refreshRecords()` and the new control methods only affect their own calendar, so several calendars on one page no longer react together.
 - Cancelling the edit action after a drag or resize moves the event back, and so does a drag or resize the user is not allowed to make.
 - The clicked event moved from `$record` to `$eventRecord`, so the widget can be used on a resource page without overwriting the page's record ([#209](https://github.com/saade/filament-fullcalendar/issues/209)). `getRecord()`, `resolveRecord()` and the related helpers were renamed to match.
 
 ### Added
 
 - `$startAttribute` and `$endAttribute` make the widget save a dragged or resized event's new dates, and `$shouldConfirmEventChanges` opens the edit action with them filled in.
+- `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` drive the calendar from PHP.
 - The timezone, locale, plugins and license key can be overridden per widget, and the panel plugin's setters accept closures.
 - The calendar works on a panel that does not register the plugin and on Filament pages outside a panel ([#67](https://github.com/saade/filament-fullcalendar/issues/67)).
 - `onDateClick()` is called for a click or tap on a single day or time slot, separately from `onDateSelect()` for a dragged selection.
