@@ -3,6 +3,7 @@
 namespace Saade\FilamentFullCalendar\Actions;
 
 use Filament\Actions\EditAction as BaseEditAction;
+use Filament\Schemas\Schema;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class EditAction extends BaseEditAction
@@ -20,7 +21,7 @@ class EditAction extends BaseEditAction
         );
 
         $this->schema(
-            fn (FullCalendarWidget $livewire) => $livewire->getFormSchema()
+            fn (FullCalendarWidget $livewire, Schema $schema) => $livewire->form($schema)
         );
 
         $this->after(

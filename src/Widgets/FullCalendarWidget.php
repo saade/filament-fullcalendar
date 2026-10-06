@@ -9,20 +9,21 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 
 use function Filament\get_authorization_response;
 
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\Access\Response;
 use Saade\FilamentFullCalendar\Actions;
 
-class FullCalendarWidget extends Widget implements HasForms, HasActions
+class FullCalendarWidget extends Widget implements HasActions, HasSchemas
 {
-    use InteractsWithForms;
+    use InteractsWithSchemas;
     use InteractsWithActions;
     use Concerns\InteractsWithEvents;
     use Concerns\InteractsWithRecords;
@@ -69,6 +70,21 @@ class FullCalendarWidget extends Widget implements HasForms, HasActions
         return [];
     }
 
+    public function form(Schema $schema): Schema
+    {
+        return $schema->components($this->getFormSchema()); // @phpstan-ignore method.deprecated
+    }
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema;
+    }
+
+    /**
+     * @deprecated Define the fields in `form()` instead.
+     *
+     * @return array<\Filament\Schemas\Components\Component | \Filament\Actions\Action | \Filament\Actions\ActionGroup>
+     */
     public function getFormSchema(): array
     {
         return [];

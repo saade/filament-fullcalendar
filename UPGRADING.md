@@ -9,7 +9,7 @@ composer require saade/filament-fullcalendar:"^5.0"
 php artisan filament:assets
 ```
 
-It changes six behaviors. Check each one against your calendars.
+It changes six behaviors and deprecates one method. Check each one against your calendars.
 
 ### Actions follow model policies
 
@@ -67,6 +67,50 @@ Rename these wherever your widget uses or overrides them:
 If your widget redeclared `$record` to work around the conflict, remove that property, or keep it only if the widget sits on a resource page and should receive the page's record. If you passed the owner record in under another name, such as `CalendarWidget::make(['owner' => $this->record])`, that keeps working.
 
 The `$record` injected into action callbacks, as in `->mountUsing(function (Event $record) { ... })`, is Filament's and has not changed.
+
+### `getFormSchema()` is deprecated in favor of `form()`
+
+Define the fields with `form(Schema $schema): Schema`, as on other Filament components. `getFormSchema()` still works in 5.x and will be removed in the next major.
+
+```php
+// 4.x
+public function getFormSchema(): array
+{
+    return [
+        TextInput::make('name'),
+    ];
+}
+
+// 5.x
+use Filament\Schemas\Schema;
+
+public function form(Schema $schema): Schema
+{
+    return $schema->components([
+        TextInput::make('name'),
+    ]);
+}
+```
+
+There is also a new `infolist(Schema $schema): Schema`. When it is defined, clicking an event shows its entries instead of the disabled form.
+
+The widget now implements `Filament\Schemas\Contracts\HasSchemas` and uses `InteractsWithSchemas`, in place of the deprecated `HasForms` and `InteractsWithForms`. This only matters if your code type-hints the widget as `HasForms` or calls `getForm()`, `getForms()` or `getCachedForms()` on it.
+
+#### Tests need the schema name after an action has finished
+
+If you test your calendar widget, Filament's form assertions no longer find a default schema once the action has completed. Pass the schema name:
+
+```php
+// 4.x
+->callMountedAction()
+->assertHasNoFormErrors();
+
+// 5.x
+->callMountedAction()
+->assertHasNoFormErrors([], 'form');
+```
+
+Assertions made while the action is still open, such as `->fillForm()` or `->assertHasFormErrors()` right after `->callMountedAction()` fails validation, need no change.
 
 ## From 3.x to 4.x
 

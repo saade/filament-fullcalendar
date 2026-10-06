@@ -4,20 +4,19 @@ namespace Saade\FilamentFullCalendar\Tests\Fixtures;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
-class EventCalendarWidget extends FullCalendarWidget
+class LegacyFormCalendarWidget extends FullCalendarWidget
 {
     public Model | string | null $model = Event::class;
 
-    public function form(Schema $schema): Schema
+    public function getFormSchema(): array
     {
-        return $schema->components([
+        return [
             TextInput::make('title')->required(),
             DateTimePicker::make('starts_at')->required(),
             DateTimePicker::make('ends_at')->required(),
-        ]);
+        ];
     }
 }

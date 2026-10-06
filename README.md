@@ -34,6 +34,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Configuring a single widget](#configuring-a-single-widget)
   - [Premium plugins and licensing](#premium-plugins-and-licensing)
 - [Interacting with actions](#interacting-with-actions)
+  - [Viewing events with an infolist](#viewing-events-with-an-infolist)
   - [Customizing actions](#customizing-actions)
   - [Authorizing actions](#authorizing-actions)
   - [Multi-tenancy](#multi-tenancy)
@@ -346,6 +347,7 @@ use App\Models\Event;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
@@ -353,9 +355,9 @@ class CalendarWidget extends FullCalendarWidget
 {
     public Model | string | null $model = Event::class;
 
-    public function getFormSchema(): array
+    public function form(Schema $schema): Schema
     {
-        return [
+        return $schema->components([
             TextInput::make('name')
                 ->required(),
 
@@ -367,12 +369,36 @@ class CalendarWidget extends FullCalendarWidget
                     DateTimePicker::make('ends_at')
                         ->required(),
                 ]),
-        ];
+        ]);
     }
 }
 ```
 
 That is all it takes: a "New event" button appears above the calendar, clicking an event opens it, and the modal offers Edit and Delete. The form does not have to match the FullCalendar event object; add whichever fields your model has.
+
+## Viewing events with an infolist
+
+Clicking an event shows the form with its fields disabled. To show the event with [infolist entries](https://filamentphp.com/docs/5.x/infolists/overview) instead, define `infolist()`:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Schema;
+
+public function infolist(Schema $schema): Schema
+{
+    return $schema->components([
+        TextEntry::make('name'),
+
+        TextEntry::make('starts_at')
+            ->dateTime(),
+
+        TextEntry::make('ends_at')
+            ->dateTime(),
+    ]);
+}
+```
+
+Creating and editing keep using `form()`.
 
 > [!IMPORTANT]
 > Each event returned from `fetchEvents()` needs an `id` that matches the model's key, so the actions can find the record.

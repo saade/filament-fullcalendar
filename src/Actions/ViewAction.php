@@ -3,6 +3,7 @@
 namespace Saade\FilamentFullCalendar\Actions;
 
 use Filament\Actions\ViewAction as BaseViewAction;
+use Filament\Schemas\Schema;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class ViewAction extends BaseViewAction
@@ -20,7 +21,15 @@ class ViewAction extends BaseViewAction
         );
 
         $this->schema(
-            fn (FullCalendarWidget $livewire) => $livewire->getFormSchema()
+            function (FullCalendarWidget $livewire, Schema $schema): Schema {
+                $infolist = $livewire->infolist($schema);
+
+                if (filled($infolist->getComponents(withActions: false, withHidden: true))) {
+                    return $infolist;
+                }
+
+                return $livewire->form($schema);
+            }
         );
 
         $this->modalFooterActions(

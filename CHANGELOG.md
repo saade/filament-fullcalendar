@@ -15,6 +15,14 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `selectable` and `editable` set in a widget's `config()` are respected by the date click and selection handlers.
 - The clicked event moved from `$record` to `$eventRecord`, so the widget can be used on a resource page without overwriting the page's record ([#209](https://github.com/saade/filament-fullcalendar/issues/209)). `getRecord()`, `resolveRecord()` and the related helpers were renamed to match.
 
+### Added
+
+- `form(Schema $schema)` defines the fields for creating and editing, and `infolist(Schema $schema)` the entries shown when viewing an event.
+
+### Deprecated
+
+- `getFormSchema()`. Define `form()` instead.
+
 ## Unreleased
 
 ### Fixed
