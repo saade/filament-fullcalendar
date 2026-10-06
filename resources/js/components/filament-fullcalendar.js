@@ -20,7 +20,7 @@ export default function fullcalendar({
 
         listeners: {},
 
-        pendingDateSelection: null,
+        pendingDateInteraction: null,
 
         init() {
             this.calendar = new Calendar(this.$el, {
@@ -115,21 +115,13 @@ export default function fullcalendar({
                     }
                 },
                 dateClick: ({ dateStr, allDay, view, resource }) =>
-                    this.queueDateSelection([
-                        dateStr,
-                        null,
-                        allDay,
-                        view,
-                        resource,
-                    ]),
+                    this.queueDateInteraction({
+                        click: { dateStr, allDay, view, resource },
+                    }),
                 select: ({ startStr, endStr, allDay, view, resource }) =>
-                    this.queueDateSelection([
-                        startStr,
-                        endStr,
-                        allDay,
-                        view,
-                        resource,
-                    ]),
+                    this.queueDateInteraction({
+                        selection: { startStr, endStr, allDay, view, resource },
+                    }),
             })
 
             this.calendar.render()
@@ -160,27 +152,47 @@ export default function fullcalendar({
             this.calendar = null
         },
 
-        // A single click on a selectable calendar fires `select` and then, a
-        // few milliseconds later in a separate task, `dateClick`. A tap on a
-        // touch device only fires `dateClick`. Both are collected for a short
-        // window so the server is asked to create one event, preferring the
-        // `select` payload because it carries the end date.
-        queueDateSelection(selection) {
+        // A click on a selectable calendar fires `select` and then, a few
+        // milliseconds later in a separate task, `dateClick`. Dragging over
+        // several cells only fires `select`, and a tap on a touch device only
+        // fires `dateClick`. Both are collected for a short window so the
+        // server gets one call: a click when there was a `dateClick`, and a
+        // selection otherwise.
+        queueDateInteraction(interaction) {
             if (!selectable) return
 
-            const hasPendingSelection = this.pendingDateSelection !== null
+            const isFirstInteraction = this.pendingDateInteraction === null
 
-            if (!hasPendingSelection || selection[1] !== null) {
-                this.pendingDateSelection = selection
+            this.pendingDateInteraction = {
+                ...this.pendingDateInteraction,
+                ...interaction,
             }
 
-            if (hasPendingSelection) return
+            if (!isFirstInteraction) return
 
             setTimeout(() => {
-                const pendingSelection = this.pendingDateSelection
-                this.pendingDateSelection = null
+                const { click, selection } = this.pendingDateInteraction
+                this.pendingDateInteraction = null
 
-                this.$wire.handleDateSelect(...pendingSelection)
+                if (click) {
+                    this.$wire.handleDateClick(
+                        click.dateStr,
+                        click.allDay,
+                        click.view,
+                        click.resource,
+                        selection?.endStr ?? null,
+                    )
+
+                    return
+                }
+
+                this.$wire.handleDateSelect(
+                    selection.startStr,
+                    selection.endStr,
+                    selection.allDay,
+                    selection.view,
+                    selection.resource,
+                )
             }, 50)
         },
     }

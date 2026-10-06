@@ -4,6 +4,7 @@ namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Carbon\CarbonInterval;
 use LogicException;
+use Saade\FilamentFullCalendar\Data\DateClickInfo;
 use Saade\FilamentFullCalendar\Data\DateSelectInfo;
 use Saade\FilamentFullCalendar\Data\EventClickInfo;
 use Saade\FilamentFullCalendar\Data\EventDropInfo;
@@ -65,7 +66,16 @@ trait InteractsWithEvents
     }
 
     /**
-     * Called when a date is clicked or a range of dates is selected. Opens the create action.
+     * Called when a single date or time slot is clicked or tapped. Treats it
+     * as a selection of that day or slot.
+     */
+    protected function onDateClick(DateClickInfo $info): void
+    {
+        $this->onDateSelect($info->selection);
+    }
+
+    /**
+     * Called when a range of dates is selected by dragging. Opens the create action.
      */
     protected function onDateSelect(DateSelectInfo $info): void
     {
@@ -167,6 +177,17 @@ trait InteractsWithEvents
     public function handleDateSelect(string $start, ?string $end, bool $allDay, ?array $view = null, ?array $resource = null): void
     {
         $this->onDateSelect(DateSelectInfo::make($start, $end, $allDay, $view, $resource, $this->getCalendarTimezone()));
+    }
+
+    /**
+     * @internal Called by the calendar in the browser.
+     *
+     * @param  array<string, mixed> | null  $view
+     * @param  array<string, mixed> | null  $resource
+     */
+    public function handleDateClick(string $date, bool $allDay, ?array $view = null, ?array $resource = null, ?string $selectionEnd = null): void
+    {
+        $this->onDateClick(DateClickInfo::make($date, $allDay, $view, $resource, $selectionEnd, $this->getCalendarTimezone()));
     }
 
     protected function getCalendarTimezone(): string

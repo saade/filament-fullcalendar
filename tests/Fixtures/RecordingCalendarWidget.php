@@ -2,6 +2,7 @@
 
 namespace Saade\FilamentFullCalendar\Tests\Fixtures;
 
+use Saade\FilamentFullCalendar\Data\DateClickInfo;
 use Saade\FilamentFullCalendar\Data\DateSelectInfo;
 use Saade\FilamentFullCalendar\Data\EventClickInfo;
 use Saade\FilamentFullCalendar\Data\EventDropInfo;
@@ -40,6 +41,11 @@ class RecordingCalendarWidget extends EventCalendarWidget
         static::$received['resize'] = $info;
 
         return false;
+    }
+
+    protected function onDateClick(DateClickInfo $info): void
+    {
+        static::$received['dateClick'] = $info;
     }
 
     protected function onDateSelect(DateSelectInfo $info): void

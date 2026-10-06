@@ -19,6 +19,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 
 ### Added
 
+- `onDateClick()` is called for a click or tap on a single day or time slot, separately from `onDateSelect()` for a dragged selection.
 - `FetchInfo::overlapping()` limits a query to the records that overlap the visible range.
 - `form(Schema $schema)` defines the fields for creating and editing, and `infolist(Schema $schema)` the entries shown when viewing an event.
 - Filament's own `CreateAction`, `EditAction`, `DeleteAction` and `ViewAction`, and custom actions, get their model, record and schema from the widget. The calendar now uses Filament's actions by default.

@@ -91,7 +91,7 @@ The four handlers each receive one object in place of several arrays, and are no
 | `onEventClick(array $event): void` | `onEventClick(EventClickInfo $info): void` |
 | `onEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta, ?array $oldResource, ?array $newResource): bool` | `onEventDrop(EventDropInfo $info): bool` |
 | `onEventResize(array $event, array $oldEvent, array $relatedEvents, array $startDelta, array $endDelta): bool` | `onEventResize(EventResizeInfo $info): bool` |
-| `onDateSelect(string $start, ?string $end, bool $allDay, ?array $view, ?array $resource): void` | `onDateSelect(DateSelectInfo $info): void` |
+| `onDateSelect(string $start, ?string $end, bool $allDay, ?array $view, ?array $resource): void` | `onDateSelect(DateSelectInfo $info): void`, and the new `onDateClick(DateClickInfo $info): void` |
 
 ```php
 // 4.x
@@ -114,11 +114,13 @@ protected function onEventDrop(EventDropInfo $info): bool
 }
 ```
 
+A click or tap on a single day or time slot now calls `onDateClick()`, and only a selection made by dragging calls `onDateSelect()` directly. The default `onDateClick()` passes the clicked day or slot on to `onDateSelect()`, so an override of `onDateSelect()` still sees both unless you override `onDateClick()` as well.
+
 The record is resolved before the handler runs, so an override no longer has to do it. `$info->event['start']` still returns the raw string the calendar sent.
 
 What the default handlers pass to the actions as `$arguments` has not changed, so `mountUsing()` callbacks that read `$arguments['event']['start']` or `$arguments['start']` keep working. `$arguments['start']` and `$arguments['end']` after a date selection are now `CarbonImmutable` instances.
 
-The browser now calls `handleFetchEvents()`, `handleEventClick()`, `handleEventDrop()`, `handleEventResize()` and `handleDateSelect()`, which build the info objects and call the methods above. If your tests call the handlers through Livewire, call these instead, with the same arguments as before:
+The browser now calls `handleFetchEvents()`, `handleEventClick()`, `handleEventDrop()`, `handleEventResize()`, `handleDateClick()` and `handleDateSelect()`, which build the info objects and call the methods above. If your tests call the handlers through Livewire, call these instead, with the same arguments as before:
 
 ```php
 // 4.x

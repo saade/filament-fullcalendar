@@ -18892,7 +18892,7 @@ function kE({ locale: e, plugins: t, schedulerLicenseKey: n, timeZone: r, config
 	return {
 		calendar: null,
 		listeners: {},
-		pendingDateSelection: null,
+		pendingDateInteraction: null,
 		init() {
 			this.calendar = new nu(this.$el, {
 				headerToolbar: {
@@ -18931,20 +18931,19 @@ function kE({ locale: e, plugins: t, schedulerLicenseKey: n, timeZone: r, config
 					let o = await this.$wire.handleEventResize(e, t, n, r, i);
 					typeof o == "boolean" && o && a();
 				},
-				dateClick: ({ dateStr: e, allDay: t, view: n, resource: r }) => this.queueDateSelection([
-					e,
-					null,
-					t,
-					n,
-					r
-				]),
-				select: ({ startStr: e, endStr: t, allDay: n, view: r, resource: i }) => this.queueDateSelection([
-					e,
-					t,
-					n,
-					r,
-					i
-				])
+				dateClick: ({ dateStr: e, allDay: t, view: n, resource: r }) => this.queueDateInteraction({ click: {
+					dateStr: e,
+					allDay: t,
+					view: n,
+					resource: r
+				} }),
+				select: ({ startStr: e, endStr: t, allDay: n, view: r, resource: i }) => this.queueDateInteraction({ selection: {
+					startStr: e,
+					endStr: t,
+					allDay: n,
+					view: r,
+					resource: i
+				} })
 			}), this.calendar.render(), this.listeners = {
 				"filament-fullcalendar--refresh": () => this.calendar.refetchEvents(),
 				"filament-fullcalendar--prev": () => this.calendar.prev(),
@@ -18957,12 +18956,19 @@ function kE({ locale: e, plugins: t, schedulerLicenseKey: n, timeZone: r, config
 		destroy() {
 			Object.entries(this.listeners).forEach(([e, t]) => window.removeEventListener(e, t)), this.calendar?.destroy(), this.calendar = null;
 		},
-		queueDateSelection(e) {
+		queueDateInteraction(e) {
 			if (!o) return;
-			let t = this.pendingDateSelection !== null;
-			(!t || e[1] !== null) && (this.pendingDateSelection = e), !t && setTimeout(() => {
-				let e = this.pendingDateSelection;
-				this.pendingDateSelection = null, this.$wire.handleDateSelect(...e);
+			let t = this.pendingDateInteraction === null;
+			this.pendingDateInteraction = {
+				...this.pendingDateInteraction,
+				...e
+			}, t && setTimeout(() => {
+				let { click: e, selection: t } = this.pendingDateInteraction;
+				if (this.pendingDateInteraction = null, e) {
+					this.$wire.handleDateClick(e.dateStr, e.allDay, e.view, e.resource, t?.endStr ?? null);
+					return;
+				}
+				this.$wire.handleDateSelect(t.startStr, t.endStr, t.allDay, t.view, t.resource);
 			}, 50);
 		}
 	};

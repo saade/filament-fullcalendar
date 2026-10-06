@@ -516,9 +516,12 @@ The widget has a method for each calendar interaction. Each one receives an obje
 | `onEventClick(EventClickInfo $info)` | An event is clicked | Opens the view action |
 | `onEventDrop(EventDropInfo $info): bool` | An event is dragged to another date or resource | Opens the edit action |
 | `onEventResize(EventResizeInfo $info): bool` | An event is resized | Opens the edit action |
-| `onDateSelect(DateSelectInfo $info)` | A date is clicked or a range is selected | Opens the create action |
+| `onDateClick(DateClickInfo $info)` | A single day or time slot is clicked or tapped | Calls `onDateSelect()` with that day or slot |
+| `onDateSelect(DateSelectInfo $info)` | A range is selected by dragging | Opens the create action |
 
 `onEventDrop()` and `onEventResize()` return a boolean. Return `true` to move the event back to where it was.
+
+Date clicks and selections are only reported when the calendar is [`selectable`](#plugin-methods).
 
 ```php
 use Saade\FilamentFullCalendar\Data\EventDropInfo;
@@ -547,9 +550,10 @@ The info classes are in `Saade\FilamentFullCalendar\Data`:
 | `EventClickInfo` | `event` |
 | `EventDropInfo` | `event`, `oldEvent`, `relatedEvents`, `delta`, `oldResource`, `newResource` |
 | `EventResizeInfo` | `event`, `oldEvent`, `relatedEvents`, `startDelta`, `endDelta` |
+| `DateClickInfo` | `date`, `allDay`, `selection`, `view`, `resource` |
 | `DateSelectInfo` | `start`, `end`, `allDay`, `view`, `resource` |
 
-`event` and `oldEvent` are `EventInfo` objects with `id`, `title`, `start`, `end`, `allDay` and `extendedProps`. Dates are `CarbonImmutable` instances in the calendar's timezone, and the deltas are `CarbonInterval` instances. For an all-day selection, `DateSelectInfo::$end` is the end of the last selected day.
+`event` and `oldEvent` are `EventInfo` objects with `id`, `title`, `start`, `end`, `allDay` and `extendedProps`. Dates are `CarbonImmutable` instances in the calendar's timezone, and the deltas are `CarbonInterval` instances. For an all-day selection, `DateSelectInfo::$end` is the end of the last selected day. `DateClickInfo::$selection` is the clicked day or slot as a `DateSelectInfo`.
 
 # Controlling the calendar
 
@@ -607,6 +611,24 @@ protected function headerActions(): array
     ];
 }
 ```
+
+## Opening a page when a date is clicked
+
+Override `onDateClick()` to do something other than opening the create action, such as going to a resource's create page:
+
+```php
+use App\Filament\Resources\Events\EventResource;
+use Saade\FilamentFullCalendar\Data\DateClickInfo;
+
+protected function onDateClick(DateClickInfo $info): void
+{
+    $this->redirect(EventResource::getUrl('create', [
+        'date' => $info->date->toDateString(),
+    ]));
+}
+```
+
+Dragging over several days still opens the create action, through `onDateSelect()`.
 
 ## Filling the form after dragging or resizing
 
