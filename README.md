@@ -56,6 +56,11 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Refreshing resources](#refreshing-resources)
 - [Intercepting events](#intercepting-events)
 - [Controlling the calendar](#controlling-the-calendar)
+- [Business hours and constraints](#business-hours-and-constraints)
+  - [Business hours](#business-hours)
+  - [Limiting the dates](#limiting-the-dates)
+  - [Overlapping events](#overlapping-events)
+  - [Rules of your own](#rules-of-your-own)
 - [JavaScript callbacks](#javascript-callbacks)
   - [Render hooks](#render-hooks)
   - [Toolbar buttons](#toolbar-buttons)
@@ -1082,6 +1087,86 @@ Other Livewire components and JavaScript can reach a calendar through browser ev
 $this->dispatch('filament-fullcalendar--refresh');
 $this->dispatch('filament-fullcalendar--goto', date: '2026-12-01');
 ```
+
+# Business hours and constraints
+
+FullCalendar can shade the hours you are closed and limit where events may go. Options that are plain values go in `config()`, and options that are functions go in [`jsCallbacks()`](#javascript-callbacks).
+
+## Business hours
+
+[`businessHours`](https://fullcalendar.io/docs/businessHours) shades everything outside the given hours. On its own it only changes how the calendar looks:
+
+```php
+public function config(): array
+{
+    return [
+        'businessHours' => [
+            ['daysOfWeek' => [1, 2, 3, 4, 5], 'startTime' => '09:00', 'endTime' => '18:00'],
+            ['daysOfWeek' => [6], 'startTime' => '09:00', 'endTime' => '13:00'],
+        ],
+    ];
+}
+```
+
+Days are numbered from Sunday as 0. Pass `true` instead of an array for Monday to Friday, 9 to 5.
+
+To also keep events inside those hours, point the constraints at them:
+
+```php
+'selectConstraint' => 'businessHours', // where a new event can be selected
+'eventConstraint' => 'businessHours', // where an event can be dragged or resized to
+```
+
+Both also accept hours of their own, in the same format as `businessHours`.
+
+## Limiting the dates
+
+[`validRange`](https://fullcalendar.io/docs/validRange) stops the user from navigating or selecting outside a range. Either end can be left out:
+
+```php
+'validRange' => [
+    'start' => now()->toDateString(),
+    'end' => now()->addMonths(6)->toDateString(),
+],
+```
+
+To hide days or hours altogether, there are [`hiddenDays`](https://fullcalendar.io/docs/hiddenDays), [`weekends`](https://fullcalendar.io/docs/weekends), and [`slotMinTime`](https://fullcalendar.io/docs/slotMinTime) and `slotMaxTime` for the time grid:
+
+```php
+'weekends' => false,
+'slotMinTime' => '07:00',
+'slotMaxTime' => '20:00',
+```
+
+## Overlapping events
+
+[`eventOverlap`](https://fullcalendar.io/docs/eventOverlap) and [`selectOverlap`](https://fullcalendar.io/docs/selectOverlap) decide whether an event may be moved onto, or a selection made over, another event:
+
+```php
+'eventOverlap' => false,
+'selectOverlap' => false,
+```
+
+## Rules of your own
+
+When the rule depends on the event, use the function forms in `jsCallbacks()`. [`selectAllow`](https://fullcalendar.io/docs/selectAllow) and [`eventAllow`](https://fullcalendar.io/docs/eventAllow) are asked for every position while the user drags, and return whether it is allowed:
+
+```php
+public function jsCallbacks(): array
+{
+    return [
+        'selectAllow' => <<<'JS'
+            (selection) => selection.start >= new Date()
+        JS,
+        'eventAllow' => <<<'JS'
+            (drop, event) => ! event.extendedProps.isLocked
+        JS,
+    ];
+}
+```
+
+> [!WARNING]
+> All of this runs in the browser, so it guides the user but does not protect your data. Validate dates again on the server: in the rules of your form fields, and in a policy for drags and resizes that [save without a modal](#dragging-and-resizing-events).
 
 # JavaScript callbacks
 
