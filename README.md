@@ -52,7 +52,11 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Refreshing resources](#refreshing-resources)
 - [Intercepting events](#intercepting-events)
 - [Controlling the calendar](#controlling-the-calendar)
-- [Render hooks](#render-hooks)
+- [JavaScript callbacks](#javascript-callbacks)
+  - [Render hooks](#render-hooks)
+  - [Toolbar buttons](#toolbar-buttons)
+  - [Reacting to navigation](#reacting-to-navigation)
+  - [Loading state](#loading-state)
 - [Recipes](#recipes)
 - [Changelog](#changelog)
 - [Contributing](#contributing)
@@ -403,7 +407,7 @@ Options people ask about most often:
 | Highlight working hours | [`businessHours`](https://fullcalendar.io/docs/businessHours) |
 | 24-hour times | [`eventTimeFormat`](https://fullcalendar.io/docs/eventTimeFormat), [`slotLabelFormat`](https://fullcalendar.io/docs/slotLabelFormat) |
 
-`config()` is sent to the browser as JSON, so it cannot hold JavaScript functions. For event rendering callbacks, use the [render hooks](#render-hooks).
+`config()` is sent to the browser as JSON, so it cannot hold JavaScript functions. Those go in [`jsCallbacks()`](#javascript-callbacks).
 
 ## Premium plugins and licensing
 
@@ -921,9 +925,40 @@ $this->dispatch('filament-fullcalendar--refresh');
 $this->dispatch('filament-fullcalendar--goto', date: '2026-12-01');
 ```
 
-# Render hooks
+# JavaScript callbacks
 
-FullCalendar's [event render hooks](https://fullcalendar.io/docs/event-render-hooks) `eventClassNames`, `eventContent`, `eventDidMount` and `eventWillUnmount` are available as methods that return JavaScript:
+Many FullCalendar options take a function, which `config()` cannot carry because it is sent as JSON. Return those from `jsCallbacks()`, keyed by the option's name, as JavaScript:
+
+```php
+public function jsCallbacks(): array
+{
+    return [
+        'selectAllow' => <<<'JS'
+            (info) => info.start >= new Date()
+        JS,
+        'dayCellClassNames' => <<<'JS'
+            ({ date }) => [0, 6].includes(date.getUTCDay()) ? ['is-weekend'] : []
+        JS,
+    ];
+}
+```
+
+Any option from the [FullCalendar docs](https://fullcalendar.io/docs) works, and these are merged over `config()`.
+
+The calendar handles `eventClick`, `eventDrop`, `eventResize`, `dateClick`, `select`, `datesSet` and `loading` itself. A callback of yours for one of these runs first, and returning `false` from it stops the calendar from doing its part, such as opening the modal:
+
+```php
+'eventClick' => <<<'JS'
+    ({ event }) => event.extendedProps.isLocked ? false : undefined
+JS,
+```
+
+> [!WARNING]
+> These strings are printed into the page as code. Never build them from data a user can change, such as an event title. Pass data through `extendedProps` and read it in the callback.
+
+## Render hooks
+
+FullCalendar's [event render hooks](https://fullcalendar.io/docs/event-render-hooks) `eventClassNames`, `eventContent`, `eventDidMount` and `eventWillUnmount` also have methods of their own:
 
 ```php
 public function eventDidMount(): string
@@ -935,6 +970,82 @@ public function eventDidMount(): string
     JS;
 }
 ```
+
+## Toolbar buttons
+
+`toolbarActions()` turns [Filament actions](https://filamentphp.com/docs/5.x/actions/overview) into buttons of the calendar's toolbar. Put the action's name where the button should go:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
+
+public function config(): array
+{
+    return [
+        'headerToolbar' => [
+            'left' => 'prev,next today goToDate',
+            'center' => 'title',
+            'right' => 'dayGridMonth,dayGridWeek',
+        ],
+    ];
+}
+
+protected function toolbarActions(): array
+{
+    return [
+        Action::make('goToDate')
+            ->label('Go to date')
+            ->schema([
+                DatePicker::make('date')->required(),
+            ])
+            ->action(fn (array $data) => $this->goToDate($data['date'])),
+    ];
+}
+```
+
+The button shows the action's label, and clicking it runs the action with its modal, form and confirmation like any other. An action that is hidden, disabled or not authorized gets no button.
+
+A button can also run JavaScript in the browser or open a page, without a request to the server:
+
+```php
+Action::make('print')
+    ->alpineClickHandler('window.print()'),
+
+Action::make('help')
+    ->url('https://example.com/help', shouldOpenInNewTab: true),
+```
+
+The JavaScript is evaluated by Alpine on the calendar's element, so `$wire` and the component's `calendar` (the FullCalendar instance) are in scope. This button shows and hides the weekend columns with FullCalendar's own API:
+
+```php
+Action::make('toggleWeekends')
+    ->label('Weekends')
+    ->alpineClickHandler("calendar.setOption('weekends', ! calendar.getOption('weekends'))"),
+```
+
+## Reacting to navigation
+
+Define `onDatesSet()` to be told on the server when the user navigates or switches views:
+
+```php
+use Saade\FilamentFullCalendar\Data\DatesSetInfo;
+
+protected function onDatesSet(DatesSetInfo $info): void
+{
+    // $info->view          'dayGridMonth'
+    // $info->title         'October 2026'
+    // $info->currentStart  first day of the month, week or day being shown
+    // $info->currentEnd    the day after its last one
+    // $info->start         start of the visible range, which in a month view begins in the month before
+    // $info->end           end of the visible range (exclusive)
+}
+```
+
+The browser only reports this when the method exists, since it costs a request on every navigation. For JavaScript that needs no server, use a `datesSet` entry in `jsCallbacks()`.
+
+## Loading state
+
+While events are being fetched, the calendar has `aria-busy="true"` and its stylesheet dims the view. Style `.filament-fullcalendar[aria-busy='true']` to change that, or add a `loading` entry to `jsCallbacks()`.
 
 # Recipes
 
@@ -1036,6 +1147,30 @@ EventData::make()
         ],
         'duration' => '01:00',
     ])
+```
+
+## Remembering the view and date
+
+Store them in [`onDatesSet()`](#reacting-to-navigation) and open the calendar with them:
+
+```php
+use Saade\FilamentFullCalendar\Data\DatesSetInfo;
+
+public function config(): array
+{
+    return [
+        'initialView' => session('calendar.view', 'dayGridMonth'),
+        'initialDate' => session('calendar.date'),
+    ];
+}
+
+protected function onDatesSet(DatesSetInfo $info): void
+{
+    session([
+        'calendar.view' => $info->view,
+        'calendar.date' => $info->currentStart->toDateString(),
+    ]);
+}
 ```
 
 ## Share your recipes

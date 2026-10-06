@@ -18888,7 +18888,8 @@ var vE = P({
 });
 //#endregion
 //#region resources/js/components/filament-fullcalendar.js
-function kE({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, resources: o, editable: s, selectable: c, eventClassNames: l, eventContent: u, eventDidMount: d, eventWillUnmount: f }) {
+function kE({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, resources: o, editable: s, selectable: c, toolbarButtons: l, shouldReportDates: u, callbacks: d }) {
+	let f = (e, ...t) => typeof d[e] == "function" && d[e](...t) === !1;
 	return {
 		calendar: null,
 		listeners: {},
@@ -18920,10 +18921,33 @@ function kE({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 				} },
 				...a,
 				locales: Su,
-				eventClassNames: l,
-				eventContent: u,
-				eventDidMount: d,
-				eventWillUnmount: f,
+				...d,
+				customButtons: {
+					...a.customButtons,
+					...d.customButtons,
+					...Object.fromEntries(Object.entries(l).map(([e, { text: t, hint: n, alpineClickHandler: r, url: i, shouldOpenUrlInNewTab: a }]) => [e, {
+						text: t,
+						hint: n,
+						click: () => {
+							if (r) return window.Alpine.evaluate(this.$el, r);
+							if (i) return window.open(i, a ? "_blank" : "_self");
+							this.$wire.mountAction(e);
+						}
+					}]))
+				},
+				loading: (e) => {
+					this.$el.setAttribute("aria-busy", e), f("loading", e);
+				},
+				datesSet: (e) => {
+					f("datesSet", e) || u && this.$wire.handleDatesSet({
+						view: e.view.type,
+						title: e.view.title,
+						start: e.startStr,
+						end: e.endStr,
+						currentStart: this.calendar.formatIso(e.view.currentStart),
+						currentEnd: this.calendar.formatIso(e.view.currentEnd)
+					});
+				},
 				events: (e, t, n) => {
 					this.$wire.handleFetchEvents({
 						start: e.startStr,
@@ -18931,31 +18955,46 @@ function kE({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 						timezone: e.timeZone
 					}).then(t).catch(n);
 				},
-				eventClick: ({ event: e, jsEvent: t }) => {
-					if (t.preventDefault(), e.url) return window.open(e.url, e.extendedProps.shouldOpenUrlInNewTab || ((e) => e.which > 1 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey)(t) ? "_blank" : "_self");
-					this.$wire.handleEventClick(e);
+				eventClick: (e) => {
+					let { event: t, jsEvent: n } = e;
+					if (n.preventDefault(), !f("eventClick", e)) {
+						if (t.url) return window.open(t.url, t.extendedProps.shouldOpenUrlInNewTab || ((e) => e.which > 1 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey)(n) ? "_blank" : "_self");
+						this.$wire.handleEventClick(t);
+					}
 				},
-				eventDrop: async ({ event: e, oldEvent: t, relatedEvents: n, delta: r, oldResource: i, newResource: a, revert: o }) => {
-					let s = await this.$wire.handleEventDrop(e, t, n, r, i, a);
+				eventDrop: async (e) => {
+					let { event: t, oldEvent: n, relatedEvents: r, delta: i, oldResource: a, newResource: o, revert: s } = e;
+					if (f("eventDrop", e)) return;
+					let c = await this.$wire.handleEventDrop(t, n, r, i, a, o);
+					typeof c == "boolean" && c && s();
+				},
+				eventResize: async (e) => {
+					let { event: t, oldEvent: n, relatedEvents: r, startDelta: i, endDelta: a, revert: o } = e;
+					if (f("eventResize", e)) return;
+					let s = await this.$wire.handleEventResize(t, n, r, i, a);
 					typeof s == "boolean" && s && o();
 				},
-				eventResize: async ({ event: e, oldEvent: t, relatedEvents: n, startDelta: r, endDelta: i, revert: a }) => {
-					let o = await this.$wire.handleEventResize(e, t, n, r, i);
-					typeof o == "boolean" && o && a();
+				dateClick: (e) => {
+					if (f("dateClick", e)) return;
+					let { dateStr: t, allDay: n, view: r, resource: i } = e;
+					this.queueDateInteraction({ click: {
+						dateStr: t,
+						allDay: n,
+						view: r,
+						resource: i
+					} });
 				},
-				dateClick: ({ dateStr: e, allDay: t, view: n, resource: r }) => this.queueDateInteraction({ click: {
-					dateStr: e,
-					allDay: t,
-					view: n,
-					resource: r
-				} }),
-				select: ({ startStr: e, endStr: t, allDay: n, view: r, resource: i }) => this.queueDateInteraction({ selection: {
-					startStr: e,
-					endStr: t,
-					allDay: n,
-					view: r,
-					resource: i
-				} })
+				select: (e) => {
+					if (f("select", e)) return;
+					let { startStr: t, endStr: n, allDay: r, view: i, resource: a } = e;
+					this.queueDateInteraction({ selection: {
+						startStr: t,
+						endStr: n,
+						allDay: r,
+						view: i,
+						resource: a
+					} });
+				}
 			}), this.calendar.render();
 			let p = {
 				refresh: () => this.calendar.refetchEvents(),

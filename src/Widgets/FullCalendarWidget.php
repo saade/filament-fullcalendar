@@ -22,6 +22,7 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
     use Concerns\InteractsWithFilters;
     use Concerns\InteractsWithRecords;
     use Concerns\InteractsWithResources;
+    use Concerns\InteractsWithToolbarActions;
     use InteractsWithHeaderActions;
     use InteractsWithFormActions;
     use Concerns\InteractsWithRawJS;

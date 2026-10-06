@@ -28,10 +28,13 @@
                 resources: @js($this->getInitialResources()),
                 editable: @json($this->isEditable()),
                 selectable: @json($this->isSelectable()),
-                eventClassNames: {!! htmlspecialchars($this->eventClassNames(), ENT_COMPAT) !!},
-                eventContent: {!! htmlspecialchars($this->eventContent(), ENT_COMPAT) !!},
-                eventDidMount: {!! htmlspecialchars($this->eventDidMount(), ENT_COMPAT) !!},
-                eventWillUnmount: {!! htmlspecialchars($this->eventWillUnmount(), ENT_COMPAT) !!},
+                toolbarButtons: @js($this->getToolbarButtons()),
+                shouldReportDates: @json(method_exists($this, 'onDatesSet')),
+                callbacks: {
+                    @foreach ($this->getJsCallbacks() as $name => $callback)
+                        {{ $name }}: ({!! htmlspecialchars($callback, ENT_COMPAT) !!}),
+                    @endforeach
+                },
             })" class="filament-fullcalendar"></div>
     </x-filament::section>
 

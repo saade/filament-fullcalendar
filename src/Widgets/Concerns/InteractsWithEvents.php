@@ -13,6 +13,7 @@ use LogicException;
 use Saade\FilamentFullCalendar\Contracts\Eventable;
 use Saade\FilamentFullCalendar\Data\DateClickInfo;
 use Saade\FilamentFullCalendar\Data\DateSelectInfo;
+use Saade\FilamentFullCalendar\Data\DatesSetInfo;
 use Saade\FilamentFullCalendar\Data\EventClickInfo;
 use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Data\EventDropInfo;
@@ -261,6 +262,20 @@ trait InteractsWithEvents
             ->map($this->normalizeEvent(...))
             ->values()
             ->all();
+    }
+
+    /**
+     * Only called by the browser when the widget defines `onDatesSet()`.
+     *
+     * @param  array{view: string, title: string, start: string, end: string, currentStart: string, currentEnd: string}  $info
+     */
+    public function handleDatesSet(array $info): void
+    {
+        if (! method_exists($this, 'onDatesSet')) {
+            return;
+        }
+
+        $this->onDatesSet(DatesSetInfo::fromArray($info, $this->getTimezone()));
     }
 
     /**

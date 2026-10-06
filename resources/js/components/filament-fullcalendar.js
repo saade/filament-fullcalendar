@@ -11,11 +11,16 @@ export default function fullcalendar({
     resources,
     editable,
     selectable,
-    eventClassNames,
-    eventContent,
-    eventDidMount,
-    eventWillUnmount,
+    toolbarButtons,
+    shouldReportDates,
+    callbacks,
 }) {
+    // A callback from the widget for an option the calendar also handles runs
+    // first, and returning false from it stops the calendar's own handling.
+    const isCancelledByCallback = (name, ...args) =>
+        typeof callbacks[name] === 'function' &&
+        callbacks[name](...args) === false
+
     return {
         /** @type Calendar */
         calendar: null,
@@ -64,10 +69,73 @@ export default function fullcalendar({
                 }),
                 ...config,
                 locales,
-                eventClassNames,
-                eventContent,
-                eventDidMount,
-                eventWillUnmount,
+                ...callbacks,
+                customButtons: {
+                    ...config.customButtons,
+                    ...callbacks.customButtons,
+                    ...Object.fromEntries(
+                        Object.entries(toolbarButtons).map(
+                            ([
+                                name,
+                                {
+                                    text,
+                                    hint,
+                                    alpineClickHandler,
+                                    url,
+                                    shouldOpenUrlInNewTab,
+                                },
+                            ]) => [
+                                name,
+                                {
+                                    text,
+                                    hint,
+                                    click: () => {
+                                        if (alpineClickHandler) {
+                                            return window.Alpine.evaluate(
+                                                this.$el,
+                                                alpineClickHandler,
+                                            )
+                                        }
+
+                                        if (url) {
+                                            return window.open(
+                                                url,
+                                                shouldOpenUrlInNewTab
+                                                    ? '_blank'
+                                                    : '_self',
+                                            )
+                                        }
+
+                                        this.$wire.mountAction(name)
+                                    },
+                                },
+                            ],
+                        ),
+                    ),
+                },
+                loading: (isLoading) => {
+                    this.$el.setAttribute('aria-busy', isLoading)
+
+                    isCancelledByCallback('loading', isLoading)
+                },
+                datesSet: (info) => {
+                    if (isCancelledByCallback('datesSet', info)) return
+
+                    if (!shouldReportDates) return
+
+                    this.$wire.handleDatesSet({
+                        view: info.view.type,
+                        title: info.view.title,
+                        start: info.startStr,
+                        end: info.endStr,
+                        currentStart: this.calendar.formatIso(
+                            info.view.currentStart,
+                        ),
+                        currentEnd: this.calendar.formatIso(
+                            info.view.currentEnd,
+                        ),
+                    })
+                },
                 events: (info, successCallback, failureCallback) => {
                     this.$wire
                         .handleFetchEvents({
@@ -78,8 +146,12 @@ export default function fullcalendar({
                         .then(successCallback)
                         .catch(failureCallback)
                 },
-                eventClick: ({ event, jsEvent }) => {
+                eventClick: (info) => {
+                    const { event, jsEvent } = info
+
                     jsEvent.preventDefault()
+
+                    if (isCancelledByCallback('eventClick', info)) return
 
                     if (event.url) {
                         const isNotPlainLeftClick = (e) =>
@@ -99,15 +171,19 @@ export default function fullcalendar({
 
                     this.$wire.handleEventClick(event)
                 },
-                eventDrop: async ({
-                    event,
-                    oldEvent,
-                    relatedEvents,
-                    delta,
-                    oldResource,
-                    newResource,
-                    revert,
-                }) => {
+                eventDrop: async (info) => {
+                    const {
+                        event,
+                        oldEvent,
+                        relatedEvents,
+                        delta,
+                        oldResource,
+                        newResource,
+                        revert,
+                    } = info
+
+                    if (isCancelledByCallback('eventDrop', info)) return
+
                     const shouldRevert = await this.$wire.handleEventDrop(
                         event,
                         oldEvent,
@@ -121,14 +197,18 @@ export default function fullcalendar({
                         revert()
                     }
                 },
-                eventResize: async ({
-                    event,
-                    oldEvent,
-                    relatedEvents,
-                    startDelta,
-                    endDelta,
-                    revert,
-                }) => {
+                eventResize: async (info) => {
+                    const {
+                        event,
+                        oldEvent,
+                        relatedEvents,
+                        startDelta,
+                        endDelta,
+                        revert,
+                    } = info
+
+                    if (isCancelledByCallback('eventResize', info)) return
+
                     const shouldRevert = await this.$wire.handleEventResize(
                         event,
                         oldEvent,
@@ -141,14 +221,24 @@ export default function fullcalendar({
                         revert()
                     }
                 },
-                dateClick: ({ dateStr, allDay, view, resource }) =>
+                dateClick: (info) => {
+                    if (isCancelledByCallback('dateClick', info)) return
+
+                    const { dateStr, allDay, view, resource } = info
+
                     this.queueDateInteraction({
                         click: { dateStr, allDay, view, resource },
-                    }),
-                select: ({ startStr, endStr, allDay, view, resource }) =>
+                    })
+                },
+                select: (info) => {
+                    if (isCancelledByCallback('select', info)) return
+
+                    const { startStr, endStr, allDay, view, resource } = info
+
                     this.queueDateInteraction({
                         selection: { startStr, endStr, allDay, view, resource },
-                    }),
+                    })
+                },
             })
 
             this.calendar.render()

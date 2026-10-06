@@ -94,3 +94,11 @@ html.dark .filament-fullcalendar {
 .filament-fullcalendar .fc-list-sticky .fc-list-day th {
     @apply bg-inherit;
 }
+
+.filament-fullcalendar .fc-view-harness {
+    transition: opacity 150ms;
+}
+
+.filament-fullcalendar[aria-busy='true'] .fc-view-harness {
+    opacity: 0.6;
+}

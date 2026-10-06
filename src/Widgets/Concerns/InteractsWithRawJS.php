@@ -2,6 +2,8 @@
 
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
+use InvalidArgumentException;
+
 trait InteractsWithRawJS
 {
     /**
@@ -60,5 +62,42 @@ trait InteractsWithRawJS
         return <<<JS
             null
         JS;
+    }
+
+    /**
+     * Any other FullCalendar option that takes a function, by name, as
+     * JavaScript. These are merged over `config()`.
+     *
+     * @see https://fullcalendar.io/docs
+     *
+     * @return array<string, string>
+     */
+    public function jsCallbacks(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getJsCallbacks(): array
+    {
+        $callbacks = [
+            'eventClassNames' => $this->eventClassNames(),
+            'eventContent' => $this->eventContent(),
+            'eventDidMount' => $this->eventDidMount(),
+            'eventWillUnmount' => $this->eventWillUnmount(),
+            ...$this->jsCallbacks(),
+        ];
+
+        $callbacks = array_map(fn (string $callback): string => rtrim(trim($callback), ';'), $callbacks);
+
+        foreach (array_keys($callbacks) as $name) {
+            if (! preg_match('/^[A-Za-z_$][\w$]*$/', (string) $name)) {
+                throw new InvalidArgumentException("[{$name}] is not a valid name for a FullCalendar option.");
+            }
+        }
+
+        return array_filter($callbacks, fn (string $callback): bool => filled($callback) && ($callback !== 'null'));
     }
 }
