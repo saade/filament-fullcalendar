@@ -20,8 +20,6 @@ class EventSourceData implements Arrayable, JsonSerializable
 
     protected ?string $iCalendarUrl = null;
 
-    protected bool $isFetchedByBrowser = false;
-
     protected int $cacheMinutes = 15;
 
     protected int | string | null $id = null;
@@ -98,17 +96,6 @@ class EventSourceData implements Arrayable, JsonSerializable
     }
 
     /**
-     * Let the browser read an iCalendar feed itself. The feed's server has
-     * to allow that, and its address is visible in the page.
-     */
-    public function fetchedByBrowser(bool $condition = true): static
-    {
-        $this->isFetchedByBrowser = $condition;
-
-        return $this;
-    }
-
-    /**
      * @param  array<string, mixed>  $extraProperties
      */
     public function extraProperties(array $extraProperties): static
@@ -143,12 +130,8 @@ class EventSourceData implements Arrayable, JsonSerializable
         return $this->toArray();
     }
 
-    protected function getICalendarUrl(): ?string
+    protected function getICalendarUrl(): string
     {
-        if ($this->isFetchedByBrowser) {
-            return $this->iCalendarUrl;
-        }
-
         return route('filament-fullcalendar.icalendar-feed', [
             'feed' => Crypt::encryptString(json_encode(['url' => $this->iCalendarUrl, 'cacheFor' => $this->cacheMinutes])),
         ]);

@@ -805,7 +805,6 @@ These events are read-only: they cannot be dragged or resized, and clicking one 
 | `color(string $color)`, `textColor(string $color)` | Colors for the events of this source. |
 | `className(string $className)` | A CSS class for the events of this source. |
 | `cacheFor(int $minutes)` | How long an iCalendar feed is kept before it is read again. 15 minutes by default. |
-| `fetchedByBrowser()` | Lets the browser read an iCalendar feed itself, see below. |
 | `extraProperties(array $properties)` | Any other [event source option](https://fullcalendar.io/docs/event-source-object). |
 
 `eventSources()` may also return plain arrays in FullCalendar's [event source](https://fullcalendar.io/docs/event-source-object) format, such as a JSON feed of your own.
@@ -815,12 +814,6 @@ These events are read-only: they cannot be dragged or resized, and clicking one 
 Any `.ics` address works, including the "secret address in iCal format" that Google Calendar, Outlook and others give for a private calendar.
 
 The feed is read by your application, not by the browser, and served to the calendar from a route of this package. Browsers are not allowed to read most feeds directly, and this way the feed's address, which is often a secret in itself, never appears in the page. The route only serves addresses your application encrypted, it is rate limited, and the feed is cached between requests.
-
-If the feed's server allows requests from other sites and its address is not secret, the browser can read it without your application in between:
-
-```php
-EventSourceData::iCalendar('https://example.com/holidays.ics')->fetchedByBrowser()
-```
 
 ## Google Calendar
 

@@ -36,12 +36,8 @@ it('keeps the address of an iCalendar feed out of the page', function () {
     Livewire::test(SourcesCalendarWidget::class)->assertDontSee('token-123');
 });
 
-it('gives the browser the address of a feed it is told to read itself', function () {
-    expect(calendarEventSources()[2]['url'])->toBe('https://example.com/public.ics');
-});
-
 it('passes plain arrays through', function () {
-    expect(calendarEventSources()[3])->toBe(['url' => '/feeds/custom.json', 'color' => 'red']);
+    expect(calendarEventSources()[2])->toBe(['url' => '/feeds/custom.json', 'color' => 'red']);
 });
 
 it('serves the feed from this application and reads it once while it is cached', function () {
