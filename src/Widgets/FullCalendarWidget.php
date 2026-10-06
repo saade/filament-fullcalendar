@@ -20,6 +20,7 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
     use Concerns\InteractsWithCalendarActions;
     use Concerns\InteractsWithEvents;
     use Concerns\InteractsWithRecords;
+    use Concerns\InteractsWithResources;
     use InteractsWithHeaderActions;
     use InteractsWithFormActions;
     use Concerns\InteractsWithRawJS;
@@ -45,6 +46,18 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
     public function fetchEvents(FetchInfo $info): iterable | Builder | Relation
     {
         return [];
+    }
+
+    /**
+     * The resources of a resource view, as arrays or `ResourceData` objects.
+     * Return `null` when the calendar has none, or when they are set in `config()`.
+     *
+     * @param  ?FetchInfo  $info  The visible range, only when `refetchResourcesOnNavigate` is on.
+     * @return iterable<mixed> | null
+     */
+    public function fetchResources(?FetchInfo $info = null): ?iterable
+    {
+        return null;
     }
 
     public function form(Schema $schema): Schema

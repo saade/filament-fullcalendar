@@ -43,6 +43,9 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Authorizing actions](#authorizing-actions)
   - [Multi-tenancy](#multi-tenancy)
 - [Dragging and resizing events](#dragging-and-resizing-events)
+- [Resource views](#resource-views)
+  - [Moving events between resources](#moving-events-between-resources)
+  - [Refreshing resources](#refreshing-resources)
 - [Intercepting events](#intercepting-events)
 - [Controlling the calendar](#controlling-the-calendar)
 - [Render hooks](#render-hooks)
@@ -656,6 +659,112 @@ EventData::make()
     ->start($event->starts_at->toDateString())
     ->end($event->ends_at->addDay()->toDateString())
 ```
+
+# Resource views
+
+The resource views (`resourceTimeline`, `resourceTimeGrid`, `resourceDayGrid`) lay events out by room, person, machine or whatever else your events belong to. They are [premium plugins](#premium-plugins-and-licensing) of FullCalendar.
+
+Return the resources from `fetchResources()`, and give every event the id of its resource:
+
+```php
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\Booking;
+use App\Models\Room;
+use Illuminate\Database\Eloquent\Model;
+use Saade\FilamentFullCalendar\Data\EventData;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
+use Saade\FilamentFullCalendar\Data\ResourceData;
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+
+class RoomTimelineWidget extends FullCalendarWidget
+{
+    public Model | string | null $model = Booking::class;
+
+    protected ?string $startAttribute = 'starts_at';
+
+    protected ?string $endAttribute = 'ends_at';
+
+    protected ?string $resourceAttribute = 'room_id';
+
+    public function getPlugins(): array
+    {
+        return [...parent::getPlugins(), 'resourceTimeline'];
+    }
+
+    public function getSchedulerLicenseKey(): ?string
+    {
+        return config('services.fullcalendar.license_key');
+    }
+
+    public function config(): array
+    {
+        return [
+            'initialView' => 'resourceTimelineWeek',
+            'headerToolbar' => [
+                'left' => 'prev,next today',
+                'center' => 'title',
+                'right' => 'resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth',
+            ],
+            'resourceAreaHeaderContent' => 'Rooms',
+        ];
+    }
+
+    public function fetchResources(?FetchInfo $info = null): array
+    {
+        return Room::query()
+            ->orderBy('name')
+            ->get()
+            ->map(fn (Room $room): ResourceData => ResourceData::make()
+                ->id($room->id)
+                ->title($room->name))
+            ->all();
+    }
+
+    public function fetchEvents(FetchInfo $info): array
+    {
+        return $info->overlapping(Booking::query(), 'starts_at', 'ends_at')
+            ->get()
+            ->map(fn (Booking $booking): EventData => EventData::make()
+                ->id($booking->id)
+                ->title($booking->title)
+                ->start($booking->starts_at)
+                ->end($booking->ends_at)
+                ->resourceId($booking->room_id))
+            ->all();
+    }
+}
+```
+
+The plugins and the license key can also be set once for the panel, as shown in [Premium plugins and licensing](#premium-plugins-and-licensing). While you evaluate the premium views, FullCalendar's trial key `CC-Attribution-NonCommercial-NoDerivatives` removes the license warning.
+
+The resources are sent with the page, so they cost no extra request. `fetchResources()` may also return plain arrays in the shape of FullCalendar's [resource object](https://fullcalendar.io/docs/resource-object).
+
+| Method | Description |
+| ------ | ----------- |
+| `id(int \| string $id)` | Identifies the resource. Events point to it with `resourceId()`. |
+| `title(string $title)` | The text shown for the resource. |
+| `parentId(int \| string \| null $parentId)` | Nests the resource under another one. |
+| `children(array $children)` | Nested resources, as `ResourceData` objects or arrays. |
+| `eventColor(string $color)`, `eventBackgroundColor(string $color)`, `eventBorderColor(string $color)`, `eventTextColor(string $color)` | Colors for the events of this resource. |
+| `extendedProps(array $props)` | Your own data, such as the values of extra [resource columns](https://fullcalendar.io/docs/resourceAreaColumns). |
+| `extraProperties(array $properties)` | Any other [resource property](https://fullcalendar.io/docs/resource-object), such as `eventOverlap` or `eventConstraint`. |
+
+## Moving events between resources
+
+With `$resourceAttribute` set next to [`$startAttribute`](#dragging-and-resizing-events), an event dragged to another resource is saved with that resource's id. The resource a date was clicked or selected in is in `$info->resource` in `onDateClick()` and `onDateSelect()`, and in the `resource` argument of the create action.
+
+## Refreshing resources
+
+`refreshRecords()` fetches the events again, not the resources. Call `refreshResources()` when the resources themselves changed:
+
+```php
+$this->refreshResources();
+```
+
+If the resources depend on the dates being shown, turn on [`refetchResourcesOnNavigate`](https://fullcalendar.io/docs/refetchResourcesOnNavigate) in `config()`. `fetchResources()` then receives the visible range as `$info` each time the user navigates, at the cost of one more request per navigation.
 
 # Intercepting events
 

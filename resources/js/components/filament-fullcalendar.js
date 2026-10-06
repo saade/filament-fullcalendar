@@ -8,6 +8,7 @@ export default function fullcalendar({
     schedulerLicenseKey,
     timeZone,
     config,
+    resources,
     editable,
     selectable,
     eventClassNames,
@@ -23,6 +24,8 @@ export default function fullcalendar({
 
         pendingDateInteraction: null,
 
+        initialResources: Array.isArray(resources) ? resources : null,
+
         init() {
             this.calendar = new Calendar(this.$el, {
                 headerToolbar: {
@@ -36,6 +39,29 @@ export default function fullcalendar({
                 timeZone,
                 editable,
                 selectable,
+                ...(resources !== false && {
+                    resources: (info, successCallback, failureCallback) => {
+                        if (this.initialResources) {
+                            successCallback(this.initialResources)
+                            this.initialResources = null
+
+                            return
+                        }
+
+                        this.$wire
+                            .handleFetchResources(
+                                info?.startStr
+                                    ? {
+                                          start: info.startStr,
+                                          end: info.endStr,
+                                          timezone: info.timeZone,
+                                      }
+                                    : null,
+                            )
+                            .then(successCallback)
+                            .catch(failureCallback)
+                    },
+                }),
                 ...config,
                 locales,
                 eventClassNames,
@@ -129,6 +155,7 @@ export default function fullcalendar({
 
             const handlers = {
                 refresh: () => this.calendar.refetchEvents(),
+                'refresh-resources': () => this.calendar.refetchResources(),
                 prev: () => this.calendar.prev(),
                 next: () => this.calendar.next(),
                 today: () => this.calendar.today(),

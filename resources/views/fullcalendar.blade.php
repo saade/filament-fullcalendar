@@ -13,6 +13,7 @@
                 schedulerLicenseKey: @js($this->getSchedulerLicenseKey()),
                 timeZone: @js($this->getTimezone()),
                 config: @js($this->getConfig()),
+                resources: @js($this->getInitialResources()),
                 editable: @json($this->isEditable()),
                 selectable: @json($this->isSelectable()),
                 eventClassNames: {!! htmlspecialchars($this->eventClassNames(), ENT_COMPAT) !!},

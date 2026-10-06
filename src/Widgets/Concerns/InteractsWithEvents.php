@@ -96,6 +96,12 @@ trait InteractsWithEvents
             foreach ($this->getEventRecordDates($event) as $attribute => $date) {
                 $record->setAttribute($attribute, $date);
             }
+
+            $resourceId = $arguments['newResource']['id'] ?? null;
+
+            if (filled($this->getResourceAttribute()) && filled($resourceId)) {
+                $record->setAttribute($this->getResourceAttribute(), $resourceId);
+            }
         }
 
         if ((! $canSaveDates) || $this->shouldConfirmEventChanges()) {
