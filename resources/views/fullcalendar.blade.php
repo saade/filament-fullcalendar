@@ -26,6 +26,8 @@
                 timeZone: @js($this->getTimezone()),
                 config: @js($this->getConfig()),
                 resources: @js($this->getInitialResources()),
+                eventSources: @js($this->getEventSources()),
+                googleCalendarApiKey: @js($this->getGoogleCalendarApiKey()),
                 editable: @json($this->isEditable()),
                 selectable: @json($this->isSelectable()),
                 toolbarButtons: @js($this->getToolbarButtons()),

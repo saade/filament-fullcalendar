@@ -44,6 +44,9 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Multi-tenancy](#multi-tenancy)
 - [Dragging and resizing events](#dragging-and-resizing-events)
 - [Dragging items onto the calendar](#dragging-items-onto-the-calendar)
+- [Showing other calendars](#showing-other-calendars)
+  - [iCalendar feeds](#icalendar-feeds)
+  - [Google Calendar](#google-calendar)
 - [Filtering events](#filtering-events)
   - [Filter form](#filter-form)
   - [Tabs](#tabs)
@@ -774,6 +777,61 @@ public function config(): array
 ```
 
 The dragged item stays where it was. If it should disappear from its list once scheduled, re-render that list, for example from a Livewire event dispatched as above.
+
+# Showing other calendars
+
+A calendar can show events from elsewhere next to its own, such as public holidays or a team's shared calendar. Return them from `eventSources()`:
+
+```php
+use Saade\FilamentFullCalendar\Data\EventSourceData;
+
+public function eventSources(): array
+{
+    return [
+        EventSourceData::iCalendar('https://example.com/holidays.ics')
+            ->color('gray'),
+
+        EventSourceData::googleCalendar('en.usa#holiday@group.v.calendar.google.com')
+            ->color('#0f9d58'),
+    ];
+}
+```
+
+These events are read-only: they cannot be dragged or resized, and clicking one does not open the calendar's modals. The JavaScript for each kind of source is only downloaded by calendars that use it.
+
+| Method | Description |
+| ------ | ----------- |
+| `id(int \| string $id)` | Identifies the source, for use in [JavaScript callbacks](#javascript-callbacks) as `event.source.id`. |
+| `color(string $color)`, `textColor(string $color)` | Colors for the events of this source. |
+| `className(string $className)` | A CSS class for the events of this source. |
+| `cacheFor(int $minutes)` | How long an iCalendar feed is kept before it is read again. 15 minutes by default. |
+| `fetchedByBrowser()` | Lets the browser read an iCalendar feed itself, see below. |
+| `extraProperties(array $properties)` | Any other [event source option](https://fullcalendar.io/docs/event-source-object). |
+
+`eventSources()` may also return plain arrays in FullCalendar's [event source](https://fullcalendar.io/docs/event-source-object) format, such as a JSON feed of your own.
+
+## iCalendar feeds
+
+Any `.ics` address works, including the "secret address in iCal format" that Google Calendar, Outlook and others give for a private calendar.
+
+The feed is read by your application, not by the browser, and served to the calendar from a route of this package. Browsers are not allowed to read most feeds directly, and this way the feed's address, which is often a secret in itself, never appears in the page. The route only serves addresses your application encrypted, it is rate limited, and the feed is cached between requests.
+
+If the feed's server allows requests from other sites and its address is not secret, the browser can read it without your application in between:
+
+```php
+EventSourceData::iCalendar('https://example.com/holidays.ics')->fetchedByBrowser()
+```
+
+## Google Calendar
+
+A Google Calendar source reads a **public** calendar through Google's API, and needs a [Google Calendar API key](https://fullcalendar.io/docs/google-calendar). Set it on the panel plugin:
+
+```php
+FilamentFullCalendarPlugin::make()
+    ->googleCalendarApiKey(config('services.google.calendar_api_key'))
+```
+
+The key is sent to the browser, so restrict it in the Google Cloud console to your site's address and to the Calendar API. For a private Google calendar, use its secret iCalendar address as an [iCalendar feed](#icalendar-feeds) instead. Clicking a Google Calendar event opens it on Google in a new tab.
 
 # Filtering events
 

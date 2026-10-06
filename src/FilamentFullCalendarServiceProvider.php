@@ -19,7 +19,8 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
-            ->hasViews();
+            ->hasViews()
+            ->hasRoute('web');
     }
 
     public function packageBooted(): void

@@ -17,6 +17,8 @@ class FilamentFullCalendarPlugin implements Plugin
 
     protected string | Closure | null $schedulerLicenseKey = null;
 
+    protected string | Closure | null $googleCalendarApiKey = null;
+
     protected array | Closure $config = [];
 
     protected string | Closure | null $timezone = null;
@@ -102,6 +104,18 @@ class FilamentFullCalendarPlugin implements Plugin
     public function getSchedulerLicenseKey(): ?string
     {
         return $this->evaluate($this->schedulerLicenseKey);
+    }
+
+    public function googleCalendarApiKey(string | Closure | null $googleCalendarApiKey): static
+    {
+        $this->googleCalendarApiKey = $googleCalendarApiKey;
+
+        return $this;
+    }
+
+    public function getGoogleCalendarApiKey(): ?string
+    {
+        return $this->evaluate($this->googleCalendarApiKey);
     }
 
     public function config(array | Closure $config): static

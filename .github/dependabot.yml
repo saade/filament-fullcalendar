@@ -38,3 +38,4 @@ updates:
       - dependency-name: "moment"
       - dependency-name: "moment-timezone"
       - dependency-name: "rrule"
+      - dependency-name: "ical.js"

@@ -28,6 +28,14 @@ const pluginGroups = [
         names: ['rrule'],
         load: () => import('../plugins/rrule.js'),
     },
+    {
+        names: ['googleCalendar'],
+        load: () => import('../plugins/google-calendar.js'),
+    },
+    {
+        names: ['iCalendar'],
+        load: () => import('../plugins/icalendar.js'),
+    },
 ]
 
 async function loadPlugins(names) {
@@ -86,6 +94,8 @@ export default function fullcalendar({
     timeZone,
     config,
     resources,
+    eventSources,
+    googleCalendarApiKey,
     editable,
     selectable,
     toolbarButtons,
@@ -118,8 +128,20 @@ export default function fullcalendar({
         initialResources: Array.isArray(resources) ? resources : null,
 
         async init() {
+            const allEventSources = [
+                ...(config.eventSources ?? []),
+                ...eventSources,
+            ]
+
+            const sourcePlugins = [
+                allEventSources.some((source) => source.googleCalendarId) &&
+                    'googleCalendar',
+                allEventSources.some((source) => source.format === 'ics') &&
+                    'iCalendar',
+            ].filter(Boolean)
+
             const [loadedPlugins, locales] = await Promise.all([
-                loadPlugins(plugins),
+                loadPlugins([...new Set([...plugins, ...sourcePlugins])]),
                 loadLocales(config.locale ?? locale),
             ])
 
@@ -163,6 +185,20 @@ export default function fullcalendar({
                 ...config,
                 locales,
                 ...callbacks,
+                ...(googleCalendarApiKey && { googleCalendarApiKey }),
+                // A Google Calendar event links to its page on Google, which
+                // should not replace the application's own page.
+                eventSources: allEventSources.map((source) =>
+                    source.googleCalendarId
+                        ? {
+                              ...source,
+                              eventDataTransform: (event) => ({
+                                  ...event,
+                                  shouldOpenUrlInNewTab: true,
+                              }),
+                          }
+                        : source,
+                ),
                 customButtons: {
                     ...config.customButtons,
                     ...callbacks.customButtons,
