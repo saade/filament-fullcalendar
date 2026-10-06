@@ -39,6 +39,13 @@ class EventData implements Arrayable, JsonSerializable
 
     protected ?array $extendedProps = null;
 
+    /**
+     * @var string | array<string> | null
+     */
+    protected string | array | null $tooltip = null;
+
+    protected bool $isTooltipHtml = false;
+
     protected array $extraProperties = [];
 
     public static function make(): static
@@ -181,6 +188,20 @@ class EventData implements Arrayable, JsonSerializable
     }
 
     /**
+     * Shown when the event is hovered. Pass an array for several lines.
+     *
+     * @param  string | array<string>  $tooltip
+     * @param  bool  $html  Rendered as HTML and not escaped.
+     */
+    public function tooltip(string | array $tooltip, bool $html = false): static
+    {
+        $this->tooltip = $tooltip;
+        $this->isTooltipHtml = $html;
+
+        return $this;
+    }
+
+    /**
      * Add extra properties that doesn't have a fluent method defined here, to the event.
      */
     public function extraProperties(array $extraProperties): static
@@ -205,7 +226,11 @@ class EventData implements Arrayable, JsonSerializable
             ...$this->backgroundColor ? ['backgroundColor' => $this->backgroundColor] : [],
             ...$this->borderColor ? ['borderColor' => $this->borderColor] : [],
             ...$this->textColor ? ['textColor' => $this->textColor] : [],
-            ...$this->extendedProps ? ['extendedProps' => $this->extendedProps] : [],
+            ...($this->extendedProps || filled($this->tooltip)) ? ['extendedProps' => [
+                ...$this->extendedProps ?? [],
+                ...filled($this->tooltip) ? ['tooltip' => $this->tooltip] : [],
+                ...(filled($this->tooltip) && $this->isTooltipHtml) ? ['isTooltipHtml' => true] : [],
+            ]] : [],
             ...$this->extraProperties,
         ];
     }

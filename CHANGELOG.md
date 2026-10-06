@@ -35,6 +35,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` drive the calendar from PHP.
 - Models that implement `Eventable` describe their own event, and `fetchEvents()` can return them as an array, a collection or a query. One calendar can show several models: each event resolves to a record of its own model through a signed reference, with that model's label and policy.
 - When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.
+- `EventData::tooltip()` shows a tooltip when an event is hovered.
 - `eventSources()` shows read-only events from iCalendar feeds and public Google Calendars next to the calendar's own. iCalendar feeds are read by the application and cached, so private feed addresses stay out of the page.
 - Items from outside the calendar can be dragged onto it with the `draggable` Blade component and `droppable` in `config()`. A dropped record is saved with its new dates, and any other item opens the create action.
 - `jsCallbacks()` passes any FullCalendar option that takes a function, such as `selectAllow` or `dayCellClassNames`. A callback for something the calendar handles itself runs first and can cancel it by returning `false`.

@@ -53,3 +53,16 @@ it('does not require an id or a title', function () {
         'display' => 'background',
     ]);
 });
+
+it('puts the tooltip with the extended props', function () {
+    expect(EventData::make()->tooltip('Room 2')->toArray()['extendedProps'])
+        ->toBe(['tooltip' => 'Room 2']);
+
+    expect(EventData::make()->extendedProps(['kind' => 'review'])->tooltip(['Room 2', '<b>Ada</b>'])->toArray()['extendedProps'])
+        ->toBe(['kind' => 'review', 'tooltip' => ['Room 2', '<b>Ada</b>']]);
+});
+
+it('marks a tooltip as HTML only when asked', function () {
+    expect(EventData::make()->tooltip('<b>Room 2</b>', html: true)->toArray()['extendedProps'])
+        ->toBe(['tooltip' => '<b>Room 2</b>', 'isTooltipHtml' => true]);
+});

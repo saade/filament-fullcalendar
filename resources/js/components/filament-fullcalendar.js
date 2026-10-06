@@ -78,6 +78,30 @@ function makeItemsDraggable() {
     })
 }
 
+const escapeHtml = (text) => {
+    const el = document.createElement('div')
+    el.textContent = text
+
+    return el.innerHTML
+}
+
+// Set as an attribute value, not an Alpine expression, so it cannot run as code.
+function addTooltip({ event, el }) {
+    const { tooltip, isTooltipHtml } = event.extendedProps
+
+    if (!tooltip || (Array.isArray(tooltip) && !tooltip.length)) return
+
+    const theme = window.Alpine.store('theme') ?? 'light'
+
+    el.setAttribute(
+        `x-tooltip.html.raw.theme.${theme}`,
+        [tooltip]
+            .flat()
+            .map((line) => (isTooltipHtml ? line : escapeHtml(line)))
+            .join('<br>'),
+    )
+}
+
 const isEnglish = (locale) => !locale || /^en([-_]us)?$/i.test(locale)
 
 async function loadLocales(locale) {
@@ -185,6 +209,11 @@ export default function fullcalendar({
                 ...config,
                 locales,
                 ...callbacks,
+                eventDidMount: (info) => {
+                    addTooltip(info)
+
+                    callbacks.eventDidMount?.(info)
+                },
                 ...(googleCalendarApiKey && { googleCalendarApiKey }),
                 // A Google Calendar event links to its page on Google, which
                 // should not replace the application's own page.

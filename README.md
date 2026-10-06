@@ -214,6 +214,7 @@ public function fetchEvents(FetchInfo $info): array
 | `backgroundColor(string $color)`, `borderColor(string $color)`, `textColor(string $color)` | Colors for this event. Any CSS color works. |
 | `groupId(int \| string $groupId)` | Events sharing a group are dragged and resized together. |
 | `resourceId(int \| string $resourceId)`, `resourceIds(array $resourceIds)` | Associates the event with [resources](https://fullcalendar.io/docs/resource-data). |
+| `tooltip(string \| array $tooltip, bool $html = false)` | Text shown when the event is hovered. An array gives one line per item. With `html: true` it is rendered as HTML and not escaped. |
 | `extendedProps(array $props)` | Your own data, available to the [render hooks](#render-hooks) as `event.extendedProps`. |
 | `extraProperties(array $properties)` | Any other [event property](https://fullcalendar.io/docs/event-object), such as `display`, `classNames`, `editable` or `rrule`. |
 
@@ -1376,16 +1377,25 @@ EventData::make()
 
 ## Event tooltip on hover
 
+Give the event a tooltip, as one line or several:
+
 ```php
-public function eventDidMount(): string
-{
-    return <<<'JS'
-        function ({ event, el }) {
-            el.setAttribute('x-tooltip.raw', event.title)
-        }
-    JS;
-}
+EventData::make()
+    ->title($event->name)
+    ->start($event->starts_at)
+    ->tooltip([$event->name, $event->room->name])
 ```
+
+The tooltip is Filament's own, and the text is escaped, so it is safe to put user data in it. To format it, pass `html: true`:
+
+```php
+->tooltip("<strong>{$name}</strong><br>{$room}", html: true)
+```
+
+> [!WARNING]
+> An HTML tooltip is not escaped. Escape any user data in it yourself, with `e()`.
+
+In a plain array, these are the `tooltip` and `isTooltipHtml` keys of `extendedProps`.
 
 ## Recurring events
 

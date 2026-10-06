@@ -1456,11 +1456,21 @@ function Xt() {
 		}
 	});
 }
-var Zt = (e) => !e || /^en([-_]us)?$/i.test(e);
-async function Qt(e) {
-	return Zt(e) ? [] : (await import("../filament-fullcalendar-locales-D70-mQ5L.js")).default;
+var Zt = (e) => {
+	let t = document.createElement("div");
+	return t.textContent = e, t.innerHTML;
+};
+function Qt({ event: e, el: t }) {
+	let { tooltip: n, isTooltipHtml: r } = e.extendedProps;
+	if (!n || Array.isArray(n) && !n.length) return;
+	let i = window.Alpine.store("theme") ?? "light";
+	t.setAttribute(`x-tooltip.html.raw.theme.${i}`, [n].flat().map((e) => r ? e : Zt(e)).join("<br>"));
 }
-function $t({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, resources: o, eventSources: s, googleCalendarApiKey: c, editable: l, selectable: u, toolbarButtons: d, droppable: f, widget: p, hasSpaMode: m, shouldReportDates: ee, callbacks: h }) {
+var $t = (e) => !e || /^en([-_]us)?$/i.test(e);
+async function en(e) {
+	return $t(e) ? [] : (await import("../filament-fullcalendar-locales-D70-mQ5L.js")).default;
+}
+function tn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, resources: o, eventSources: s, googleCalendarApiKey: c, editable: l, selectable: u, toolbarButtons: d, droppable: f, widget: p, hasSpaMode: m, shouldReportDates: ee, callbacks: h }) {
 	let g = (e, ...t) => typeof h[e] == "function" && h[e](...t) === !1;
 	return {
 		calendar: null,
@@ -1471,7 +1481,7 @@ function $t({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 		lastWidth: null,
 		initialResources: Array.isArray(o) ? o : null,
 		async init() {
-			let _ = [...a.eventSources ?? [], ...s], te = [_.some((e) => e.googleCalendarId) && "googleCalendar", _.some((e) => e.format === "ics") && "iCalendar"].filter(Boolean), [v, ne] = await Promise.all([Jt([.../* @__PURE__ */ new Set([...n, ...te])]), Qt(a.locale ?? t)]);
+			let _ = [...a.eventSources ?? [], ...s], te = [_.some((e) => e.googleCalendarId) && "googleCalendar", _.some((e) => e.format === "ics") && "iCalendar"].filter(Boolean), [v, ne] = await Promise.all([Jt([.../* @__PURE__ */ new Set([...n, ...te])]), en(a.locale ?? t)]);
 			if (this.isDestroyed) return;
 			this.calendar = new je(this.$el, {
 				headerToolbar: {
@@ -1499,6 +1509,9 @@ function $t({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 				...a,
 				locales: ne,
 				...h,
+				eventDidMount: (e) => {
+					Qt(e), h.eventDidMount?.(e);
+				},
 				...c && { googleCalendarApiKey: c },
 				eventSources: _.map((e) => e.googleCalendarId ? {
 					...e,
@@ -1636,4 +1649,4 @@ function $t({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 	};
 }
 //#endregion
-export { $t as default };
+export { tn as default };
