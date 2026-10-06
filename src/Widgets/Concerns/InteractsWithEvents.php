@@ -2,103 +2,79 @@
 
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
-use Carbon\Carbon;
+use Carbon\CarbonInterval;
+use LogicException;
+use Saade\FilamentFullCalendar\Data\DateSelectInfo;
+use Saade\FilamentFullCalendar\Data\EventClickInfo;
+use Saade\FilamentFullCalendar\Data\EventDropInfo;
+use Saade\FilamentFullCalendar\Data\EventInfo;
+use Saade\FilamentFullCalendar\Data\EventResizeInfo;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 trait InteractsWithEvents
 {
     /**
-     * Triggered when the user clicks an event.
-     * @param array $event An Event Object that holds information about the event (date, title, etc).
-     * @return void
+     * Called when an event is clicked. Opens the view action.
      */
-    public function onEventClick(array $event): void
+    protected function onEventClick(EventClickInfo $info): void
     {
-        if ($this->getModel()) {
-            $this->eventRecord = $this->resolveEventRecord($event['id']);
-        }
-
         $this->mountAction('view', [
             'type' => 'click',
-            'event' => $event,
+            'event' => $info->event->toArray(),
         ]);
     }
 
     /**
-     * Triggered when dragging stops and the event has moved to a different day/time.
-     * @param array $event An Event Object that holds information about the event (date, title, etc) after the drop.
-     * @param array $oldEvent An Event Object that holds information about the event before the drop.
-     * @param array $relatedEvents An array of other related Event Objects that were also dropped. An event might have other recurring event instances or might be linked to other events with the same groupId
-     * @param array $delta A Duration Object that represents the amount of time the event was moved by.
-     * @param ?array $oldResource A Resource Object that represents the previously assigned resource.
-     * @param ?array $newResource A Resource Object that represents the newly assigned resource.
-     * @return bool Whether to revert the drop action.
+     * Called when an event was dragged to another date or resource. Opens the edit action.
+     *
+     * @return bool Whether to move the event back to where it was.
      */
-    public function onEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta, ?array $oldResource, ?array $newResource): bool
+    protected function onEventDrop(EventDropInfo $info): bool
     {
-        if ($this->getModel()) {
-            $this->eventRecord = $this->resolveEventRecord($event['id']);
-        }
-
         $this->mountAction('edit', [
             'type' => 'drop',
-            'event' => $event,
-            'oldEvent' => $oldEvent,
-            'relatedEvents' => $relatedEvents,
-            'delta' => $delta,
-            'oldResource' => $oldResource,
-            'newResource' => $newResource,
+            'event' => $info->event->toArray(),
+            'oldEvent' => $info->oldEvent->toArray(),
+            'relatedEvents' => array_map(fn (EventInfo $event): array => $event->toArray(), $info->relatedEvents),
+            'delta' => $info->delta->toArray(),
+            'oldResource' => $info->oldResource,
+            'newResource' => $info->newResource,
         ]);
 
         return false;
     }
 
     /**
-     * Triggered when resizing stops and the event has changed in duration.
-     * @param array $event An Event Object that holds information about the event (date, title, etc) after the drop.
-     * @param array $oldEvent An Event Object that holds information about the event before the drop.
-     * @param array $relatedEvents An array of other related Event Objects that were also dropped. An event might have other recurring event instances or might be linked to other events with the same groupId
-     * @param array $startDelta A Duration Object that represents the amount of time the event’s start date was moved by.
-     * @param array $endDelta A Duration Object that represents the amount of time the event’s end date was moved by.
-     * @return bool Whether to revert the resize action.
+     * Called when an event was resized. Opens the edit action.
+     *
+     * @return bool Whether to resize the event back to what it was.
      */
-    public function onEventResize(array $event, array $oldEvent, array $relatedEvents, array $startDelta, array $endDelta): bool
+    protected function onEventResize(EventResizeInfo $info): bool
     {
-        if ($this->getModel()) {
-            $this->eventRecord = $this->resolveEventRecord($event['id']);
-        }
-
         $this->mountAction('edit', [
             'type' => 'resize',
-            'event' => $event,
-            'oldEvent' => $oldEvent,
-            'relatedEvents' => $relatedEvents,
-            'startDelta' => $startDelta,
-            'endDelta' => $endDelta,
+            'event' => $info->event->toArray(),
+            'oldEvent' => $info->oldEvent->toArray(),
+            'relatedEvents' => array_map(fn (EventInfo $event): array => $event->toArray(), $info->relatedEvents),
+            'startDelta' => $info->startDelta->toArray(),
+            'endDelta' => $info->endDelta->toArray(),
         ]);
 
         return false;
     }
 
     /**
-     * Triggered when a date/time selection is made (single or multiple days).
-     * @param string $start An ISO8601 string representation of the start date. It will have a timezone offset similar to the calendar’s timeZone. If selecting all-day cells, it won’t have a time nor timezone part.
-     * @param ?string $end An ISO8601 string representation of the end date. It will have a timezone offset similar to the calendar’s timeZone. If selecting all-day cells, it won’t have a time nor timezone part.
-     * @param bool $allDay Whether the selection happened on all-day cells.
-     * @param ?array $view A View array that contains information about a calendar view, such as title and date range.
-     * @param ?array $resource A Resource Object that represents the selected resource.
-     * @return void
+     * Called when a date is clicked or a range of dates is selected. Opens the create action.
      */
-    public function onDateSelect(string $start, ?string $end, bool $allDay, ?array $view, ?array $resource): void
+    protected function onDateSelect(DateSelectInfo $info): void
     {
-        [$start, $end] = $this->calculateTimezoneOffset($start, $end, $allDay);
-
         $this->mountAction('create', [
             'type' => 'select',
-            'start' => $start,
-            'end' => $end,
-            'allDay' => $allDay,
-            'resource' => $resource,
+            'start' => $info->start,
+            'end' => $info->end,
+            'allDay' => $info->allDay,
+            'resource' => $info->resource,
         ]);
     }
 
@@ -107,24 +83,128 @@ trait InteractsWithEvents
         $this->dispatch('filament-fullcalendar--refresh');
     }
 
-    protected function calculateTimezoneOffset(string $start, ?string $end, bool $allDay): array
+    /**
+     * @internal Called by the calendar in the browser.
+     *
+     * @param  array{start: string, end: string, timezone?: string}  $info
+     * @return array<mixed>
+     */
+    public function handleFetchEvents(array $info): array
     {
-        $timezone = FilamentFullCalendarPlugin::get()->getTimezone();
+        return $this->fetchEvents(FetchInfo::fromArray($info, $this->getCalendarTimezone()));
+    }
 
-        $start = Carbon::parse($start, $timezone);
+    /**
+     * @internal Called by the calendar in the browser.
+     *
+     * @param  array<string, mixed>  $event
+     */
+    public function handleEventClick(array $event): void
+    {
+        $info = new EventClickInfo($this->makeEventInfo($event));
 
-        if ($end) {
-            $end = Carbon::parse($end, $timezone);
+        $this->resolveClickedEventRecord($info->event);
+
+        $this->onEventClick($info);
+    }
+
+    /**
+     * @internal Called by the calendar in the browser.
+     *
+     * @param  array<string, mixed>  $event
+     * @param  array<string, mixed>  $oldEvent
+     * @param  array<array<string, mixed>>  $relatedEvents
+     * @param  array<string, int | float>  $delta
+     * @param  array<string, mixed> | null  $oldResource
+     * @param  array<string, mixed> | null  $newResource
+     */
+    public function handleEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta, ?array $oldResource = null, ?array $newResource = null): bool
+    {
+        $info = new EventDropInfo(
+            event: $this->makeEventInfo($event),
+            oldEvent: $this->makeEventInfo($oldEvent),
+            relatedEvents: array_map($this->makeEventInfo(...), $relatedEvents),
+            delta: $this->makeInterval($delta),
+            oldResource: $oldResource,
+            newResource: $newResource,
+        );
+
+        $this->resolveClickedEventRecord($info->event);
+
+        return $this->onEventDrop($info);
+    }
+
+    /**
+     * @internal Called by the calendar in the browser.
+     *
+     * @param  array<string, mixed>  $event
+     * @param  array<string, mixed>  $oldEvent
+     * @param  array<array<string, mixed>>  $relatedEvents
+     * @param  array<string, int | float>  $startDelta
+     * @param  array<string, int | float>  $endDelta
+     */
+    public function handleEventResize(array $event, array $oldEvent, array $relatedEvents, array $startDelta, array $endDelta): bool
+    {
+        $info = new EventResizeInfo(
+            event: $this->makeEventInfo($event),
+            oldEvent: $this->makeEventInfo($oldEvent),
+            relatedEvents: array_map($this->makeEventInfo(...), $relatedEvents),
+            startDelta: $this->makeInterval($startDelta),
+            endDelta: $this->makeInterval($endDelta),
+        );
+
+        $this->resolveClickedEventRecord($info->event);
+
+        return $this->onEventResize($info);
+    }
+
+    /**
+     * @internal Called by the calendar in the browser.
+     *
+     * @param  array<string, mixed> | null  $view
+     * @param  array<string, mixed> | null  $resource
+     */
+    public function handleDateSelect(string $start, ?string $end, bool $allDay, ?array $view = null, ?array $resource = null): void
+    {
+        $this->onDateSelect(DateSelectInfo::make($start, $end, $allDay, $view, $resource, $this->getCalendarTimezone()));
+    }
+
+    protected function getCalendarTimezone(): string
+    {
+        return FilamentFullCalendarPlugin::get()->getTimezone();
+    }
+
+    /**
+     * @param  array<string, mixed>  $event
+     */
+    protected function makeEventInfo(array $event): EventInfo
+    {
+        return EventInfo::fromArray($event, $this->getCalendarTimezone());
+    }
+
+    /**
+     * @param  array<string, int | float>  $duration  A FullCalendar duration: years, months, days and milliseconds.
+     */
+    protected function makeInterval(array $duration): CarbonInterval
+    {
+        return CarbonInterval::create(
+            years: (int) ($duration['years'] ?? 0),
+            months: (int) ($duration['months'] ?? 0),
+            days: (int) ($duration['days'] ?? 0),
+            microseconds: (int) (($duration['milliseconds'] ?? 0) * 1000),
+        );
+    }
+
+    protected function resolveClickedEventRecord(EventInfo $event): void
+    {
+        if (blank($this->getModel())) {
+            return;
         }
 
-        if (! is_null($end) && $allDay) {
-            /**
-             * date is exclusive, read more https://fullcalendar.io/docs/select-callback
-             * For example, if the selection is all-day and the last day is a Thursday, end will be Friday.
-             */
-            $end->subDay()->endOfDay();
+        if (blank($event->id)) {
+            throw new LogicException('The event has no [id], so its [' . $this->getModel() . '] record cannot be found. Return an [id] for each event from fetchEvents().');
         }
 
-        return [$start, $end];
+        $this->eventRecord = $this->resolveEventRecord($event->id);
     }
 }

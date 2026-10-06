@@ -22,7 +22,7 @@ it('resolves records of the current tenant only', function () {
     expect($widget->resolveEventRecordRouteBinding($ours->getKey())?->is($ours))->toBeTrue()
         ->and($widget->resolveEventRecordRouteBinding($theirs->getKey()))->toBeNull();
 
-    expect(fn () => $widget->onEventClick(['id' => $theirs->getKey()]))
+    expect(fn () => $widget->handleEventClick(['id' => $theirs->getKey()]))
         ->toThrow(ModelNotFoundException::class);
 });
 

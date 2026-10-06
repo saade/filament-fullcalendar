@@ -18913,7 +18913,7 @@ function kE({ locale: e, plugins: t, schedulerLicenseKey: n, timeZone: r, config
 				eventDidMount: l,
 				eventWillUnmount: u,
 				events: (e, t, n) => {
-					this.$wire.fetchEvents({
+					this.$wire.handleFetchEvents({
 						start: e.startStr,
 						end: e.endStr,
 						timezone: e.timeZone
@@ -18921,14 +18921,14 @@ function kE({ locale: e, plugins: t, schedulerLicenseKey: n, timeZone: r, config
 				},
 				eventClick: ({ event: e, jsEvent: t }) => {
 					if (t.preventDefault(), e.url) return window.open(e.url, e.extendedProps.shouldOpenUrlInNewTab || ((e) => e.which > 1 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey)(t) ? "_blank" : "_self");
-					this.$wire.onEventClick(e);
+					this.$wire.handleEventClick(e);
 				},
 				eventDrop: async ({ event: e, oldEvent: t, relatedEvents: n, delta: r, oldResource: i, newResource: a, revert: o }) => {
-					let s = await this.$wire.onEventDrop(e, t, n, r, i, a);
+					let s = await this.$wire.handleEventDrop(e, t, n, r, i, a);
 					typeof s == "boolean" && s && o();
 				},
 				eventResize: async ({ event: e, oldEvent: t, relatedEvents: n, startDelta: r, endDelta: i, revert: a }) => {
-					let o = await this.$wire.onEventResize(e, t, n, r, i);
+					let o = await this.$wire.handleEventResize(e, t, n, r, i);
 					typeof o == "boolean" && o && a();
 				},
 				dateClick: ({ dateStr: e, allDay: t, view: n, resource: r }) => this.queueDateSelection([
@@ -18962,7 +18962,7 @@ function kE({ locale: e, plugins: t, schedulerLicenseKey: n, timeZone: r, config
 			let t = this.pendingDateSelection !== null;
 			(!t || e[1] !== null) && (this.pendingDateSelection = e), !t && setTimeout(() => {
 				let e = this.pendingDateSelection;
-				this.pendingDateSelection = null, this.$wire.onDateSelect(...e);
+				this.pendingDateSelection = null, this.$wire.handleDateSelect(...e);
 			}, 50);
 		}
 	};

@@ -43,7 +43,7 @@ export default function fullcalendar({
                 eventWillUnmount,
                 events: (info, successCallback, failureCallback) => {
                     this.$wire
-                        .fetchEvents({
+                        .handleFetchEvents({
                             start: info.startStr,
                             end: info.endStr,
                             timezone: info.timeZone,
@@ -70,7 +70,7 @@ export default function fullcalendar({
                         )
                     }
 
-                    this.$wire.onEventClick(event)
+                    this.$wire.handleEventClick(event)
                 },
                 eventDrop: async ({
                     event,
@@ -81,7 +81,7 @@ export default function fullcalendar({
                     newResource,
                     revert,
                 }) => {
-                    const shouldRevert = await this.$wire.onEventDrop(
+                    const shouldRevert = await this.$wire.handleEventDrop(
                         event,
                         oldEvent,
                         relatedEvents,
@@ -102,7 +102,7 @@ export default function fullcalendar({
                     endDelta,
                     revert,
                 }) => {
-                    const shouldRevert = await this.$wire.onEventResize(
+                    const shouldRevert = await this.$wire.handleEventResize(
                         event,
                         oldEvent,
                         relatedEvents,
@@ -180,7 +180,7 @@ export default function fullcalendar({
                 const pendingSelection = this.pendingDateSelection
                 this.pendingDateSelection = null
 
-                this.$wire.onDateSelect(...pendingSelection)
+                this.$wire.handleDateSelect(...pendingSelection)
             }, 50)
         },
     }

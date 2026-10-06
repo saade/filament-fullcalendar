@@ -3,6 +3,7 @@
 namespace Saade\FilamentFullCalendar\Tests\Fixtures;
 
 use Illuminate\Database\Eloquent\Model;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 
 class TeamCalendarWidget extends EventCalendarWidget
 {
@@ -10,7 +11,7 @@ class TeamCalendarWidget extends EventCalendarWidget
 
     protected static bool $isScopedToTenant = false;
 
-    public function fetchEvents(array $info): array
+    public function fetchEvents(FetchInfo $info): array
     {
         return Event::query()
             ->whereBelongsTo($this->record, 'team')

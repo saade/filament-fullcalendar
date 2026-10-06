@@ -31,7 +31,7 @@ function dropMeeting(Event $event): array
 
 it('creates an event with the fields from form()', function (string $widget) {
     Livewire::test($widget)
-        ->call('onDateSelect', '2026-10-06', '2026-10-07', true, null, null)
+        ->call('handleDateSelect', '2026-10-06', '2026-10-07', true, null, null)
         ->assertSchemaComponentExists('title', 'mountedActionSchema0', fn ($component): bool => $component instanceof TextInput)
         ->fillForm([
             'title' => 'Planning',
@@ -49,7 +49,7 @@ it('creates an event with the fields from form()', function (string $widget) {
 
 it('validates the fields from form()', function () {
     Livewire::test(EventCalendarWidget::class)
-        ->call('onDateSelect', '2026-10-06', '2026-10-07', true, null, null)
+        ->call('handleDateSelect', '2026-10-06', '2026-10-07', true, null, null)
         ->fillForm(['title' => null])
         ->callMountedAction()
         ->assertHasFormErrors(['title' => 'required']);
@@ -59,7 +59,7 @@ it('edits an event with the fields from form()', function (string $widget) {
     $event = createMeeting();
 
     Livewire::test($widget)
-        ->call('onEventDrop', ...dropMeeting($event))
+        ->call('handleEventDrop', ...dropMeeting($event))
         ->assertActionMounted('edit')
         ->assertSchemaStateSet(['title' => 'Meeting'], 'mountedActionSchema0')
         ->fillForm(['title' => 'Renamed'])
@@ -76,7 +76,7 @@ it('views an event with the entries from infolist()', function () {
     $event = createMeeting();
 
     Livewire::test(InfolistCalendarWidget::class)
-        ->call('onEventClick', ['id' => $event->getKey()])
+        ->call('handleEventClick', ['id' => $event->getKey()])
         ->assertActionMounted('view')
         ->assertSchemaComponentExists('title', 'mountedActionSchema0', fn ($component): bool => $component instanceof TextEntry && $component->getState() === 'Meeting');
 });
@@ -85,7 +85,7 @@ it('views an event with the disabled form when there is no infolist', function (
     $event = createMeeting();
 
     Livewire::test($widget)
-        ->call('onEventClick', ['id' => $event->getKey()])
+        ->call('handleEventClick', ['id' => $event->getKey()])
         ->assertActionMounted('view')
         ->assertSchemaComponentExists('title', 'mountedActionSchema0', fn ($component): bool => $component instanceof TextInput && $component->isDisabled());
 })->with([
@@ -97,7 +97,7 @@ it('still edits with the form when the widget has an infolist', function () {
     $event = createMeeting();
 
     Livewire::test(InfolistCalendarWidget::class)
-        ->call('onEventDrop', ...dropMeeting($event))
+        ->call('handleEventDrop', ...dropMeeting($event))
         ->assertActionMounted('edit')
         ->assertSchemaComponentExists('title', 'mountedActionSchema0', fn ($component): bool => $component instanceof TextInput);
 });

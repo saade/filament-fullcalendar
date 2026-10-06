@@ -14,10 +14,12 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - Date selection uses the timezone configured on the panel plugin.
 - `selectable` and `editable` set in a widget's `config()` are respected by the date click and selection handlers.
 - The calendar refetches its events after any action other than viewing has run, not only after the package's own actions.
+- `fetchEvents()` receives a `FetchInfo` object, and `onEventClick()`, `onEventDrop()`, `onEventResize()` and `onDateSelect()` each receive a typed info object in place of several arrays. See the upgrade guide for the new signatures.
 - The clicked event moved from `$record` to `$eventRecord`, so the widget can be used on a resource page without overwriting the page's record ([#209](https://github.com/saade/filament-fullcalendar/issues/209)). `getRecord()`, `resolveRecord()` and the related helpers were renamed to match.
 
 ### Added
 
+- `FetchInfo::overlapping()` limits a query to the records that overlap the visible range.
 - `form(Schema $schema)` defines the fields for creating and editing, and `infolist(Schema $schema)` the entries shown when viewing an event.
 - Filament's own `CreateAction`, `EditAction`, `DeleteAction` and `ViewAction`, and custom actions, get their model, record and schema from the widget. The calendar now uses Filament's actions by default.
 

@@ -14,14 +14,14 @@ beforeEach(function () {
 
 it('opens the view action when an event is clicked', function () {
     Livewire::test(EventCalendarWidget::class)
-        ->call('onEventClick', ['id' => $this->event->getKey()])
+        ->call('handleEventClick', ['id' => $this->event->getKey()])
         ->assertActionMounted('view');
 });
 
 it('opens the edit action when an event is dropped', function () {
     Livewire::test(EventCalendarWidget::class)
         ->call(
-            'onEventDrop',
+            'handleEventDrop',
             ['id' => $this->event->getKey(), 'start' => '2026-10-07T09:00:00Z', 'end' => '2026-10-07T10:00:00Z'],
             ['id' => $this->event->getKey(), 'start' => '2026-10-06T09:00:00Z', 'end' => '2026-10-06T10:00:00Z'],
             [],
@@ -35,7 +35,7 @@ it('opens the edit action when an event is dropped', function () {
 it('opens the edit action when an event is resized', function () {
     Livewire::test(EventCalendarWidget::class)
         ->call(
-            'onEventResize',
+            'handleEventResize',
             ['id' => $this->event->getKey(), 'start' => '2026-10-06T09:00:00Z', 'end' => '2026-10-06T11:00:00Z'],
             ['id' => $this->event->getKey(), 'start' => '2026-10-06T09:00:00Z', 'end' => '2026-10-06T10:00:00Z'],
             [],
@@ -47,6 +47,6 @@ it('opens the edit action when an event is resized', function () {
 
 it('opens the create action when a date is selected', function () {
     Livewire::test(EventCalendarWidget::class)
-        ->call('onDateSelect', '2026-10-06', '2026-10-07', true, null, null)
+        ->call('handleDateSelect', '2026-10-06', '2026-10-07', true, null, null)
         ->assertActionMounted('create');
 });

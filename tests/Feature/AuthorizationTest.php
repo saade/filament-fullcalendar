@@ -36,15 +36,15 @@ it('lets every action through when the model has no policy', function () {
     $event = createEvent();
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onEventClick', ['id' => $event->getKey()])
+        ->call('handleEventClick', ['id' => $event->getKey()])
         ->assertActionMounted('view');
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onEventDrop', ...dropPayload($event))
+        ->call('handleEventDrop', ...dropPayload($event))
         ->assertActionMounted('edit');
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onDateSelect', '2026-10-06', '2026-10-07', true, null, null)
+        ->call('handleDateSelect', '2026-10-06', '2026-10-07', true, null, null)
         ->assertActionMounted('create');
 });
 
@@ -54,11 +54,11 @@ it('lets every action through when the policy allows it', function () {
     $event = createEvent();
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onEventClick', ['id' => $event->getKey()])
+        ->call('handleEventClick', ['id' => $event->getKey()])
         ->assertActionMounted('view');
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onEventDrop', ...dropPayload($event))
+        ->call('handleEventDrop', ...dropPayload($event))
         ->assertActionMounted('edit');
 });
 
@@ -69,7 +69,7 @@ it('does not open the view modal when the policy denies viewing', function () {
     $event = createEvent();
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onEventClick', ['id' => $event->getKey()])
+        ->call('handleEventClick', ['id' => $event->getKey()])
         ->assertSet('mountedActions', []);
 });
 
@@ -80,13 +80,13 @@ it('does not open the edit modal on drop or resize when the policy denies updati
     $event = createEvent();
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onEventDrop', ...dropPayload($event))
+        ->call('handleEventDrop', ...dropPayload($event))
         ->assertSet('mountedActions', []);
 
     [$newEvent, $oldEvent] = dropPayload($event);
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onEventResize', $newEvent, $oldEvent, [], ['days' => 0], ['days' => 1])
+        ->call('handleEventResize', $newEvent, $oldEvent, [], ['days' => 0], ['days' => 1])
         ->assertSet('mountedActions', []);
 });
 
@@ -95,7 +95,7 @@ it('does not open the create modal when the policy denies creating', function ()
     EventPolicy::$allows = false;
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onDateSelect', '2026-10-06', '2026-10-07', true, null, null)
+        ->call('handleDateSelect', '2026-10-06', '2026-10-07', true, null, null)
         ->assertSet('mountedActions', []);
 });
 

@@ -95,6 +95,7 @@ php artisan make:filament-widget CalendarWidget
 
 namespace App\Filament\Widgets;
 
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class CalendarWidget extends FullCalendarWidget
@@ -102,10 +103,8 @@ class CalendarWidget extends FullCalendarWidget
     /**
      * FullCalendar calls this whenever it needs events, such as when the
      * user clicks prev/next or switches views.
-     *
-     * @param  array{start: string, end: string, timezone: string}  $info
      */
-    public function fetchEvents(array $info): array
+    public function fetchEvents(FetchInfo $info): array
     {
         return [];
     }
@@ -114,7 +113,7 @@ class CalendarWidget extends FullCalendarWidget
 
 ## Returning events
 
-`fetchEvents()` returns an array of [FullCalendar event objects](https://fullcalendar.io/docs/event-object). `$info` holds the visible range, so only the events that overlap it need to be loaded:
+`fetchEvents()` returns an array of [FullCalendar event objects](https://fullcalendar.io/docs/event-object). `$info` holds the visible range, so only the events that overlap it need to be loaded. `$info->overlapping()` adds that condition to a query:
 
 ```php
 <?php
@@ -122,15 +121,14 @@ class CalendarWidget extends FullCalendarWidget
 namespace App\Filament\Widgets;
 
 use App\Models\Event;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class CalendarWidget extends FullCalendarWidget
 {
-    public function fetchEvents(array $info): array
+    public function fetchEvents(FetchInfo $info): array
     {
-        return Event::query()
-            ->where('starts_at', '<', $info['end'])
-            ->where('ends_at', '>', $info['start'])
+        return $info->overlapping(Event::query(), 'starts_at', 'ends_at')
             ->get()
             ->map(fn (Event $event): array => [
                 'id' => $event->id,
@@ -143,8 +141,16 @@ class CalendarWidget extends FullCalendarWidget
 }
 ```
 
+`FetchInfo` has these properties:
+
+| Property | Description |
+| -------- | ----------- |
+| `$info->start` | Start of the visible range, as a `CarbonImmutable` in the application's timezone. |
+| `$info->end` | End of the visible range (exclusive), as a `CarbonImmutable` in the application's timezone. |
+| `$info->timezone` | The calendar's timezone. |
+
 > [!NOTE]
-> Compare the range with an overlap test like the one above. Filtering with `starts_at >= start` and `ends_at <= end` hides every event that begins before or ends after the visible range.
+> If you write the condition yourself, make it an overlap test: the event starts before `$info->end` and ends after `$info->start`. Filtering with `starts_at >= start` and `ends_at <= end` hides every event that begins before or ends after the visible range.
 
 > [!NOTE]
 > FullCalendar treats the `end` of an event as exclusive. An all-day event that should cover October 6th to 8th needs `2026-10-09` as its `end`.
@@ -157,12 +163,11 @@ class CalendarWidget extends FullCalendarWidget
 use App\Filament\Resources\Events\EventResource;
 use App\Models\Event;
 use Saade\FilamentFullCalendar\Data\EventData;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 
-public function fetchEvents(array $info): array
+public function fetchEvents(FetchInfo $info): array
 {
-    return Event::query()
-        ->where('starts_at', '<', $info['end'])
-        ->where('ends_at', '>', $info['start'])
+    return $info->overlapping(Event::query(), 'starts_at', 'ends_at')
         ->get()
         ->map(fn (Event $event): EventData => EventData::make()
             ->id($event->id)
@@ -223,6 +228,7 @@ namespace App\Filament\Resources\Projects\Widgets;
 
 use App\Models\Task;
 use Illuminate\Database\Eloquent\Model;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class ProjectCalendarWidget extends FullCalendarWidget
@@ -231,12 +237,9 @@ class ProjectCalendarWidget extends FullCalendarWidget
 
     public ?Model $record = null;
 
-    public function fetchEvents(array $info): array
+    public function fetchEvents(FetchInfo $info): array
     {
-        return Task::query()
-            ->whereBelongsTo($this->record)
-            ->where('starts_at', '<', $info['end'])
-            ->where('ends_at', '>', $info['start'])
+        return $info->overlapping(Task::query()->whereBelongsTo($this->record), 'starts_at', 'ends_at')
             ->get()
             ->map(fn (Task $task): array => [
                 'id' => $task->id,
@@ -506,16 +509,47 @@ protected static ?string $tenantOwnershipRelationshipName = 'organization';
 
 # Intercepting events
 
-The widget has a method for each calendar interaction. Override one to change what it does, and call the parent to keep the default behavior:
+The widget has a method for each calendar interaction. Each one receives an object describing what happened. Override one to change what it does, and call the parent to keep the default behavior:
 
 | Method | Called when | Default |
 | ------ | ----------- | ------- |
-| `onEventClick(array $event)` | An event is clicked | Opens the view action |
-| `onEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta, ?array $oldResource, ?array $newResource)` | An event is dragged to another date | Opens the edit action |
-| `onEventResize(array $event, array $oldEvent, array $relatedEvents, array $startDelta, array $endDelta)` | An event is resized | Opens the edit action |
-| `onDateSelect(string $start, ?string $end, bool $allDay, ?array $view, ?array $resource)` | A date is clicked or a range is selected | Opens the create action |
+| `onEventClick(EventClickInfo $info)` | An event is clicked | Opens the view action |
+| `onEventDrop(EventDropInfo $info): bool` | An event is dragged to another date or resource | Opens the edit action |
+| `onEventResize(EventResizeInfo $info): bool` | An event is resized | Opens the edit action |
+| `onDateSelect(DateSelectInfo $info)` | A date is clicked or a range is selected | Opens the create action |
 
 `onEventDrop()` and `onEventResize()` return a boolean. Return `true` to move the event back to where it was.
+
+```php
+use Saade\FilamentFullCalendar\Data\EventDropInfo;
+
+protected function onEventDrop(EventDropInfo $info): bool
+{
+    if ($info->event->start->isPast()) {
+        return true;
+    }
+
+    $this->eventRecord->update([
+        'starts_at' => $info->event->start,
+        'ends_at' => $info->event->end,
+    ]);
+
+    return false;
+}
+```
+
+When the widget has a `$model`, the event's record is already in `$this->eventRecord` by the time these methods run.
+
+The info classes are in `Saade\FilamentFullCalendar\Data`:
+
+| Class | Properties |
+| ----- | ---------- |
+| `EventClickInfo` | `event` |
+| `EventDropInfo` | `event`, `oldEvent`, `relatedEvents`, `delta`, `oldResource`, `newResource` |
+| `EventResizeInfo` | `event`, `oldEvent`, `relatedEvents`, `startDelta`, `endDelta` |
+| `DateSelectInfo` | `start`, `end`, `allDay`, `view`, `resource` |
+
+`event` and `oldEvent` are `EventInfo` objects with `id`, `title`, `start`, `end`, `allDay` and `extendedProps`. Dates are `CarbonImmutable` instances in the calendar's timezone, and the deltas are `CarbonInterval` instances. For an all-day selection, `DateSelectInfo::$end` is the end of the last selected day.
 
 # Controlling the calendar
 

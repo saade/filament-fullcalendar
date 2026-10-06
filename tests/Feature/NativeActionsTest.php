@@ -34,7 +34,7 @@ beforeEach(function () {
 
 it('creates an event and refreshes the calendar', function (string $widget) {
     Livewire::test($widget)
-        ->call('onDateSelect', '2026-10-06', '2026-10-07', true, null, null)
+        ->call('handleDateSelect', '2026-10-06', '2026-10-07', true, null, null)
         ->assertActionMounted('create')
         ->fillForm([
             'title' => 'Planning',
@@ -50,16 +50,16 @@ it('creates an event and refreshes the calendar', function (string $widget) {
 
 it('creates an empty event even after another event was clicked', function (string $widget) {
     Livewire::test($widget)
-        ->call('onEventClick', ['id' => $this->event->getKey()])
+        ->call('handleEventClick', ['id' => $this->event->getKey()])
         ->call('unmountAction')
-        ->call('onDateSelect', '2026-10-06', '2026-10-07', true, null, null)
+        ->call('handleDateSelect', '2026-10-06', '2026-10-07', true, null, null)
         ->assertActionMounted('create')
         ->assertSchemaStateSet(['title' => null], 'mountedActionSchema0');
 })->with('action classes');
 
 it('views the clicked event', function (string $widget) {
     Livewire::test($widget)
-        ->call('onEventClick', ['id' => $this->event->getKey()])
+        ->call('handleEventClick', ['id' => $this->event->getKey()])
         ->assertActionMounted('view')
         ->assertSchemaComponentExists('title', 'mountedActionSchema0', fn ($component): bool => $component instanceof TextEntry && $component->getState() === 'Meeting')
         ->assertNotDispatched('filament-fullcalendar--refresh');
@@ -71,7 +71,7 @@ it('views the clicked event', function (string $widget) {
 
 it('edits the dropped event and refreshes the calendar', function (string $widget) {
     Livewire::test($widget)
-        ->call('onEventDrop', ...$this->drop)
+        ->call('handleEventDrop', ...$this->drop)
         ->assertActionMounted('edit')
         ->assertSchemaComponentExists('title', 'mountedActionSchema0', fn ($component): bool => $component instanceof TextInput)
         ->fillForm(['title' => 'Renamed'])
@@ -84,7 +84,7 @@ it('edits the dropped event and refreshes the calendar', function (string $widge
 
 it('deletes the clicked event, clears it and refreshes the calendar', function (string $widget) {
     Livewire::test($widget)
-        ->call('onEventClick', ['id' => $this->event->getKey()])
+        ->call('handleEventClick', ['id' => $this->event->getKey()])
         ->callAction('delete')
         ->assertSet('eventRecord', null)
         ->assertDispatched('filament-fullcalendar--refresh');
@@ -94,7 +94,7 @@ it('deletes the clicked event, clears it and refreshes the calendar', function (
 
 it('edits from the view modal and closes it', function (string $widget) {
     Livewire::test($widget)
-        ->call('onEventClick', ['id' => $this->event->getKey()])
+        ->call('handleEventClick', ['id' => $this->event->getKey()])
         ->callAction('edit', ['title' => 'Renamed'])
         ->assertSet('mountedActions', []);
 
@@ -106,7 +106,7 @@ it('edits from the view modal and closes it', function (string $widget) {
 
 it('deletes from the view modal and closes it', function (string $widget) {
     Livewire::test($widget)
-        ->call('onEventClick', ['id' => $this->event->getKey()])
+        ->call('handleEventClick', ['id' => $this->event->getKey()])
         ->callAction('delete')
         ->assertSet('mountedActions', []);
 
@@ -124,7 +124,7 @@ it('refreshes the calendar after a custom action', function () {
 
 it('passes the clicked event to a custom action as its record', function () {
     Livewire::test(NativeActionsCalendarWidget::class)
-        ->call('onEventClick', ['id' => $this->event->getKey()])
+        ->call('handleEventClick', ['id' => $this->event->getKey()])
         ->call('unmountAction')
         ->callAction('archive');
 

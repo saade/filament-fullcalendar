@@ -27,7 +27,7 @@ it('keeps the clicked event in its own property', function () {
     $event = createTeamEvent(Team::create(['name' => 'Ours']));
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onEventClick', ['id' => $event->getKey()])
+        ->call('handleEventClick', ['id' => $event->getKey()])
         ->assertSet('eventRecord', fn (Event $eventRecord): bool => $eventRecord->is($event));
 });
 
@@ -39,12 +39,12 @@ it('leaves the record of a resource page alone when an event is clicked, dropped
     $oldEvent = ['id' => $event->getKey(), 'start' => '2026-10-06T09:00:00Z', 'end' => '2026-10-06T10:00:00Z'];
 
     Livewire::test(TeamCalendarWidget::class, ['record' => $team])
-        ->call('onEventClick', ['id' => $event->getKey()])
+        ->call('handleEventClick', ['id' => $event->getKey()])
         ->assertSet('record', fn (Team $record): bool => $record->is($team))
         ->assertSet('eventRecord', fn (Event $eventRecord): bool => $eventRecord->is($event))
-        ->call('onEventDrop', $newEvent, $oldEvent, [], ['days' => 1], null, null)
+        ->call('handleEventDrop', $newEvent, $oldEvent, [], ['days' => 1], null, null)
         ->assertSet('record', fn (Team $record): bool => $record->is($team))
-        ->call('onEventResize', $newEvent, $oldEvent, [], ['days' => 0], ['days' => 1])
+        ->call('handleEventResize', $newEvent, $oldEvent, [], ['days' => 0], ['days' => 1])
         ->assertSet('record', fn (Team $record): bool => $record->is($team));
 });
 
@@ -56,18 +56,18 @@ it('can still fetch events for the record of a resource page after an event was 
     $info = ['start' => '2026-10-01T00:00:00Z', 'end' => '2026-11-01T00:00:00Z', 'timezone' => 'UTC'];
 
     $component = Livewire::test(TeamCalendarWidget::class, ['record' => $team])
-        ->call('onEventClick', ['id' => $event->getKey()]);
+        ->call('handleEventClick', ['id' => $event->getKey()]);
 
-    expect($component->instance()->fetchEvents($info))
+    expect($component->instance()->handleFetchEvents($info))
         ->toHaveCount(1)
-        ->and($component->instance()->fetchEvents($info)[0]['title'])->toBe('Ours');
+        ->and($component->instance()->handleFetchEvents($info)[0]['title'])->toBe('Ours');
 });
 
 it('clears the event record after deleting it', function () {
     $event = createTeamEvent(Team::create(['name' => 'Ours']));
 
     Livewire::test(EventCalendarWidget::class)
-        ->call('onEventClick', ['id' => $event->getKey()])
+        ->call('handleEventClick', ['id' => $event->getKey()])
         ->callAction('delete')
         ->assertSet('eventRecord', null);
 

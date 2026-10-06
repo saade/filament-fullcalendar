@@ -9,6 +9,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Widgets\Widget;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 
 class FullCalendarWidget extends Widget implements HasActions, HasSchemas
 {
@@ -30,11 +31,12 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
     protected int | string | array $columnSpan = 'full';
 
     /**
-     * FullCalendar will call this function whenever it needs new event data.
-     * This is triggered when the user clicks prev/next or switches views.
-     * @param array{start: string, end: string, timezone: string} $info
+     * Called whenever the calendar needs events, such as when the user
+     * navigates or switches views.
+     *
+     * @return array<mixed>
      */
-    public function fetchEvents(array $info): array
+    public function fetchEvents(FetchInfo $info): array
     {
         return [];
     }

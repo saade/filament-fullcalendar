@@ -9,7 +9,7 @@ composer require saade/filament-fullcalendar:"^5.0"
 php artisan filament:assets
 ```
 
-It changes seven behaviors and deprecates one method and four classes. Check each one against your calendars.
+It changes seven behaviors, changes the signature of `fetchEvents()` and the four event handlers, and deprecates one method and four classes. Check each one against your calendars.
 
 ### Actions follow model policies
 
@@ -67,6 +67,68 @@ Rename these wherever your widget uses or overrides them:
 If your widget redeclared `$record` to work around the conflict, remove that property, or keep it only if the widget sits on a resource page and should receive the page's record. If you passed the owner record in under another name, such as `CalendarWidget::make(['owner' => $this->record])`, that keeps working.
 
 The `$record` injected into action callbacks, as in `->mountUsing(function (Event $record) { ... })`, is Filament's and has not changed.
+
+### `fetchEvents()` and the event handlers take info objects
+
+`fetchEvents()` now receives a `FetchInfo` object in place of an array. Change the type hint; reading `$info['start']`, `$info['end']` and `$info['timezone']` still returns the same strings as before, so the body can stay as it is.
+
+```php
+// 4.x
+public function fetchEvents(array $info): array
+
+// 5.x
+use Saade\FilamentFullCalendar\Data\FetchInfo;
+
+public function fetchEvents(FetchInfo $info): array
+```
+
+`$info->start` and `$info->end` are `CarbonImmutable` instances in the application's timezone, and `$info->overlapping($query, 'starts_at', 'ends_at')` adds the range condition to a query.
+
+The four handlers each receive one object in place of several arrays, and are now `protected`:
+
+| 4.x | 5.x |
+| --- | --- |
+| `onEventClick(array $event): void` | `onEventClick(EventClickInfo $info): void` |
+| `onEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta, ?array $oldResource, ?array $newResource): bool` | `onEventDrop(EventDropInfo $info): bool` |
+| `onEventResize(array $event, array $oldEvent, array $relatedEvents, array $startDelta, array $endDelta): bool` | `onEventResize(EventResizeInfo $info): bool` |
+| `onDateSelect(string $start, ?string $end, bool $allDay, ?array $view, ?array $resource): void` | `onDateSelect(DateSelectInfo $info): void` |
+
+```php
+// 4.x
+public function onEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta, ?array $oldResource, ?array $newResource): bool
+{
+    $this->record = $this->resolveRecord($event['id']);
+    $this->record->update(['starts_at' => $event['start'], 'ends_at' => $event['end']]);
+
+    return false;
+}
+
+// 5.x
+use Saade\FilamentFullCalendar\Data\EventDropInfo;
+
+protected function onEventDrop(EventDropInfo $info): bool
+{
+    $this->eventRecord->update(['starts_at' => $info->event->start, 'ends_at' => $info->event->end]);
+
+    return false;
+}
+```
+
+The record is resolved before the handler runs, so an override no longer has to do it. `$info->event['start']` still returns the raw string the calendar sent.
+
+What the default handlers pass to the actions as `$arguments` has not changed, so `mountUsing()` callbacks that read `$arguments['event']['start']` or `$arguments['start']` keep working. `$arguments['start']` and `$arguments['end']` after a date selection are now `CarbonImmutable` instances.
+
+The browser now calls `handleFetchEvents()`, `handleEventClick()`, `handleEventDrop()`, `handleEventResize()` and `handleDateSelect()`, which build the info objects and call the methods above. If your tests call the handlers through Livewire, call these instead, with the same arguments as before:
+
+```php
+// 4.x
+->call('onEventClick', ['id' => $event->id])
+
+// 5.x
+->call('handleEventClick', ['id' => $event->id])
+```
+
+Clicking, dragging or resizing an event that has no `id` on a widget with a `$model` now fails with a message saying so, instead of an "undefined array key" error.
 
 ### The package's action classes are deprecated in favor of Filament's
 
