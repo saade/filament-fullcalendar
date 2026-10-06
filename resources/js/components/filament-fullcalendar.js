@@ -152,6 +152,16 @@ export default function fullcalendar({
         initialResources: Array.isArray(resources) ? resources : null,
 
         async init() {
+            const {
+                mobileInitialView,
+                mobileBreakpoint = 768,
+                ...fullCalendarConfig
+            } = config
+
+            const isMobile = window.matchMedia(
+                `(max-width: ${mobileBreakpoint - 1}px)`,
+            ).matches
+
             const allEventSources = [
                 ...(config.eventSources ?? []),
                 ...eventSources,
@@ -206,7 +216,9 @@ export default function fullcalendar({
                             .catch(failureCallback)
                     },
                 }),
-                ...config,
+                ...fullCalendarConfig,
+                ...(isMobile &&
+                    mobileInitialView && { initialView: mobileInitialView }),
                 locales,
                 ...callbacks,
                 eventDidMount: (info) => {

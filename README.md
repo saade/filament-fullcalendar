@@ -34,6 +34,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
 - [Configuration](#configuration)
   - [Plugin methods](#plugin-methods)
   - [Configuring a single widget](#configuring-a-single-widget)
+  - [A different view on phones](#a-different-view-on-phones)
   - [Premium plugins and licensing](#premium-plugins-and-licensing)
 - [Interacting with actions](#interacting-with-actions)
   - [Viewing events with an infolist](#viewing-events-with-an-infolist)
@@ -418,6 +419,22 @@ Options people ask about most often:
 | 24-hour times | [`eventTimeFormat`](https://fullcalendar.io/docs/eventTimeFormat), [`slotLabelFormat`](https://fullcalendar.io/docs/slotLabelFormat) |
 
 `config()` is sent to the browser as JSON, so it cannot hold JavaScript functions. Those go in [`jsCallbacks()`](#javascript-callbacks).
+
+## A different view on phones
+
+The month grid is hard to read on a narrow screen. `mobileInitialView` opens the calendar in another view there, next to FullCalendar's own `initialView`:
+
+```php
+public function config(): array
+{
+    return [
+        'initialView' => 'dayGridMonth',
+        'mobileInitialView' => 'listWeek',
+    ];
+}
+```
+
+It is not set by default, so nothing changes unless you ask for it. A screen counts as a phone below 768 pixels wide; change that with `mobileBreakpoint`. The view is chosen once, when the calendar loads, and the user can still switch to any view in the toolbar.
 
 ## Premium plugins and licensing
 
