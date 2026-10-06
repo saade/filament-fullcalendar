@@ -102,3 +102,7 @@ html.dark .filament-fullcalendar {
 .filament-fullcalendar[aria-busy='true'] .fc-view-harness {
     opacity: 0.6;
 }
+
+.filament-fullcalendar.fc .fc-popover {
+    z-index: 10;
+}

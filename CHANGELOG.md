@@ -23,10 +23,15 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 ### Fixed
 
 - In dark mode, the popover that lists a day's hidden events had a white background and an unreadable title.
+- The popover that lists a day's hidden events stayed on top of the modal opened from it.
+- A calendar created while hidden, in a closed modal or an inactive tab, rendered collapsed. It now sizes itself when it becomes visible.
+- Clicking an event with no record behind it, such as a holiday, opened a broken modal ([#238](https://github.com/saade/filament-fullcalendar/discussions/238)). It now does nothing.
+- An event with a `url` caused a full page load in panels with SPA mode. It now navigates like any other link.
+- Filling the create form from a date selection discarded the fields' `default()` values ([#207](https://github.com/saade/filament-fullcalendar/issues/207)).
 
 ### Added
 
-- `$startAttribute` and `$endAttribute` make the widget save a dragged or resized event's new dates, and `$shouldConfirmEventChanges` opens the edit action with them filled in.
+- `$startAttribute` and `$endAttribute` make the widget fill the create form from a date selection and save a dragged or resized event's new dates, and `$shouldConfirmEventChanges` opens the edit action with them filled in.
 - `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` drive the calendar from PHP.
 - Models that implement `Eventable` describe their own event, and `fetchEvents()` can return them as an array, a collection or a query. One calendar can show several models: each event resolves to a record of its own model through a signed reference, with that model's label and policy.
 - When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.

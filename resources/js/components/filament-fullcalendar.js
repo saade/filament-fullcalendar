@@ -70,6 +70,7 @@ export default function fullcalendar({
     editable,
     selectable,
     toolbarButtons,
+    hasSpaMode,
     shouldReportDates,
     callbacks,
 }) {
@@ -88,6 +89,10 @@ export default function fullcalendar({
         pendingDateInteraction: null,
 
         isDestroyed: false,
+
+        resizeObserver: null,
+
+        lastWidth: null,
 
         initialResources: Array.isArray(resources) ? resources : null,
 
@@ -227,12 +232,21 @@ export default function fullcalendar({
                             e.ctrlKey ||
                             e.metaKey ||
                             e.shiftKey
+                        const shouldOpenInNewTab =
+                            event.extendedProps.shouldOpenUrlInNewTab ||
+                            isNotPlainLeftClick(jsEvent)
+
+                        const isSameOrigin =
+                            new URL(event.url, window.location.href).origin ===
+                            window.location.origin
+
+                        if (hasSpaMode && isSameOrigin && !shouldOpenInNewTab) {
+                            return window.Livewire.navigate(event.url)
+                        }
+
                         return window.open(
                             event.url,
-                            event.extendedProps.shouldOpenUrlInNewTab ||
-                                isNotPlainLeftClick(jsEvent)
-                                ? '_blank'
-                                : '_self',
+                            shouldOpenInNewTab ? '_blank' : '_self',
                         )
                     }
 
@@ -310,6 +324,20 @@ export default function fullcalendar({
 
             this.calendar.render()
 
+            // A calendar created while hidden, in a closed modal or an
+            // inactive tab, has no size until its container gets one.
+            this.resizeObserver = new ResizeObserver(([entry]) => {
+                const width = entry.contentRect.width
+
+                if (width === this.lastWidth) return
+
+                this.lastWidth = width
+
+                requestAnimationFrame(() => this.calendar?.updateSize())
+            })
+
+            this.resizeObserver.observe(this.$el)
+
             const handlers = {
                 refresh: () => this.calendar.refetchEvents(),
                 'refresh-resources': () => this.calendar.refetchResources(),
@@ -344,6 +372,8 @@ export default function fullcalendar({
             Object.entries(this.listeners).forEach(([name, listener]) =>
                 window.removeEventListener(name, listener),
             )
+
+            this.resizeObserver?.disconnect()
 
             this.calendar?.destroy()
             this.calendar = null

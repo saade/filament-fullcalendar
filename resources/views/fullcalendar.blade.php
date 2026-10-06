@@ -29,6 +29,7 @@
                 editable: @json($this->isEditable()),
                 selectable: @json($this->isSelectable()),
                 toolbarButtons: @js($this->getToolbarButtons()),
+                hasSpaMode: @json(\Filament\Support\Facades\FilamentView::hasSpaMode()),
                 shouldReportDates: @json(method_exists($this, 'onDatesSet')),
                 callbacks: {
                     @foreach ($this->getJsCallbacks() as $name => $callback)

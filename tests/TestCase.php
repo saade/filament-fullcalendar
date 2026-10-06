@@ -74,6 +74,13 @@ class TestCase extends Orchestra
             $table->timestamps();
         });
 
+        Schema::create('attendees', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('event_id');
+            $table->string('name');
+            $table->timestamps();
+        });
+
         Schema::create('events', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('team_id')->nullable();

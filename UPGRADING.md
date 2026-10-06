@@ -166,7 +166,7 @@ The browser now calls `handleFetchEvents()`, `handleEventClick()`, `handleEventD
 ->call('handleEventClick', ['id' => $event->id])
 ```
 
-Clicking, dragging or resizing an event that has no `id` on a widget with a `$model` now fails with a message saying so, instead of an "undefined array key" error.
+An event that has no `id` is treated as having no record: clicking it does nothing, and dragging or resizing it moves it back. In 4.x this failed with an "undefined array key" error. Use it for events that are only there to be seen, such as holidays.
 
 ### Dragging and resizing
 

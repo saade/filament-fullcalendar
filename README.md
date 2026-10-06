@@ -196,7 +196,7 @@ public function fetchEvents(FetchInfo $info): array
 
 | Method | Description |
 | ------ | ----------- |
-| `id(int \| string $id)` | Identifies the event. Required for the view, edit and delete actions to find the record. |
+| `id(int \| string $id)` | Identifies the event. Required for the view, edit and delete actions to find the record. An event without one, such as a holiday, does nothing when clicked. |
 | `title(string $title)` | The text shown on the event. |
 | `start(DateTimeInterface \| string $start)` | When the event begins. |
 | `end(DateTimeInterface \| string \| null $end)` | When the event ends (exclusive). |
@@ -1064,7 +1064,15 @@ While events are being fetched, the calendar has `aria-busy="true"` and its styl
 
 ## Filling the form from a date selection
 
-Enable `selectable()`, then fill the create form with the selected dates:
+Enable `selectable()` and tell the widget which attributes hold the start and the end. The create form then opens with the selected dates, and with the clicked resource when `$resourceAttribute` is set:
+
+```php
+protected ?string $startAttribute = 'starts_at';
+
+protected ?string $endAttribute = 'ends_at';
+```
+
+To fill other fields, use `mountUsing()`. Call `fill()` with no arguments first, so the fields keep their `default()` values, then set the ones you want:
 
 ```php
 use Filament\Actions\CreateAction;
@@ -1075,14 +1083,19 @@ protected function headerActions(): array
     return [
         CreateAction::make()
             ->mountUsing(function (Schema $schema, array $arguments): void {
-                $schema->fill([
-                    'starts_at' => $arguments['start'] ?? null,
-                    'ends_at' => $arguments['end'] ?? null,
-                ]);
+                $schema->fill();
+
+                $schema->fillPartially(
+                    ['is_all_day' => $arguments['allDay'] ?? false],
+                    ['is_all_day'],
+                );
             }),
     ];
 }
 ```
+
+> [!NOTE]
+> `$schema->fill([...])` with an array replaces the whole state, so every field you leave out loses its `default()`.
 
 ## Opening a page when a date is clicked
 

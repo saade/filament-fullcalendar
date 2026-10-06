@@ -42,6 +42,10 @@ trait InteractsWithEvents
      */
     protected function onEventClick(EventClickInfo $info): void
     {
+        if (! $this->getEventRecord()) {
+            return;
+        }
+
         $this->mountAction('view', [
             'type' => 'click',
             'event' => $info->event->toArray(),
@@ -91,7 +95,11 @@ trait InteractsWithEvents
     {
         $record = $this->getEventRecord();
 
-        $canSaveDates = $record && filled($this->getStartAttribute());
+        if (! $record) {
+            return true;
+        }
+
+        $canSaveDates = filled($this->getStartAttribute());
 
         if ($canSaveDates) {
             foreach ($this->getEventRecordDates($event) as $attribute => $date) {
@@ -186,7 +194,49 @@ trait InteractsWithEvents
             'allDay' => $info->allDay,
             'resource' => $info->resource,
         ]);
+
+        $this->fillMountedActionFromSelection($info);
     }
+
+    /**
+     * Written into the form after the action has filled it, so the fields'
+     * `default()` values are kept.
+     */
+    protected function fillMountedActionFromSelection(DateSelectInfo $info): void
+    {
+        $index = array_key_last($this->mountedActions);
+
+        if ($index === null) {
+            return;
+        }
+
+        foreach ($this->getSelectionRecordAttributes($info) as $attribute => $value) {
+            data_set($this->mountedActions[$index]['data'], $attribute, $value);
+        }
+    }
+
+    /**
+     * @return array<string, int | string>
+     */
+    protected function getSelectionRecordAttributes(DateSelectInfo $info): array
+    {
+        if (blank($this->getStartAttribute())) {
+            return [];
+        }
+
+        $timezone = config('app.timezone');
+
+        $toApplicationTime = fn (CarbonImmutable $date): string => $info->allDay
+            ? $date->toDateTimeString()
+            : $date->setTimezone($timezone)->toDateTimeString();
+
+        return array_filter([
+            $this->getStartAttribute() => $toApplicationTime($info->start),
+            $this->getEndAttribute() ?? '' => $info->end ? $toApplicationTime($info->end) : null,
+            $this->getResourceAttribute() ?? '' => $info->resource['id'] ?? null,
+        ], fn (mixed $value, string $attribute): bool => filled($attribute) && filled($value), ARRAY_FILTER_USE_BOTH);
+    }
+
 
     /**
      * Fetch the events again.
@@ -430,6 +480,8 @@ trait InteractsWithEvents
 
     protected function resolveClickedEventRecord(EventInfo $event): void
     {
+        $this->eventRecord = null;
+
         $identity = $event->extendedProps['calendarRecord'] ?? null;
 
         if (is_array($identity)) {
@@ -438,12 +490,8 @@ trait InteractsWithEvents
             return;
         }
 
-        if (blank($this->getModel())) {
+        if (blank($this->getModel()) || blank($event->id)) {
             return;
-        }
-
-        if (blank($event->id)) {
-            throw new LogicException('The event has no [id], so its [' . $this->getModel() . '] record cannot be found. Return an [id] for each event from fetchEvents().');
         }
 
         $this->eventRecord = $this->resolveEventRecord($event->id);

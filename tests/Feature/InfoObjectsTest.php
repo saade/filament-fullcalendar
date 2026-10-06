@@ -135,8 +135,3 @@ it('keeps the action arguments as plain arrays', function () {
         ->assertSet('mountedActions.0.arguments.oldEvent.start', '2026-10-06T09:00:00-03:00');
 });
 
-it('explains what is wrong when a clicked event has no id', function () {
-    Livewire::test(EventCalendarWidget::class)
-        ->instance()
-        ->handleEventClick(['title' => 'Meeting', 'start' => '2026-10-07']);
-})->throws(LogicException::class, 'Return an [id] for each event from fetchEvents().');

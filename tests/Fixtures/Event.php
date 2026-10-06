@@ -4,6 +4,7 @@ namespace Saade\FilamentFullCalendar\Tests\Fixtures;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
 {
@@ -15,6 +16,11 @@ class Event extends Model
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
         ];
+    }
+
+    public function attendees(): HasMany
+    {
+        return $this->hasMany(Attendee::class);
     }
 
     public function team(): BelongsTo
