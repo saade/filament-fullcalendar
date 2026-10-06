@@ -27,6 +27,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
 - [Usage](#usage)
   - [Returning events](#returning-events)
   - [The EventData class](#the-eventdata-class)
+  - [Returning models](#returning-models)
   - [Showing the calendar on its own page](#showing-the-calendar-on-its-own-page)
   - [Showing the calendar on a resource page](#showing-the-calendar-on-a-resource-page)
   - [Using the calendar outside a panel](#using-the-calendar-outside-a-panel)
@@ -37,6 +38,8 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
 - [Interacting with actions](#interacting-with-actions)
   - [Viewing events with an infolist](#viewing-events-with-an-infolist)
   - [Customizing actions](#customizing-actions)
+  - [Several models on one calendar](#several-models-on-one-calendar)
+  - [Reusing a resource's form and infolist](#reusing-a-resources-form-and-infolist)
   - [Authorizing actions](#authorizing-actions)
   - [Multi-tenancy](#multi-tenancy)
 - [Dragging and resizing events](#dragging-and-resizing-events)
@@ -193,6 +196,40 @@ public function fetchEvents(FetchInfo $info): array
 | `resourceId(int \| string $resourceId)`, `resourceIds(array $resourceIds)` | Associates the event with [resources](https://fullcalendar.io/docs/resource-data). |
 | `extendedProps(array $props)` | Your own data, available to the [render hooks](#render-hooks) as `event.extendedProps`. |
 | `extraProperties(array $properties)` | Any other [event property](https://fullcalendar.io/docs/event-object), such as `display`, `classNames`, `editable` or `rrule`. |
+
+## Returning models
+
+A model can describe its own event. Implement `Eventable` on it:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Saade\FilamentFullCalendar\Contracts\Eventable;
+use Saade\FilamentFullCalendar\Data\EventData;
+
+class Event extends Model implements Eventable
+{
+    public function toCalendarEvent(): EventData
+    {
+        return EventData::make()
+            ->title($this->name)
+            ->start($this->starts_at)
+            ->end($this->ends_at);
+    }
+}
+```
+
+`toCalendarEvent()` may also return a plain array. `fetchEvents()` can then return the models themselves, as an array, a collection, or a query that the calendar runs:
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+
+public function fetchEvents(FetchInfo $info): Builder
+{
+    return $info->overlapping(Event::query(), 'starts_at', 'ends_at');
+}
+```
+
+There is no `id` to set: the calendar gives each event one and remembers which record it stands for, so the view, edit and delete actions work without `$model`. Creating still needs `$model`, or a create action with its own `model()`. That reference is signed, so a user cannot swap it in the browser to reach a record the calendar never showed them. Models, `EventData` objects and plain arrays can be mixed in the same result.
 
 ## Showing the calendar on its own page
 
@@ -509,6 +546,52 @@ protected function modalActions(): array
 }
 ```
 
+## Several models on one calendar
+
+When the events come from [models that implement `Eventable`](#returning-models), one calendar can show more than one model. Each clicked, dragged or resized event resolves to a record of its own model, and the actions use that model's label and policy:
+
+```php
+public function fetchEvents(FetchInfo $info): array
+{
+    return [
+        ...$info->overlapping(Meeting::query(), 'starts_at', 'ends_at')->get(),
+        ...Task::query()->whereBetween('due_at', [$info->start, $info->end])->get(),
+    ];
+}
+```
+
+`form()` and `infolist()` receive a schema that knows the model, so they can branch on it:
+
+```php
+public function form(Schema $schema): Schema
+{
+    return match ($schema->getModel()) {
+        Meeting::class => $schema->components([/* ... */]),
+        Task::class => $schema->components([/* ... */]),
+    };
+}
+```
+
+`$model` is still the model that the "New" button and a date click create. Add a create action for each of the others:
+
+```php
+use Filament\Actions\CreateAction;
+
+protected function headerActions(): array
+{
+    return [
+        CreateAction::make(),
+        CreateAction::make('createTask')->model(Task::class),
+    ];
+}
+```
+
+`$startAttribute` and `$endAttribute` apply to every model. When the columns differ, override `getStartAttribute()` and `getEndAttribute()` and decide from `$this->getEventRecord()`.
+
+## Reusing a resource's form and infolist
+
+If the widget defines no `form()`, the calendar uses the form of the model's [resource](https://filamentphp.com/docs/5.x/resources/overview) in the current panel, and the same goes for `infolist()`. A calendar of a model that already has a resource needs neither method. What the widget defines always wins.
+
 ## Authorizing actions
 
 When the model has a [policy](https://laravel.com/docs/authorization#creating-policies), the actions follow it:
@@ -532,6 +615,8 @@ protected function getEloquentQuery(): Builder
     return parent::getEloquentQuery()->whereBelongsTo(auth()->user());
 }
 ```
+
+On a calendar with [several models](#several-models-on-one-calendar), `getEloquentQuery()` covers `$model`. Override `getEventRecordQuery(string $model)` to limit the others.
 
 ## Multi-tenancy
 

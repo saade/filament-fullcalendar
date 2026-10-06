@@ -9,6 +9,9 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Saade\FilamentFullCalendar\Data\FetchInfo;
 
 class FullCalendarWidget extends Widget implements HasActions, HasSchemas
@@ -34,9 +37,12 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
      * Called whenever the calendar needs events, such as when the user
      * navigates or switches views.
      *
-     * @return array<mixed>
+     * Return event arrays or `EventData` objects, or models that implement
+     * `Eventable`, as an array, a collection or a query.
+     *
+     * @return iterable<mixed> | Builder<Model> | Relation<Model, Model, mixed>
      */
-    public function fetchEvents(FetchInfo $info): array
+    public function fetchEvents(FetchInfo $info): iterable | Builder | Relation
     {
         return [];
     }

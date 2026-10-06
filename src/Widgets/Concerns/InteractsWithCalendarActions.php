@@ -10,15 +10,16 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
-
-use function Filament\get_authorization_response;
-
+use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use Throwable;
+
+use function Filament\get_authorization_response;
+use function Filament\Support\get_model_label;
 
 trait InteractsWithCalendarActions
 {
@@ -57,12 +58,26 @@ trait InteractsWithCalendarActions
 
     public function getDefaultActionModel(Action $action): ?string
     {
-        return $this->getModel();
+        if ($action instanceof CreateAction) {
+            return $this->getModel();
+        }
+
+        return $this->getEventRecordModel() ?? $this->getModel();
     }
 
     public function getDefaultActionModelLabel(Action $action): ?string
     {
-        return filled($this->getModel()) ? $this->getModelLabel() : null;
+        $model = $action->getModel();
+
+        if (blank($model)) {
+            return null;
+        }
+
+        if ($model === $this->getModel()) {
+            return $this->getModelLabel();
+        }
+
+        return ($resource = $this->getModelResource($model)) ? $resource::getModelLabel() : get_model_label($model);
     }
 
     public function getDefaultActionRecord(Action $action): ?Model
@@ -77,18 +92,62 @@ trait InteractsWithCalendarActions
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
-            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => $this->form($schema),
-            $action instanceof ViewAction => function (Schema $schema): Schema {
-                $infolist = $this->infolist($schema);
+            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => $this->getEventFormSchema($schema, $action->getModel()),
+            $action instanceof ViewAction => function (Schema $schema) use ($action): Schema {
+                $model = $action->getModel();
 
-                if (filled($infolist->getComponents(withActions: false, withHidden: true))) {
-                    return $infolist;
+                $resource = $this->getModelResource($model);
+
+                foreach ([$this->infolist($schema), $resource ? $resource::infolist($schema) : null] as $infolist) {
+                    if ($infolist && $this->hasSchemaComponents($infolist)) {
+                        return $infolist;
+                    }
                 }
 
-                return $this->form($schema);
+                return $this->getEventFormSchema($schema, $model);
             },
             default => null,
         };
+    }
+
+    /**
+     * The widget's `form()` wins. When it defines nothing, the form of the
+     * model's resource in the current panel is used.
+     */
+    protected function getEventFormSchema(Schema $schema, ?string $model): Schema
+    {
+        $form = $this->form($schema);
+
+        if ($this->hasSchemaComponents($form)) {
+            return $form;
+        }
+
+        $resource = $this->getModelResource($model);
+
+        return $resource ? $resource::form($schema) : $form;
+    }
+
+    protected function hasSchemaComponents(Schema $schema): bool
+    {
+        return filled($schema->getComponents(withActions: false, withHidden: true));
+    }
+
+    /**
+     * @return ?class-string<resource>
+     */
+    protected function getModelResource(?string $model): ?string
+    {
+        if (blank($model)) {
+            return null;
+        }
+
+        try {
+            $resource = Filament::getModelResource($model);
+        } catch (Throwable) {
+            return null;
+        }
+
+        return $resource;
     }
 
     /**
@@ -135,16 +194,11 @@ trait InteractsWithCalendarActions
 
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response
     {
-        $model = $this->getModel();
-
-        if (blank($model)) {
-            return null;
-        }
-
+        $model = $action->getModel();
         $record = $action->getRecord();
 
         return match (true) {
-            $action instanceof CreateAction => $this->getAuthorizationResponse('create', $model),
+            $action instanceof CreateAction && filled($model) => $this->getAuthorizationResponse('create', $model),
             $action instanceof DeleteAction && $record => $this->getAuthorizationResponse('delete', $record),
             $action instanceof EditAction && $record => $this->getAuthorizationResponse('update', $record),
             $action instanceof ViewAction && $record => $this->getAuthorizationResponse('view', $record),

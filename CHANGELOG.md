@@ -27,6 +27,8 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 
 - `$startAttribute` and `$endAttribute` make the widget save a dragged or resized event's new dates, and `$shouldConfirmEventChanges` opens the edit action with them filled in.
 - `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` drive the calendar from PHP.
+- Models that implement `Eventable` describe their own event, and `fetchEvents()` can return them as an array, a collection or a query. One calendar can show several models: each event resolves to a record of its own model through a signed reference, with that model's label and policy.
+- When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.
 - The timezone, locale, plugins and license key can be overridden per widget, and the panel plugin's setters accept closures.
 - The calendar works on a panel that does not register the plugin and on Filament pages outside a panel ([#67](https://github.com/saade/filament-fullcalendar/issues/67)).
 - `onDateClick()` is called for a click or tap on a single day or time slot, separately from `onDateSelect()` for a dragged selection.

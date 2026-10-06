@@ -5,10 +5,16 @@ namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterval;
 use DateTimeInterface;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
+use Saade\FilamentFullCalendar\Contracts\Eventable;
 use Saade\FilamentFullCalendar\Data\DateClickInfo;
 use Saade\FilamentFullCalendar\Data\DateSelectInfo;
 use Saade\FilamentFullCalendar\Data\EventClickInfo;
+use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Data\EventDropInfo;
 use Saade\FilamentFullCalendar\Data\EventInfo;
 use Saade\FilamentFullCalendar\Data\EventResizeInfo;
@@ -231,7 +237,59 @@ trait InteractsWithEvents
      */
     public function handleFetchEvents(array $info): array
     {
-        return $this->fetchEvents(FetchInfo::fromArray($info, $this->getTimezone()));
+        $events = $this->fetchEvents(FetchInfo::fromArray($info, $this->getTimezone()));
+
+        if (($events instanceof Builder) || ($events instanceof Relation)) {
+            $events = $events->get();
+        }
+
+        return collect($events)
+            ->map($this->normalizeEvent(...))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function normalizeEvent(mixed $event): array
+    {
+        if ($event instanceof Eventable) {
+            return $this->getEventFromRecord($event);
+        }
+
+        if ($event instanceof Arrayable) {
+            return $event->toArray();
+        }
+
+        return $event;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getEventFromRecord(Eventable $record): array
+    {
+        if (! $record instanceof Model) {
+            throw new LogicException('[' . $record::class . '] implements Eventable but is not an Eloquent model.');
+        }
+
+        $event = $record->toCalendarEvent();
+
+        if ($event instanceof EventData) {
+            $event = $event->toArray();
+        }
+
+        $identity = $this->getEventRecordIdentity($record);
+
+        return [
+            ...$event,
+            'id' => $event['id'] ?? "{$identity['model']}-{$identity['key']}",
+            'extendedProps' => [
+                ...($event['extendedProps'] ?? []),
+                'calendarRecord' => $identity,
+            ],
+        ];
     }
 
     /**
@@ -343,6 +401,14 @@ trait InteractsWithEvents
 
     protected function resolveClickedEventRecord(EventInfo $event): void
     {
+        $identity = $event->extendedProps['calendarRecord'] ?? null;
+
+        if (is_array($identity)) {
+            $this->eventRecord = $this->resolveEventRecordFromIdentity($identity);
+
+            return;
+        }
+
         if (blank($this->getModel())) {
             return;
         }

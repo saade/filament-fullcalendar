@@ -13,6 +13,7 @@ class TestPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
+            ->resources([TaskResource::class])
             ->plugin(
                 FilamentFullCalendarPlugin::make()
                     ->timezone('America/Sao_Paulo')
