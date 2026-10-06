@@ -115,11 +115,11 @@ trait InteractsWithRecords
         return [
             'model' => $model,
             'key' => $key,
-            'signature' => $this->signEventRecordIdentity($model, $key),
+            'signature' => static::signEventRecordIdentity($model, $key),
         ];
     }
 
-    protected function signEventRecordIdentity(string $model, int | string $key): string
+    protected static function signEventRecordIdentity(string $model, int | string $key): string
     {
         return hash_hmac('sha256', json_encode([static::class, $model, (string) $key]), config('app.key'));
     }
@@ -135,7 +135,7 @@ trait InteractsWithRecords
 
         abort_unless(
             is_string($model) && (is_string($key) || is_int($key)) && is_string($signature)
-                && hash_equals($this->signEventRecordIdentity($model, $key), $signature),
+                && hash_equals(static::signEventRecordIdentity($model, $key), $signature),
             403,
         );
 

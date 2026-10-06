@@ -35,6 +35,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` drive the calendar from PHP.
 - Models that implement `Eventable` describe their own event, and `fetchEvents()` can return them as an array, a collection or a query. One calendar can show several models: each event resolves to a record of its own model through a signed reference, with that model's label and policy.
 - When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.
+- Items from outside the calendar can be dragged onto it with the `draggable` Blade component and `droppable` in `config()`. A dropped record is saved with its new dates, and any other item opens the create action.
 - `jsCallbacks()` passes any FullCalendar option that takes a function, such as `selectAllow` or `dayCellClassNames`. A callback for something the calendar handles itself runs first and can cancel it by returning `false`.
 - `toolbarActions()` turns Filament actions into toolbar buttons.
 - `onDatesSet()` is called with the view and its dates when the user navigates, and the calendar is marked `aria-busy` and dimmed while it fetches events.

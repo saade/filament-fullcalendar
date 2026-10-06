@@ -43,6 +43,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Authorizing actions](#authorizing-actions)
   - [Multi-tenancy](#multi-tenancy)
 - [Dragging and resizing events](#dragging-and-resizing-events)
+- [Dragging items onto the calendar](#dragging-items-onto-the-calendar)
 - [Filtering events](#filtering-events)
   - [Filter form](#filter-form)
   - [Tabs](#tabs)
@@ -680,6 +681,99 @@ EventData::make()
     ->start($event->starts_at->toDateString())
     ->end($event->ends_at->addDay()->toDateString())
 ```
+
+# Dragging items onto the calendar
+
+Items from outside the calendar, such as a list of unscheduled tasks, can be dragged onto it. Turn `droppable` on in `config()`:
+
+```php
+public function config(): array
+{
+    return [
+        'droppable' => true,
+    ];
+}
+```
+
+Then mark what can be dragged. It can be anywhere on the page, not only inside the widget, and there are three ways to do it. The first is to wrap it in the `draggable` component:
+
+```blade
+@foreach ($tasks as $task)
+    <x-filament-fullcalendar::draggable
+        :calendar="\App\Filament\Widgets\CalendarWidget::class"
+        :record="$task"
+        :title="$task->name"
+        duration="01:30"
+    >
+        {{ $task->name }}
+    </x-filament-fullcalendar::draggable>
+@endforeach
+```
+
+| Attribute | Description |
+| --------- | ----------- |
+| `record` | The record this item stands for. Its model has to implement [`Eventable`](#returning-models). |
+| `calendar` | The class of the widget the item can be dropped on. Required with `record`; without it, any droppable calendar on the page accepts the item. |
+| `data` | An array of your own, passed on to the widget. |
+| `title` | The text shown while dragging. Defaults to the item's own text. |
+| `duration` | How long the item takes, as hours and minutes. Defaults to one hour on a time slot and one day on a day. |
+
+The second is to put the attributes on an element of your own, such as a table row, with `getDraggableAttributes()`. It takes the same `record`, `data`, `title` and `duration`:
+
+```blade
+<tr {{ \App\Filament\Widgets\CalendarWidget::getDraggableAttributes(record: $task, duration: '01:30') }}>
+    ...
+</tr>
+```
+
+Called on your widget, the item is only accepted by that widget. Call it on `FullCalendarWidget` for an item that any calendar accepts.
+
+The third is to write the attribute yourself, which is what the other two print. This suits items built in JavaScript. All keys are optional:
+
+```html
+<li data-filament-fullcalendar-draggable='{"title": "Review", "duration": "01:30", "data": {"kind": "review"}}'>
+    Review
+</li>
+```
+
+A `record` cannot be written by hand, because it needs the signature that only the first two ways produce.
+
+What happens on a drop depends on the item:
+
+- **With a `record`**, the record is saved with the dates it was dropped on, using [`$startAttribute` and `$endAttribute`](#dragging-and-resizing-events), and with the resource when `$resourceAttribute` is set. The model's `update` policy is checked first.
+- **Without one**, the create action opens with the dates filled in, and the item's `data` in `$arguments['data']`.
+
+The record is referenced by a signature made for that calendar, so the browser cannot make the calendar save a record that was not offered to it.
+
+To do something else, override `onExternalDrop()`:
+
+```php
+use Saade\FilamentFullCalendar\Data\ExternalDropInfo;
+
+protected function onExternalDrop(ExternalDropInfo $info): void
+{
+    // $info->date, $info->allDay, $info->selection, $info->record,
+    // $info->data, $info->duration, $info->resource
+
+    parent::onExternalDrop($info);
+
+    $this->dispatch('task-scheduled');
+}
+```
+
+A calendar only accepts elements that have the `data-filament-fullcalendar-draggable` attribute, and only those addressed to it or to no calendar in particular. To narrow that further for one calendar, set FullCalendar's [`dropAccept`](https://fullcalendar.io/docs/dropAccept): a CSS selector in `config()`, or a function in [`jsCallbacks()`](#javascript-callbacks).
+
+```php
+public function config(): array
+{
+    return [
+        'droppable' => true,
+        'dropAccept' => '.is-unscheduled',
+    ];
+}
+```
+
+The dragged item stays where it was. If it should disappear from its list once scheduled, re-render that list, for example from a Livewire event dispatched as above.
 
 # Filtering events
 

@@ -1,4 +1,4 @@
-import { n as e, x as t } from "./filament-fullcalendar-core-IEdKpiTH.js";
+import { S as e, n as t } from "./filament-fullcalendar-core-DflVpway.js";
 //#region \0rolldown/runtime.js
 var n = Object.create, r = Object.defineProperty, i = Object.getOwnPropertyDescriptor, a = Object.getOwnPropertyNames, o = Object.getPrototypeOf, s = Object.prototype.hasOwnProperty, c = (e, t, n) => () => {
 	if (n) throw n[0];
@@ -1931,7 +1931,7 @@ function jo(e, t, n, r) {
 	let i = t(e.whole), a = n(e.whole);
 	return i === a ? i : i + r + a;
 }
-var Mo = e({
+var Mo = t({
 	name: "@fullcalendar/moment",
 	cmdFormatter: Oo
 }), No = /* @__PURE__ */ l(((e, t) => {
@@ -2183,9 +2183,9 @@ var Mo = e({
 	(t.exports = No()).tz.load((Bo(), ee(Po).default));
 })))(), 1), Ho = {
 	moment: Mo,
-	momentTimezone: e({
+	momentTimezone: t({
 		name: "@fullcalendar/moment-timezone",
-		namedTimeZonedImpl: class extends t {
+		namedTimeZonedImpl: class extends e {
 			offsetForArray(e) {
 				return Vo.default.tz(e, this.timeZoneName).utcOffset();
 			}

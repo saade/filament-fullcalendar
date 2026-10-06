@@ -1,5 +1,5 @@
 import { Calendar } from '@fullcalendar/core'
-import interaction from '@fullcalendar/interaction'
+import interaction, { Draggable } from '@fullcalendar/interaction'
 import dayGrid from '@fullcalendar/daygrid'
 import timeGrid from '@fullcalendar/timegrid'
 import list from '@fullcalendar/list'
@@ -51,6 +51,25 @@ async function loadPlugins(names) {
     })
 }
 
+const draggableSelector = '[data-filament-fullcalendar-draggable]'
+
+const readDraggable = (el) => JSON.parse(el.dataset.filamentFullcalendarDraggable)
+
+function makeItemsDraggable() {
+    window.filamentFullCalendarDraggable ??= new Draggable(document.body, {
+        itemSelector: draggableSelector,
+        eventData: (el) => {
+            const { title, duration } = readDraggable(el)
+
+            return {
+                title: title ?? el.innerText,
+                ...(duration && { duration }),
+                create: false,
+            }
+        },
+    })
+}
+
 const isEnglish = (locale) => !locale || /^en([-_]us)?$/i.test(locale)
 
 async function loadLocales(locale) {
@@ -70,6 +89,8 @@ export default function fullcalendar({
     editable,
     selectable,
     toolbarButtons,
+    droppable,
+    widget,
     hasSpaMode,
     shouldReportDates,
     callbacks,
@@ -185,6 +206,38 @@ export default function fullcalendar({
                         ),
                     ),
                 },
+                ...(droppable && {
+                    droppable: true,
+                    dropAccept: (el) => {
+                        if (!el.matches(draggableSelector)) return false
+
+                        const { calendar } = readDraggable(el)
+
+                        if (calendar && calendar !== widget) return false
+
+                        const accept = callbacks.dropAccept ?? config.dropAccept
+
+                        if (typeof accept === 'function') return accept(el)
+
+                        return typeof accept === 'string'
+                            ? el.matches(accept)
+                            : true
+                    },
+                    drop: (info) => {
+                        if (isCancelledByCallback('drop', info)) return
+
+                        const { calendar, ...item } = readDraggable(
+                            info.draggedEl,
+                        )
+
+                        this.$wire.handleExternalDrop(
+                            item,
+                            info.dateStr,
+                            info.allDay,
+                            info.resource ?? null,
+                        )
+                    },
+                }),
                 loading: (isLoading) => {
                     this.$el.setAttribute('aria-busy', isLoading)
 
@@ -323,6 +376,8 @@ export default function fullcalendar({
             })
 
             this.calendar.render()
+
+            if (droppable) makeItemsDraggable()
 
             // A calendar created while hidden, in a closed modal or an
             // inactive tab, has no size until its container gets one.
