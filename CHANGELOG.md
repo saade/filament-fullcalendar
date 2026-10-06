@@ -8,6 +8,7 @@ All notable changes to `filament-fullcalendar` will be documented in this file.
 
 These change the behavior of existing calendars. See the [upgrade guide](UPGRADING.md#from-4x-to-5x).
 
+- The JavaScript is split into parts that are downloaded on demand. A calendar with the standard views loads 155 KB gzipped, down from 204 KB, or 93 KB without the `moment` plugins. The premium plugins, `rrule` and the locales are only downloaded by calendars that use them. Run `php artisan filament:assets` after updating.
 - The view, create, edit and delete actions follow the model's policy when it has one. In 4.x, any user who could see the widget could open, edit or delete any record of the model by id unless `authorize()` was called on each action.
 - Records are scoped to the current tenant in panels with tenancy.
 - The toolbar shows the month, week and day view buttons by default, as it did in 3.x.

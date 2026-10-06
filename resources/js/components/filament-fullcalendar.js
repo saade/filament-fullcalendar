@@ -1,5 +1,63 @@
 import { Calendar } from '@fullcalendar/core'
-import locales from '@fullcalendar/core/locales-all'
+import interaction from '@fullcalendar/interaction'
+import dayGrid from '@fullcalendar/daygrid'
+import timeGrid from '@fullcalendar/timegrid'
+import list from '@fullcalendar/list'
+import multiMonth from '@fullcalendar/multimonth'
+
+const standardPlugins = { interaction, dayGrid, timeGrid, list, multiMonth }
+
+const pluginGroups = [
+    {
+        names: [
+            'scrollGrid',
+            'timeline',
+            'adaptive',
+            'resource',
+            'resourceDayGrid',
+            'resourceTimeline',
+            'resourceTimeGrid',
+        ],
+        load: () => import('../plugins/premium.js'),
+    },
+    {
+        names: ['moment', 'momentTimezone'],
+        load: () => import('../plugins/moment.js'),
+    },
+    {
+        names: ['rrule'],
+        load: () => import('../plugins/rrule.js'),
+    },
+]
+
+async function loadPlugins(names) {
+    const groups = await Promise.all(
+        pluginGroups
+            .filter((group) => names.some((name) => group.names.includes(name)))
+            .map((group) => group.load()),
+    )
+
+    const available = Object.assign(
+        { ...standardPlugins },
+        ...groups.map((group) => group.default),
+    )
+
+    return names.map((name) => {
+        if (!available[name]) {
+            throw new Error(`[${name}] is not a FullCalendar plugin this package knows.`)
+        }
+
+        return available[name]
+    })
+}
+
+const isEnglish = (locale) => !locale || /^en([-_]us)?$/i.test(locale)
+
+async function loadLocales(locale) {
+    if (isEnglish(locale)) return []
+
+    return (await import('../plugins/locales.js')).default
+}
 
 export default function fullcalendar({
     id,
@@ -29,16 +87,25 @@ export default function fullcalendar({
 
         pendingDateInteraction: null,
 
+        isDestroyed: false,
+
         initialResources: Array.isArray(resources) ? resources : null,
 
-        init() {
+        async init() {
+            const [loadedPlugins, locales] = await Promise.all([
+                loadPlugins(plugins),
+                loadLocales(config.locale ?? locale),
+            ])
+
+            if (this.isDestroyed) return
+
             this.calendar = new Calendar(this.$el, {
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,dayGridWeek,dayGridDay',
                 },
-                plugins: plugins.map((plugin) => availablePlugins[plugin]),
+                plugins: loadedPlugins,
                 locale,
                 ...(schedulerLicenseKey && { schedulerLicenseKey }),
                 timeZone,
@@ -272,6 +339,8 @@ export default function fullcalendar({
         },
 
         destroy() {
+            this.isDestroyed = true
+
             Object.entries(this.listeners).forEach(([name, listener]) =>
                 window.removeEventListener(name, listener),
             )
@@ -324,38 +393,4 @@ export default function fullcalendar({
             }, 50)
         },
     }
-}
-
-import interaction from '@fullcalendar/interaction'
-import dayGrid from '@fullcalendar/daygrid'
-import timeGrid from '@fullcalendar/timegrid'
-import list from '@fullcalendar/list'
-import multiMonth from '@fullcalendar/multimonth'
-import scrollGrid from '@fullcalendar/scrollgrid'
-import timeline from '@fullcalendar/timeline'
-import adaptive from '@fullcalendar/adaptive'
-import resource from '@fullcalendar/resource'
-import resourceDayGrid from '@fullcalendar/resource-daygrid'
-import resourceTimeline from '@fullcalendar/resource-timeline'
-import resourceTimeGrid from '@fullcalendar/resource-timegrid'
-import rrule from '@fullcalendar/rrule'
-import moment from '@fullcalendar/moment'
-import momentTimezone from '@fullcalendar/moment-timezone'
-
-const availablePlugins = {
-    interaction,
-    dayGrid,
-    timeGrid,
-    list,
-    multiMonth,
-    scrollGrid,
-    timeline,
-    adaptive,
-    resource,
-    resourceDayGrid,
-    resourceTimeline,
-    resourceTimeGrid,
-    rrule,
-    moment,
-    momentTimezone,
 }

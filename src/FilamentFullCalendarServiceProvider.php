@@ -4,6 +4,7 @@ namespace Saade\FilamentFullCalendar;
 
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -39,8 +40,16 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
      */
     protected function getAssets(): array
     {
+        $directory = __DIR__ . '/../resources/dist';
+
+        // The component imports these by relative path, so they have to be
+        // published under the names they were built with.
         return [
-            AlpineComponent::make('filament-fullcalendar-alpine', __DIR__ . '/../resources/dist/filament-fullcalendar.js'),
+            AlpineComponent::make('filament-fullcalendar-alpine', "{$directory}/components/filament-fullcalendar-alpine.js"),
+            ...array_map(
+                fn (string $path): Js => Js::make(basename($path, '.js'), $path)->loadedOnRequest(),
+                glob("{$directory}/*.js") ?: [],
+            ),
         ];
     }
 }

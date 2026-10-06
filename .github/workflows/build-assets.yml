@@ -1,0 +1,44 @@
+name: build-assets
+
+on:
+  push:
+    branches:
+      - 5.x
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.js'
+      - 'resources/js/**'
+      - 'resources/dist/**'
+      - '.github/workflows/build-assets.yml'
+  pull_request:
+    branches:
+      - 5.x
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.js'
+      - 'resources/js/**'
+      - 'resources/dist/**'
+      - '.github/workflows/build-assets.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    name: Committed assets match the sources
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Fail when the build differs from what is committed
+        run: |
+          git add --intent-to-add resources/dist
+          git diff --exit-code --stat resources/dist

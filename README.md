@@ -411,7 +411,20 @@ Options people ask about most often:
 
 ## Premium plugins and licensing
 
-The standard views (month, week, day, list, multi-month) are free and MIT licensed. The `timeline`, `resource*`, `scrollGrid` and `adaptive` plugins are part of [FullCalendar Premium](https://fullcalendar.io/pricing) and need a license from FullCalendar, which is separate from this package. They are only enabled on a calendar when you add them to `plugins()`.
+This package is MIT licensed, and so are the standard views it uses: month, week, day, list and multi-month. The `timeline`, `resource*`, `scrollGrid` and `adaptive` plugins belong to [FullCalendar Premium](https://fullcalendar.io/pricing), which is licensed by FullCalendar, not by this package.
+
+### Do I need a license?
+
+| You use | License |
+| ------- | ------- |
+| Only the standard views | None. Nothing premium is downloaded by the browser. |
+| A premium plugin, to try it out | FullCalendar's trial key, `CC-Attribution-NonCommercial-NoDerivatives`. |
+| A premium plugin in a commercial or internal product | A [paid license](https://fullcalendar.io/pricing) from FullCalendar, per developer. |
+| A premium plugin in a project that qualifies under FullCalendar's non-commercial or open-source terms | The key FullCalendar publishes for that case. |
+
+The [FullCalendar license terms](https://fullcalendar.io/license) decide which row is yours, and they are narrower than they sound, so read them before going to production. This table is a summary, not legal advice.
+
+The premium code is only loaded by a calendar that lists a premium plugin, and the key is yours to provide:
 
 ```php
 FilamentFullCalendarPlugin::make()
@@ -419,7 +432,7 @@ FilamentFullCalendarPlugin::make()
     ->schedulerLicenseKey(config('services.fullcalendar.license_key'))
 ```
 
-FullCalendar also publishes keys for evaluation, registered non-profits and open-source projects. Which one applies to you is defined by the [FullCalendar license terms](https://fullcalendar.io/license), so check them before going to production.
+Keep the key in your environment file, not in the repository.
 
 # Interacting with actions
 

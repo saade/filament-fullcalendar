@@ -33,3 +33,8 @@ updates:
     labels:
       - "dependencies"
       - "javascript"
+    ignore:
+      - dependency-name: "@fullcalendar/*"
+      - dependency-name: "moment"
+      - dependency-name: "moment-timezone"
+      - dependency-name: "rrule"
