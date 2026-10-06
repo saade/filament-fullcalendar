@@ -38,6 +38,17 @@
 html.dark .filament-fullcalendar {
     /* UI */
     --fc-border-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+    --fc-page-bg-color: var(--color-gray-900);
+    --fc-neutral-bg-color: color-mix(
+        in oklab,
+        var(--color-gray-800) 80%,
+        transparent
+    );
+    --fc-list-event-hover-bg-color: color-mix(
+        in oklab,
+        var(--color-gray-800) 80%,
+        transparent
+    );
 
     /* Buttons */
     --fc-button-text-color: var(--primary-950);

@@ -19,6 +19,10 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - Cancelling the edit action after a drag or resize moves the event back, and so does a drag or resize the user is not allowed to make.
 - The clicked event moved from `$record` to `$eventRecord`, so the widget can be used on a resource page without overwriting the page's record ([#209](https://github.com/saade/filament-fullcalendar/issues/209)). `getRecord()`, `resolveRecord()` and the related helpers were renamed to match.
 
+### Fixed
+
+- In dark mode, the popover that lists a day's hidden events had a white background and an unreadable title.
+
 ### Added
 
 - `$startAttribute` and `$endAttribute` make the widget save a dragged or resized event's new dates, and `$shouldConfirmEventChanges` opens the edit action with them filled in.
