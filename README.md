@@ -57,6 +57,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Refreshing resources](#refreshing-resources)
 - [Intercepting events](#intercepting-events)
 - [Controlling the calendar](#controlling-the-calendar)
+  - [Refreshing automatically](#refreshing-automatically)
 - [Business hours and constraints](#business-hours-and-constraints)
   - [Business hours](#business-hours)
   - [Limiting the dates](#limiting-the-dates)
@@ -1105,6 +1106,16 @@ Other Livewire components and JavaScript can reach a calendar through browser ev
 $this->dispatch('filament-fullcalendar--refresh');
 $this->dispatch('filament-fullcalendar--goto', date: '2026-12-01');
 ```
+
+## Refreshing automatically
+
+To keep the calendar up to date with changes made by other people, set how often it fetches its events again, the same way as on Filament's own widgets:
+
+```php
+protected ?string $pollingInterval = '30s';
+```
+
+The interval is a number followed by `ms`, `s` or `m`. It is off by default. The calendar skips a turn while its browser tab is in the background, while one of its modals is open, and while an event is being dragged or resized, so it never changes under the user's hands.
 
 # Business hours and constraints
 

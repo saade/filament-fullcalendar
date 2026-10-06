@@ -123,6 +123,7 @@ export default function fullcalendar({
     editable,
     selectable,
     toolbarButtons,
+    pollingInterval,
     droppable,
     widget,
     hasSpaMode,
@@ -142,6 +143,10 @@ export default function fullcalendar({
         listeners: {},
 
         pendingDateInteraction: null,
+
+        pollingTimer: null,
+
+        isDragging: false,
 
         isDestroyed: false,
 
@@ -382,6 +387,26 @@ export default function fullcalendar({
 
                     this.$wire.handleEventClick(event)
                 },
+                eventDragStart: (info) => {
+                    this.isDragging = true
+
+                    callbacks.eventDragStart?.(info)
+                },
+                eventDragStop: (info) => {
+                    this.isDragging = false
+
+                    callbacks.eventDragStop?.(info)
+                },
+                eventResizeStart: (info) => {
+                    this.isDragging = true
+
+                    callbacks.eventResizeStart?.(info)
+                },
+                eventResizeStop: (info) => {
+                    this.isDragging = false
+
+                    callbacks.eventResizeStop?.(info)
+                },
                 eventDrop: async (info) => {
                     const {
                         event,
@@ -456,6 +481,22 @@ export default function fullcalendar({
 
             if (droppable) makeItemsDraggable()
 
+            if (pollingInterval) {
+                // Fetching replaces the events, which would interrupt a drag
+                // and discard what was moved behind an open modal.
+                this.pollingTimer = setInterval(() => {
+                    if (
+                        document.hidden ||
+                        this.isDragging ||
+                        this.$wire.mountedActions?.length
+                    ) {
+                        return
+                    }
+
+                    this.calendar.refetchEvents()
+                }, pollingInterval)
+            }
+
             // A calendar created while hidden, in a closed modal or an
             // inactive tab, has no size until its container gets one.
             this.resizeObserver = new ResizeObserver(([entry]) => {
@@ -504,6 +545,8 @@ export default function fullcalendar({
             Object.entries(this.listeners).forEach(([name, listener]) =>
                 window.removeEventListener(name, listener),
             )
+
+            clearInterval(this.pollingTimer)
 
             this.resizeObserver?.disconnect()
 

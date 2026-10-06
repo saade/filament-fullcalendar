@@ -31,6 +31,7 @@
                 editable: @json($this->isEditable()),
                 selectable: @json($this->isSelectable()),
                 toolbarButtons: @js($this->getToolbarButtons()),
+                pollingInterval: @js($this->getPollingIntervalInMilliseconds()),
                 droppable: @json($this->isDroppable()),
                 widget: @js(static::class),
                 hasSpaMode: @json(\Filament\Support\Facades\FilamentView::hasSpaMode()),
