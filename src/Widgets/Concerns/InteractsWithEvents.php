@@ -15,7 +15,7 @@ trait InteractsWithEvents
     public function onEventClick(array $event): void
     {
         if ($this->getModel()) {
-            $this->record = $this->resolveRecord($event['id']);
+            $this->eventRecord = $this->resolveEventRecord($event['id']);
         }
 
         $this->mountAction('view', [
@@ -37,7 +37,7 @@ trait InteractsWithEvents
     public function onEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta, ?array $oldResource, ?array $newResource): bool
     {
         if ($this->getModel()) {
-            $this->record = $this->resolveRecord($event['id']);
+            $this->eventRecord = $this->resolveEventRecord($event['id']);
         }
 
         $this->mountAction('edit', [
@@ -65,7 +65,7 @@ trait InteractsWithEvents
     public function onEventResize(array $event, array $oldEvent, array $relatedEvents, array $startDelta, array $endDelta): bool
     {
         if ($this->getModel()) {
-            $this->record = $this->resolveRecord($event['id']);
+            $this->eventRecord = $this->resolveEventRecord($event['id']);
         }
 
         $this->mountAction('edit', [

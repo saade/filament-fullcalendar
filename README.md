@@ -28,6 +28,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Returning events](#returning-events)
   - [The EventData class](#the-eventdata-class)
   - [Showing the calendar on its own page](#showing-the-calendar-on-its-own-page)
+  - [Showing the calendar on a resource page](#showing-the-calendar-on-a-resource-page)
 - [Configuration](#configuration)
   - [Plugin methods](#plugin-methods)
   - [Configuring a single widget](#configuring-a-single-widget)
@@ -209,6 +210,45 @@ class Calendar extends Page
 ```
 
 Filament adds every discovered widget to the default dashboard. If your dashboard does not define its own `getWidgets()`, keep the calendar off it by registering your widgets explicitly on the panel with `->widgets([...])`.
+
+## Showing the calendar on a resource page
+
+On the edit and view pages of a resource, Filament passes the page's record to its widgets. Declare a `$record` property on the widget to receive it, and use it to load that record's events:
+
+```php
+<?php
+
+namespace App\Filament\Resources\Projects\Widgets;
+
+use App\Models\Task;
+use Illuminate\Database\Eloquent\Model;
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+
+class ProjectCalendarWidget extends FullCalendarWidget
+{
+    public Model | string | null $model = Task::class;
+
+    public ?Model $record = null;
+
+    public function fetchEvents(array $info): array
+    {
+        return Task::query()
+            ->whereBelongsTo($this->record)
+            ->where('starts_at', '<', $info['end'])
+            ->where('ends_at', '>', $info['start'])
+            ->get()
+            ->map(fn (Task $task): array => [
+                'id' => $task->id,
+                'title' => $task->name,
+                'start' => $task->starts_at,
+                'end' => $task->ends_at,
+            ])
+            ->all();
+    }
+}
+```
+
+Return the widget from the page's `getHeaderWidgets()` or `getFooterWidgets()`. The event a user clicked, dragged or resized is kept separately in `$eventRecord`, so `$record` always stays the page's record.
 
 # Configuration
 

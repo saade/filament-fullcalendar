@@ -16,7 +16,7 @@ class EditAction extends BaseEditAction
         );
 
         $this->record(
-            fn (FullCalendarWidget $livewire) => $livewire->getRecord()
+            fn (FullCalendarWidget $livewire) => $livewire->getEventRecord()
         );
 
         $this->schema(

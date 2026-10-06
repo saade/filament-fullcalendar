@@ -16,12 +16,12 @@ class DeleteAction extends BaseDeleteAction
         );
 
         $this->record(
-            fn (FullCalendarWidget $livewire) => $livewire->getRecord()
+            fn (FullCalendarWidget $livewire) => $livewire->getEventRecord()
         );
 
         $this->after(
             function (FullCalendarWidget $livewire) {
-                $livewire->record = null;
+                $livewire->eventRecord = null;
                 $livewire->refreshRecords();
             }
         );

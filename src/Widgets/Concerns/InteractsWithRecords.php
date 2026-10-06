@@ -19,17 +19,17 @@ trait InteractsWithRecords
     protected ?string $modelLabel = null;
 
     #[Locked]
-    public Model | int | string | null $record = null;
+    public ?Model $eventRecord = null;
 
-    protected static ?string $recordRouteKeyName = null;
+    protected static ?string $eventRecordRouteKeyName = null;
 
     protected static bool $isScopedToTenant = true;
 
     protected static ?string $tenantOwnershipRelationshipName = null;
 
-    protected function resolveRecord(int | string $key): Model
+    protected function resolveEventRecord(int | string $key): Model
     {
-        $record = $this->resolveRecordRouteBinding($key);
+        $record = $this->resolveEventRecordRouteBinding($key);
 
         if ($record === null) {
             throw (new ModelNotFoundException())->setModel($this->getModel(), [$key]);
@@ -53,25 +53,15 @@ trait InteractsWithRecords
         return null;
     }
 
-    public function getRecord(): ?Model
+    public function getEventRecord(): ?Model
     {
-        $record = $this->record;
-
-        if ($record instanceof Model) {
-            return $record;
-        }
-
-        if (is_string($record)) {
-            return null;
-        }
-
-        return null;
+        return $this->eventRecord;
     }
 
-    public function resolveRecordRouteBinding(int | string $key): ?Model
+    public function resolveEventRecordRouteBinding(int | string $key): ?Model
     {
         return app($this->getModel())
-            ->resolveRouteBindingQuery($this->getEloquentQuery(), $key, $this->getRecordRouteKeyName())
+            ->resolveRouteBindingQuery($this->getEloquentQuery(), $key, $this->getEventRecordRouteKeyName())
             ->first();
     }
 
@@ -104,9 +94,9 @@ trait InteractsWithRecords
         );
     }
 
-    protected function getRecordRouteKeyName(): ?string
+    protected function getEventRecordRouteKeyName(): ?string
     {
-        return static::$recordRouteKeyName;
+        return static::$eventRecordRouteKeyName;
     }
 
     protected function getModelLabel(): string

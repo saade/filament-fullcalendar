@@ -50,9 +50,23 @@ The `start` and `end` passed to the create action after a date selection are now
 
 In 4.x, a widget that set `'selectable' => true` in `config()` let users select dates but did not open the create action. It now does, and `'selectable' => false` on a widget turns selection off even when the panel plugin enables it. The same applies to `editable`.
 
-### `$record` defaults to `null`
+### The clicked event moved from `$record` to `$eventRecord`
 
-`FullCalendarWidget::$record` is now declared with a `null` default. A widget that also uses a trait declaring `$record` without a default, such as `Filament\Resources\Pages\Concerns\InteractsWithRecord`, no longer composes. Remove the trait from the widget and pass the owner record in under another property name.
+The widget no longer declares a `$record` property. The event a user clicked, dragged or resized is now kept in `$eventRecord`, which leaves `$record` free for the record of a resource page ([#209](https://github.com/saade/filament-fullcalendar/issues/209)).
+
+Rename these wherever your widget uses or overrides them:
+
+| 4.x | 5.x |
+| --- | --- |
+| `$this->record` | `$this->eventRecord` |
+| `getRecord()` | `getEventRecord()` |
+| `resolveRecord()` | `resolveEventRecord()` |
+| `resolveRecordRouteBinding()` | `resolveEventRecordRouteBinding()` |
+| `$recordRouteKeyName`, `getRecordRouteKeyName()` | `$eventRecordRouteKeyName`, `getEventRecordRouteKeyName()` |
+
+If your widget redeclared `$record` to work around the conflict, remove that property, or keep it only if the widget sits on a resource page and should receive the page's record. If you passed the owner record in under another name, such as `CalendarWidget::make(['owner' => $this->record])`, that keeps working.
+
+The `$record` injected into action callbacks, as in `->mountUsing(function (Event $record) { ... })`, is Filament's and has not changed.
 
 ## From 3.x to 4.x
 

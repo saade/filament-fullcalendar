@@ -19,8 +19,8 @@ it('resolves records of the current tenant only', function () {
 
     $widget = Livewire::test(EventCalendarWidget::class)->instance();
 
-    expect($widget->resolveRecordRouteBinding($ours->getKey())?->is($ours))->toBeTrue()
-        ->and($widget->resolveRecordRouteBinding($theirs->getKey()))->toBeNull();
+    expect($widget->resolveEventRecordRouteBinding($ours->getKey())?->is($ours))->toBeTrue()
+        ->and($widget->resolveEventRecordRouteBinding($theirs->getKey()))->toBeNull();
 
     expect(fn () => $widget->onEventClick(['id' => $theirs->getKey()]))
         ->toThrow(ModelNotFoundException::class);
@@ -31,5 +31,5 @@ it('does not scope records when there is no tenant', function () {
 
     $widget = Livewire::test(EventCalendarWidget::class)->instance();
 
-    expect($widget->resolveRecordRouteBinding($event->getKey())?->is($event))->toBeTrue();
+    expect($widget->resolveEventRecordRouteBinding($event->getKey())?->is($event))->toBeTrue();
 });
