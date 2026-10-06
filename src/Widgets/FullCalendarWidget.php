@@ -2,29 +2,18 @@
 
 namespace Saade\FilamentFullCalendar\Widgets;
 
-use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-
-use function Filament\get_authorization_response;
-
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Widgets\Widget;
-use Illuminate\Auth\Access\Response;
-use Saade\FilamentFullCalendar\Actions;
 
 class FullCalendarWidget extends Widget implements HasActions, HasSchemas
 {
     use InteractsWithSchemas;
-    use InteractsWithActions;
+    use Concerns\InteractsWithCalendarActions;
     use Concerns\InteractsWithEvents;
     use Concerns\InteractsWithRecords;
     use InteractsWithHeaderActions;
@@ -39,26 +28,6 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
     protected string $view = 'filament-fullcalendar::fullcalendar';
 
     protected int | string | array $columnSpan = 'full';
-
-    protected function headerActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
-    }
-
-    protected function modalActions(): array
-    {
-        return [
-            Actions\EditAction::make(),
-            Actions\DeleteAction::make(),
-        ];
-    }
-
-    protected function viewAction(): Action
-    {
-        return Actions\ViewAction::make();
-    }
 
     /**
      * FullCalendar will call this function whenever it needs new event data.
@@ -88,24 +57,5 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
     public function getFormSchema(): array
     {
         return [];
-    }
-
-    public function getDefaultActionAuthorizationResponse(Action $action): ?Response
-    {
-        $model = $this->getModel();
-
-        if (blank($model)) {
-            return null;
-        }
-
-        $record = $action->getRecord();
-
-        return match (true) {
-            $action instanceof CreateAction => get_authorization_response('create', $model),
-            $action instanceof DeleteAction && $record => get_authorization_response('delete', $record),
-            $action instanceof EditAction && $record => get_authorization_response('update', $record),
-            $action instanceof ViewAction && $record => get_authorization_response('view', $record),
-            default => null,
-        };
     }
 }

@@ -405,35 +405,70 @@ Creating and editing keep using `form()`.
 
 ## Customizing actions
 
-The actions are regular Filament actions, so they can be customized the same way. Override these methods to change them:
+The calendar uses Filament's own `CreateAction`, `EditAction`, `DeleteAction` and `ViewAction`. The widget gives every action its model, the clicked event as its record, and the schema from `form()` or `infolist()`, and it refetches the events after any action other than viewing has run.
+
+These are the defaults. Override a method to change its actions:
 
 ```php
 use Filament\Actions\Action;
-use Saade\FilamentFullCalendar\Actions;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 
 protected function headerActions(): array
 {
     return [
-        Actions\CreateAction::make(),
+        CreateAction::make(),
     ];
 }
 
 protected function modalActions(): array
 {
     return [
-        Actions\EditAction::make(),
-        Actions\DeleteAction::make(),
+        EditAction::make()
+            ->cancelParentActions(),
+
+        DeleteAction::make()
+            ->cancelParentActions(),
     ];
 }
 
 protected function viewAction(): Action
 {
-    return Actions\ViewAction::make();
+    return ViewAction::make()
+        ->modalFooterActions(fn (ViewAction $action): array => [
+            ...$this->getCachedFormActions(),
+            $action->getModalCancelAction(),
+        ]);
 }
 ```
 
-> [!IMPORTANT]
-> Use the actions from `Saade\FilamentFullCalendar\Actions`, not `Filament\Actions`. They are wired to the widget's model, record and form schema.
+Two parts of that are easy to lose when you replace an action:
+
+- `modalFooterActions()` is what puts the actions from `modalActions()` in the footer of the view modal. To keep it while changing something else, start from the default: `parent::viewAction()->modalHeading('Event')`.
+- `cancelParentActions()` closes the view modal after an action that was run from inside it. Without it, deleting an event leaves the view modal open with nothing to show.
+
+A custom action gets the clicked event as its record:
+
+```php
+use App\Models\Event;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+
+protected function modalActions(): array
+{
+    return [
+        EditAction::make()
+            ->cancelParentActions(),
+
+        Action::make('cancelEvent')
+            ->requiresConfirmation()
+            ->action(fn (Event $record) => $record->cancel())
+            ->cancelParentActions(),
+    ];
+}
+```
 
 ## Authorizing actions
 
@@ -522,13 +557,13 @@ public function eventDidMount(): string
 Enable `selectable()`, then fill the create form with the selected dates:
 
 ```php
+use Filament\Actions\CreateAction;
 use Filament\Schemas\Schema;
-use Saade\FilamentFullCalendar\Actions;
 
 protected function headerActions(): array
 {
     return [
-        Actions\CreateAction::make()
+        CreateAction::make()
             ->mountUsing(function (Schema $schema, array $arguments): void {
                 $schema->fill([
                     'starts_at' => $arguments['start'] ?? null,
@@ -545,13 +580,15 @@ Enable `editable()`. Dragging or resizing an event opens the edit action, which 
 
 ```php
 use App\Models\Event;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Schemas\Schema;
-use Saade\FilamentFullCalendar\Actions;
 
 protected function modalActions(): array
 {
     return [
-        Actions\EditAction::make()
+        EditAction::make()
+            ->cancelParentActions()
             ->mountUsing(function (Event $record, Schema $schema, array $arguments): void {
                 $schema->fill([
                     ...$record->attributesToArray(),
@@ -560,7 +597,8 @@ protected function modalActions(): array
                 ]);
             }),
 
-        Actions\DeleteAction::make(),
+        DeleteAction::make()
+            ->cancelParentActions(),
     ];
 }
 ```
@@ -568,12 +606,12 @@ protected function modalActions(): array
 ## Saving extra data when creating
 
 ```php
-use Saade\FilamentFullCalendar\Actions;
+use Filament\Actions\CreateAction;
 
 protected function headerActions(): array
 {
     return [
-        Actions\CreateAction::make()
+        CreateAction::make()
             ->mutateDataUsing(fn (array $data): array => [
                 ...$data,
                 'user_id' => auth()->id(),

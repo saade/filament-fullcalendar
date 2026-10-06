@@ -9,7 +9,7 @@ composer require saade/filament-fullcalendar:"^5.0"
 php artisan filament:assets
 ```
 
-It changes six behaviors and deprecates one method. Check each one against your calendars.
+It changes seven behaviors and deprecates one method and four classes. Check each one against your calendars.
 
 ### Actions follow model policies
 
@@ -67,6 +67,62 @@ Rename these wherever your widget uses or overrides them:
 If your widget redeclared `$record` to work around the conflict, remove that property, or keep it only if the widget sits on a resource page and should receive the page's record. If you passed the owner record in under another name, such as `CalendarWidget::make(['owner' => $this->record])`, that keeps working.
 
 The `$record` injected into action callbacks, as in `->mountUsing(function (Event $record) { ... })`, is Filament's and has not changed.
+
+### The package's action classes are deprecated in favor of Filament's
+
+In 4.x only the actions in `Saade\FilamentFullCalendar\Actions` knew about the widget's model, the clicked event and the form. Now the widget supplies those to every action, so the calendar uses `Filament\Actions\CreateAction`, `EditAction`, `DeleteAction` and `ViewAction` directly, and a custom action receives the clicked event as `$record`.
+
+The four classes in `Saade\FilamentFullCalendar\Actions` still work in 5.x and will be removed in the next major. To move off them, change the import and add the two things they did for you:
+
+```php
+// 4.x
+use Saade\FilamentFullCalendar\Actions;
+
+protected function modalActions(): array
+{
+    return [
+        Actions\EditAction::make(),
+        Actions\DeleteAction::make(),
+    ];
+}
+
+protected function viewAction(): Action
+{
+    return Actions\ViewAction::make();
+}
+
+// 5.x
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+
+protected function modalActions(): array
+{
+    return [
+        EditAction::make()
+            ->cancelParentActions(),
+
+        DeleteAction::make()
+            ->cancelParentActions(),
+    ];
+}
+
+protected function viewAction(): Action
+{
+    return ViewAction::make()
+        ->modalFooterActions(fn (ViewAction $action): array => [
+            ...$this->getCachedFormActions(),
+            $action->getModalCancelAction(),
+        ]);
+}
+```
+
+`cancelParentActions()` closes the view modal after an action run from inside it, and `modalFooterActions()` puts the actions from `modalActions()` in the view modal's footer. If you only override `viewAction()` to tweak it, `parent::viewAction()` already has the footer. `CreateAction` needs nothing extra.
+
+Two things behave differently as a result:
+
+- The calendar refetches its events after any action other than `ViewAction` has run, including your own. In 4.x only the package's actions did this, so you can remove `->after(fn () => $this->refreshRecords())` from custom actions.
+- A custom action in `modalActions()` that did not set a record now has the clicked event as its record. If it declared its own `->record()` or `->model()`, that still wins.
 
 ### `getFormSchema()` is deprecated in favor of `form()`
 

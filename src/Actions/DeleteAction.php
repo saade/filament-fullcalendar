@@ -3,28 +3,15 @@
 namespace Saade\FilamentFullCalendar\Actions;
 
 use Filament\Actions\DeleteAction as BaseDeleteAction;
-use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
+/**
+ * @deprecated Use `Filament\Actions\DeleteAction` instead.
+ */
 class DeleteAction extends BaseDeleteAction
 {
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->model(
-            fn (FullCalendarWidget $livewire) => $livewire->getModel()
-        );
-
-        $this->record(
-            fn (FullCalendarWidget $livewire) => $livewire->getEventRecord()
-        );
-
-        $this->after(
-            function (FullCalendarWidget $livewire) {
-                $livewire->eventRecord = null;
-                $livewire->refreshRecords();
-            }
-        );
 
         $this->cancelParentActions();
     }

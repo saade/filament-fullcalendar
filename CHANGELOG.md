@@ -13,15 +13,18 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - The toolbar shows the month, week and day view buttons by default, as it did in 3.x.
 - Date selection uses the timezone configured on the panel plugin.
 - `selectable` and `editable` set in a widget's `config()` are respected by the date click and selection handlers.
+- The calendar refetches its events after any action other than viewing has run, not only after the package's own actions.
 - The clicked event moved from `$record` to `$eventRecord`, so the widget can be used on a resource page without overwriting the page's record ([#209](https://github.com/saade/filament-fullcalendar/issues/209)). `getRecord()`, `resolveRecord()` and the related helpers were renamed to match.
 
 ### Added
 
 - `form(Schema $schema)` defines the fields for creating and editing, and `infolist(Schema $schema)` the entries shown when viewing an event.
+- Filament's own `CreateAction`, `EditAction`, `DeleteAction` and `ViewAction`, and custom actions, get their model, record and schema from the widget. The calendar now uses Filament's actions by default.
 
 ### Deprecated
 
 - `getFormSchema()`. Define `form()` instead.
+- The action classes in `Saade\FilamentFullCalendar\Actions`. Use the ones from `Filament\Actions`.
 
 ## Unreleased
 

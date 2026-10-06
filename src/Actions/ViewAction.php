@@ -3,44 +3,22 @@
 namespace Saade\FilamentFullCalendar\Actions;
 
 use Filament\Actions\ViewAction as BaseViewAction;
-use Filament\Schemas\Schema;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
+/**
+ * @deprecated Use `Filament\Actions\ViewAction` instead.
+ */
 class ViewAction extends BaseViewAction
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->model(
-            fn (FullCalendarWidget $livewire) => $livewire->getModel()
-        );
-
-        $this->record(
-            fn (FullCalendarWidget $livewire) => $livewire->getEventRecord()
-        );
-
-        $this->schema(
-            function (FullCalendarWidget $livewire, Schema $schema): Schema {
-                $infolist = $livewire->infolist($schema);
-
-                if (filled($infolist->getComponents(withActions: false, withHidden: true))) {
-                    return $infolist;
-                }
-
-                return $livewire->form($schema);
-            }
-        );
-
         $this->modalFooterActions(
             fn (ViewAction $action, FullCalendarWidget $livewire) => [
                 ...$livewire->getCachedFormActions(),
                 $action->getModalCancelAction(),
             ]
-        );
-
-        $this->after(
-            fn (FullCalendarWidget $livewire) => $livewire->refreshRecords()
         );
 
         $this->cancelParentActions();
