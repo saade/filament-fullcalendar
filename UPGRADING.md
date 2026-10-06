@@ -9,7 +9,21 @@ composer require saade/filament-fullcalendar:"^5.0"
 php artisan filament:assets
 ```
 
-It changes eight behaviors, changes the signature of `fetchEvents()` and the four event handlers, and deprecates one method and four classes. Check each one against your calendars.
+Start with the changes your widgets need before they load at all, then review the behavior that changed. Each item links to its section below.
+
+**Required, or the widget or its tests fail:**
+
+1. Change the type hint of `fetchEvents()` from `array` to `FetchInfo`. The body can stay as it is. ([details](#fetchevents-and-the-event-handlers-take-info-objects))
+2. If you override `onEventClick()`, `onEventDrop()`, `onEventResize()` or `onDateSelect()`, update their signatures. ([details](#fetchevents-and-the-event-handlers-take-info-objects))
+3. Replace `$this->record`, `getRecord()` and `resolveRecord()` with their `eventRecord` names. ([details](#the-clicked-event-moved-from-record-to-eventrecord))
+4. Rename any method of your own called `getTimezone()`, `getLocale()`, `getPlugins()`, `getSchedulerLicenseKey()`, `goToDate()`, `changeView()`, `next()`, `previous()` or `today()`, since the widget now defines them.
+5. In tests, call `handleFetchEvents()`, `handleEventClick()`, `handleEventDrop()`, `handleEventResize()` and `handleDateSelect()` in place of `fetchEvents()` and the `on*` methods, and pass the schema name to form assertions made after an action has finished. ([details](#tests-need-the-schema-name-after-an-action-has-finished))
+
+A widget written for 4.x that overrides none of the handlers and does not read `$this->record` needs only the first item to run on 5.x.
+
+**Behavior to review:** [policies are enforced](#actions-follow-model-policies), [records are scoped to the tenant](#records-are-scoped-to-the-current-tenant), [the default toolbar has view buttons](#the-toolbar-has-view-buttons-by-default), [date selections use the panel's timezone](#date-selection-uses-the-panels-timezone), [`selectable` and `editable` in a widget's `config()` take effect](#selectable-and-editable-in-a-widgets-config-take-effect), [a cancelled drag or resize moves the event back](#dragging-and-resizing), [the calendar refetches after any action, and custom actions receive the clicked event](#the-packages-action-classes-are-deprecated-in-favor-of-filaments), and [a calendar only reacts to its own refresh](#a-calendar-only-reacts-to-its-own-refresh-and-navigation).
+
+**Deprecated, still working in 5.x:** [`getFormSchema()`](#getformschema-is-deprecated-in-favor-of-form) and [the action classes in `Saade\FilamentFullCalendar\Actions`](#the-packages-action-classes-are-deprecated-in-favor-of-filaments).
 
 ### Actions follow model policies
 
@@ -134,7 +148,7 @@ The record is resolved before the handler runs, so an override no longer has to 
 
 What the default handlers pass to the actions as `$arguments` has not changed, so `mountUsing()` callbacks that read `$arguments['event']['start']` or `$arguments['start']` keep working. `$arguments['start']` and `$arguments['end']` after a date selection are now `CarbonImmutable` instances.
 
-The browser now calls `handleFetchEvents()`, `handleEventClick()`, `handleEventDrop()`, `handleEventResize()`, `handleDateClick()` and `handleDateSelect()`, which build the info objects and call the methods above. If your tests call the handlers through Livewire, call these instead, with the same arguments as before:
+The browser now calls `handleFetchEvents()`, `handleEventClick()`, `handleEventDrop()`, `handleEventResize()`, `handleDateClick()` and `handleDateSelect()`, which build the info objects and call the methods above. If your tests call the handlers through Livewire, or call `fetchEvents()` with an array, call these instead, with the same arguments as before:
 
 ```php
 // 4.x
