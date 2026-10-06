@@ -2,7 +2,11 @@
 
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterval;
+
+use function Filament\get_authorization_response;
+
 use LogicException;
 use Saade\FilamentFullCalendar\Data\DateClickInfo;
 use Saade\FilamentFullCalendar\Data\DateSelectInfo;
@@ -15,6 +19,20 @@ use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 trait InteractsWithEvents
 {
+    /**
+     * The model attribute that holds when an event starts. When it is set,
+     * dragging or resizing an event saves its new dates.
+     */
+    protected ?string $startAttribute = null;
+
+    protected ?string $endAttribute = null;
+
+    /**
+     * Whether a dragged or resized event opens the edit action with its new
+     * dates filled in, instead of being saved straight away.
+     */
+    protected bool $shouldConfirmEventChanges = false;
+
     /**
      * Called when an event is clicked. Opens the view action.
      */
@@ -33,7 +51,7 @@ trait InteractsWithEvents
      */
     protected function onEventDrop(EventDropInfo $info): bool
     {
-        $this->mountAction('edit', [
+        return $this->changeEventDates($info->event, [
             'type' => 'drop',
             'event' => $info->event->toArray(),
             'oldEvent' => $info->oldEvent->toArray(),
@@ -42,8 +60,6 @@ trait InteractsWithEvents
             'oldResource' => $info->oldResource,
             'newResource' => $info->newResource,
         ]);
-
-        return false;
     }
 
     /**
@@ -53,7 +69,7 @@ trait InteractsWithEvents
      */
     protected function onEventResize(EventResizeInfo $info): bool
     {
-        $this->mountAction('edit', [
+        return $this->changeEventDates($info->event, [
             'type' => 'resize',
             'event' => $info->event->toArray(),
             'oldEvent' => $info->oldEvent->toArray(),
@@ -61,8 +77,82 @@ trait InteractsWithEvents
             'startDelta' => $info->startDelta->toArray(),
             'endDelta' => $info->endDelta->toArray(),
         ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $arguments  Passed to the edit action when it is opened.
+     * @return bool Whether to put the event back where it was.
+     */
+    protected function changeEventDates(EventInfo $event, array $arguments): bool
+    {
+        $record = $this->getEventRecord();
+
+        $canSaveDates = $record && filled($this->getStartAttribute());
+
+        if ($canSaveDates) {
+            foreach ($this->getEventRecordDates($event) as $attribute => $date) {
+                $record->setAttribute($attribute, $date);
+            }
+        }
+
+        if ((! $canSaveDates) || $this->shouldConfirmEventChanges()) {
+            $this->mountAction('edit', $arguments);
+
+            return blank($this->mountedActions);
+        }
+
+        if (get_authorization_response('update', $record)->denied()) {
+            return true;
+        }
+
+        $record->save();
+
+        $this->refreshRecords();
 
         return false;
+    }
+
+    /**
+     * The dates to store for an event as the calendar reports it. An all-day
+     * event is stored from the start of its first day to the end of its last
+     * day, where FullCalendar reports the day after the last one as its end.
+     *
+     * @return array<string, CarbonImmutable>
+     */
+    protected function getEventRecordDates(EventInfo $event): array
+    {
+        $timezone = config('app.timezone');
+
+        if ($event->allDay) {
+            $start = CarbonImmutable::parse($event->start->toDateString(), $timezone);
+
+            $end = $event->end
+                ? CarbonImmutable::parse($event->end->toDateString(), $timezone)->subDay()->endOfDay()
+                : $start->endOfDay();
+        } else {
+            $start = $event->start->setTimezone($timezone);
+            $end = $event->end?->setTimezone($timezone);
+        }
+
+        return array_filter([
+            $this->getStartAttribute() => $start,
+            $this->getEndAttribute() ?? '' => $end,
+        ], fn (?CarbonImmutable $date, string $attribute): bool => filled($attribute) && $date, ARRAY_FILTER_USE_BOTH);
+    }
+
+    protected function getStartAttribute(): ?string
+    {
+        return $this->startAttribute;
+    }
+
+    protected function getEndAttribute(): ?string
+    {
+        return $this->endAttribute;
+    }
+
+    protected function shouldConfirmEventChanges(): bool
+    {
+        return $this->shouldConfirmEventChanges;
     }
 
     /**

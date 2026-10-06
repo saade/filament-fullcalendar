@@ -132,6 +132,15 @@ The browser now calls `handleFetchEvents()`, `handleEventClick()`, `handleEventD
 
 Clicking, dragging or resizing an event that has no `id` on a widget with a `$model` now fails with a message saying so, instead of an "undefined array key" error.
 
+### Dragging and resizing
+
+Nothing changes for an existing widget until you opt in, with two exceptions that fix long-standing problems:
+
+- When the edit action that opens after a drag or resize is cancelled, the calendar fetches its events again, so the event returns to where it was. In 4.x it stayed in the dropped position until the next reload.
+- When that edit action cannot be opened, for example because the policy denies updating, the event moves back straight away.
+
+New in 5.x: set `$startAttribute` and `$endAttribute` on the widget and a dropped or resized event is saved without a modal. Add `$shouldConfirmEventChanges = true` to open the edit action with the new dates filled in. Either way, a `mountUsing()` callback whose only job was to copy `$arguments['event']['start']` into the form is no longer needed.
+
 ### The package's action classes are deprecated in favor of Filament's
 
 In 4.x only the actions in `Saade\FilamentFullCalendar\Actions` knew about the widget's model, the clicked event and the form. Now the widget supplies those to every action, so the calendar uses `Filament\Actions\CreateAction`, `EditAction`, `DeleteAction` and `ViewAction` directly, and a custom action receives the clicked event as `$record`.

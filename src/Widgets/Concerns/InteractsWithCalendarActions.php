@@ -15,10 +15,15 @@ use function Filament\get_authorization_response;
 use Filament\Schemas\Schema;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 trait InteractsWithCalendarActions
 {
-    use InteractsWithActions;
+    use InteractsWithActions {
+        unmountAction as unmountFilamentAction;
+    }
+
+    protected bool $hasCalledAction = false;
 
     protected function headerActions(): array
     {
@@ -83,9 +88,16 @@ trait InteractsWithCalendarActions
         };
     }
 
-    protected function afterActionCalled(Action $action): void
+    /**
+     * Filament 4.0 to 4.4 call this without the action.
+     */
+    protected function afterActionCalled(?Action $action = null): void
     {
-        if ($action instanceof ViewAction) {
+        $action ??= $this->getMountedAction();
+
+        $this->hasCalledAction = true;
+
+        if ((! $action) || ($action instanceof ViewAction)) {
             return;
         }
 
@@ -94,6 +106,28 @@ trait InteractsWithCalendarActions
         }
 
         $this->refreshRecords();
+    }
+
+    /**
+     * When the edit action that was opened for a dragged or resized event is
+     * closed without saving, the calendar still shows the event where it was
+     * dropped, so the events are fetched again to put it back.
+     *
+     * The signature of the method this wraps differs between Filament versions.
+     */
+    public function unmountAction(mixed ...$arguments): void
+    {
+        $isChangingEventDates = in_array(
+            Arr::last($this->mountedActions)['arguments']['type'] ?? null,
+            ['drop', 'resize'],
+            strict: true,
+        );
+
+        $this->unmountFilamentAction(...$arguments);
+
+        if ($isChangingEventDates && (! $this->hasCalledAction)) {
+            $this->refreshRecords();
+        }
     }
 
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response

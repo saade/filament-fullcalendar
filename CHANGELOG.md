@@ -15,10 +15,12 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `selectable` and `editable` set in a widget's `config()` are respected by the date click and selection handlers.
 - The calendar refetches its events after any action other than viewing has run, not only after the package's own actions.
 - `fetchEvents()` receives a `FetchInfo` object, and `onEventClick()`, `onEventDrop()`, `onEventResize()` and `onDateSelect()` each receive a typed info object in place of several arrays. See the upgrade guide for the new signatures.
+- Cancelling the edit action after a drag or resize moves the event back, and so does a drag or resize the user is not allowed to make.
 - The clicked event moved from `$record` to `$eventRecord`, so the widget can be used on a resource page without overwriting the page's record ([#209](https://github.com/saade/filament-fullcalendar/issues/209)). `getRecord()`, `resolveRecord()` and the related helpers were renamed to match.
 
 ### Added
 
+- `$startAttribute` and `$endAttribute` make the widget save a dragged or resized event's new dates, and `$shouldConfirmEventChanges` opens the edit action with them filled in.
 - `onDateClick()` is called for a click or tap on a single day or time slot, separately from `onDateSelect()` for a dragged selection.
 - `FetchInfo::overlapping()` limits a query to the records that overlap the visible range.
 - `form(Schema $schema)` defines the fields for creating and editing, and `infolist(Schema $schema)` the entries shown when viewing an event.

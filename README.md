@@ -38,6 +38,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Customizing actions](#customizing-actions)
   - [Authorizing actions](#authorizing-actions)
   - [Multi-tenancy](#multi-tenancy)
+- [Dragging and resizing events](#dragging-and-resizing-events)
 - [Intercepting events](#intercepting-events)
 - [Controlling the calendar](#controlling-the-calendar)
 - [Render hooks](#render-hooks)
@@ -507,6 +508,35 @@ protected static ?string $tenantOwnershipRelationshipName = 'organization';
 
 `fetchEvents()` is your own query, so scope it to the tenant as well.
 
+# Dragging and resizing events
+
+Enable [`editable`](#plugin-methods) to let users drag and resize events. Tell the widget which attributes of the model hold the start and the end, and it saves the new dates as soon as an event is dropped or resized:
+
+```php
+protected ?string $startAttribute = 'starts_at';
+
+protected ?string $endAttribute = 'ends_at';
+```
+
+The change is checked against the model's `update` policy. If the user is not allowed, nothing is saved and the event moves back.
+
+To let the user review the change first, open the edit action with the new dates filled in. Saving it stores them, and cancelling it moves the event back:
+
+```php
+protected bool $shouldConfirmEventChanges = true;
+```
+
+Without a `$startAttribute`, the widget cannot know where to put the dates, so it opens the edit action with the stored values and leaves filling in the new ones to you. They are in the action's arguments as `$arguments['event']['start']` and `$arguments['event']['end']`.
+
+Dates are converted from the calendar's timezone to the application's before they are saved. An all-day event is saved from the start of its first day to the end of its last day, so one that covers October 6th to 8th is stored as `2026-10-06 00:00:00` to `2026-10-08 23:59:59`. FullCalendar itself reports the day after the last one as the end, and expects it back that way from `fetchEvents()`:
+
+```php
+EventData::make()
+    ->allDay()
+    ->start($event->starts_at->toDateString())
+    ->end($event->ends_at->addDay()->toDateString())
+```
+
 # Intercepting events
 
 The widget has a method for each calendar interaction. Each one receives an object describing what happened. Override one to change what it does, and call the parent to keep the default behavior:
@@ -514,8 +544,8 @@ The widget has a method for each calendar interaction. Each one receives an obje
 | Method | Called when | Default |
 | ------ | ----------- | ------- |
 | `onEventClick(EventClickInfo $info)` | An event is clicked | Opens the view action |
-| `onEventDrop(EventDropInfo $info): bool` | An event is dragged to another date or resource | Opens the edit action |
-| `onEventResize(EventResizeInfo $info): bool` | An event is resized | Opens the edit action |
+| `onEventDrop(EventDropInfo $info): bool` | An event is dragged to another date or resource | [Saves the new dates, or opens the edit action](#dragging-and-resizing-events) |
+| `onEventResize(EventResizeInfo $info): bool` | An event is resized | [Saves the new dates, or opens the edit action](#dragging-and-resizing-events) |
 | `onDateClick(DateClickInfo $info)` | A single day or time slot is clicked or tapped | Calls `onDateSelect()` with that day or slot |
 | `onDateSelect(DateSelectInfo $info)` | A range is selected by dragging | Opens the create action |
 
@@ -629,35 +659,6 @@ protected function onDateClick(DateClickInfo $info): void
 ```
 
 Dragging over several days still opens the create action, through `onDateSelect()`.
-
-## Filling the form after dragging or resizing
-
-Enable `editable()`. Dragging or resizing an event opens the edit action, which can be filled with the event's new dates:
-
-```php
-use App\Models\Event;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Schemas\Schema;
-
-protected function modalActions(): array
-{
-    return [
-        EditAction::make()
-            ->cancelParentActions()
-            ->mountUsing(function (Event $record, Schema $schema, array $arguments): void {
-                $schema->fill([
-                    ...$record->attributesToArray(),
-                    'starts_at' => $arguments['event']['start'] ?? $record->starts_at,
-                    'ends_at' => $arguments['event']['end'] ?? $record->ends_at,
-                ]);
-            }),
-
-        DeleteAction::make()
-            ->cancelParentActions(),
-    ];
-}
-```
 
 ## Saving extra data when creating
 
