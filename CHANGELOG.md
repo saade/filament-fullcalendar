@@ -29,6 +29,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` drive the calendar from PHP.
 - Models that implement `Eventable` describe their own event, and `fetchEvents()` can return them as an array, a collection or a query. One calendar can show several models: each event resolves to a record of its own model through a signed reference, with that model's label and policy.
 - When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.
+- `filtersSchema()` shows a filter form above the calendar, with its state in `$this->filters`, and `getTabs()` shows tabs like the ones on a resource's list page. Changing either fetches the events again, and both are remembered in the session.
 - `fetchResources()` returns the resources of a resource view from PHP, as arrays or `ResourceData` objects. They are sent with the page, `refreshResources()` fetches them again, and `$resourceAttribute` saves the resource an event was dragged to.
 - The timezone, locale, plugins and license key can be overridden per widget, and the panel plugin's setters accept closures.
 - The calendar works on a panel that does not register the plugin and on Filament pages outside a panel ([#67](https://github.com/saade/filament-fullcalendar/issues/67)).

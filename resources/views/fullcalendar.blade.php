@@ -4,6 +4,18 @@
             <x-filament::actions :actions="$this->getCachedHeaderActions()" class="shrink-0" />
         </div>
 
+        @if ($this->hasFiltersSchema())
+            <div class="mb-4">
+                {{ $this->getFiltersSchema() }}
+            </div>
+        @endif
+
+        @if (filled($this->getCachedTabs()))
+            <div class="mb-4">
+                {{ $this->getSchema('calendarTabs') }}
+            </div>
+        @endif
+
         <div wire:ignore x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-fullcalendar-alpine', 'saade/filament-fullcalendar') }}"
             x-ignore x-data="fullcalendar({

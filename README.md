@@ -43,6 +43,10 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Authorizing actions](#authorizing-actions)
   - [Multi-tenancy](#multi-tenancy)
 - [Dragging and resizing events](#dragging-and-resizing-events)
+- [Filtering events](#filtering-events)
+  - [Filter form](#filter-form)
+  - [Tabs](#tabs)
+  - [Remembering filters](#remembering-filters)
 - [Resource views](#resource-views)
   - [Moving events between resources](#moving-events-between-resources)
   - [Refreshing resources](#refreshing-resources)
@@ -658,6 +662,67 @@ EventData::make()
     ->allDay()
     ->start($event->starts_at->toDateString())
     ->end($event->ends_at->addDay()->toDateString())
+```
+
+# Filtering events
+
+## Filter form
+
+Define `filtersSchema()` to show fields above the calendar. Their state is in `$this->filters`, and the events are fetched again whenever a field changes:
+
+```php
+use App\Models\Event;
+use App\Models\Room;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
+
+public function filtersSchema(Schema $schema): Schema
+{
+    return $schema->components([
+        Select::make('room_id')
+            ->label('Room')
+            ->options(fn (): array => Room::query()->pluck('name', 'id')->all()),
+    ]);
+}
+
+public function fetchEvents(FetchInfo $info): Builder
+{
+    return $info->overlapping(Event::query(), 'starts_at', 'ends_at')
+        ->when($this->filters['room_id'] ?? null, fn (Builder $query, $room) => $query->where('room_id', $room));
+}
+```
+
+## Tabs
+
+Define `getTabs()` to filter with tabs, the same way as on the [list page of a resource](https://filamentphp.com/docs/5.x/resources/listing-records#using-tabs-to-filter-the-records):
+
+```php
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
+
+public function getTabs(): array
+{
+    return [
+        'all' => Tab::make(),
+        'confirmed' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('is_confirmed', true)),
+        'tentative' => Tab::make()
+            ->badge(fn (): int => Event::query()->where('is_confirmed', false)->count())
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('is_confirmed', false)),
+    ];
+}
+```
+
+When `fetchEvents()` returns a query, the active tab is applied to it for you. When it returns an array, apply the tab yourself with `$this->modifyQueryWithActiveTab($query)`, or read `$this->activeTab`. The first tab is active by default; override `getDefaultActiveTab()` to choose another.
+
+## Remembering filters
+
+The filters and the active tab are kept in the session, so they are still set when the user comes back. To start fresh on every visit:
+
+```php
+protected bool $persistsFiltersInSession = false;
 ```
 
 # Resource views

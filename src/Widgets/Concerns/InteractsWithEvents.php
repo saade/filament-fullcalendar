@@ -245,6 +245,14 @@ trait InteractsWithEvents
     {
         $events = $this->fetchEvents(FetchInfo::fromArray($info, $this->getTimezone()));
 
+        if ($events instanceof Relation) {
+            $this->modifyQueryWithActiveTab($events->getQuery());
+        }
+
+        if ($events instanceof Builder) {
+            $events = $this->modifyQueryWithActiveTab($events);
+        }
+
         if (($events instanceof Builder) || ($events instanceof Relation)) {
             $events = $events->get();
         }

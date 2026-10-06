@@ -16,7 +16,7 @@ Start with the changes your widgets need before they load at all, then review th
 1. Change the type hint of `fetchEvents()` from `array` to `FetchInfo`. The body can stay as it is. ([details](#fetchevents-and-the-event-handlers-take-info-objects))
 2. If you override `onEventClick()`, `onEventDrop()`, `onEventResize()` or `onDateSelect()`, update their signatures. ([details](#fetchevents-and-the-event-handlers-take-info-objects))
 3. Replace `$this->record`, `getRecord()` and `resolveRecord()` with their `eventRecord` names. ([details](#the-clicked-event-moved-from-record-to-eventrecord))
-4. Rename any method of your own called `getTimezone()`, `getLocale()`, `getPlugins()`, `getSchedulerLicenseKey()`, `goToDate()`, `changeView()`, `next()`, `previous()` or `today()`, since the widget now defines them.
+4. Rename any method of your own called `getTimezone()`, `getLocale()`, `getPlugins()`, `getSchedulerLicenseKey()`, `goToDate()`, `changeView()`, `next()`, `previous()`, `today()`, `fetchResources()`, `refreshResources()`, `filtersSchema()` or `getTabs()`, and any property called `$filters` or `$activeTab`, since the widget now defines them. ([details](#the-widget-has-filters-and-activetab-properties))
 5. In tests, call `handleFetchEvents()`, `handleEventClick()`, `handleEventDrop()`, `handleEventResize()` and `handleDateSelect()` in place of `fetchEvents()` and the `on*` methods, and pass the schema name to form assertions made after an action has finished. ([details](#tests-need-the-schema-name-after-an-action-has-finished))
 
 A widget written for 4.x that overrides none of the handlers and does not read `$this->record` needs only the first item to run on 5.x.
@@ -95,6 +95,10 @@ If you published or replaced the widget's Blade view, it should read these from 
 The widget now has `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` next to `refreshRecords()`, and each of them only affects the calendar it is called on. In 4.x, `refreshRecords()` on one calendar made every calendar on the page fetch its events again.
 
 The `filament-fullcalendar--*` browser events still reach every calendar when dispatched as before. Add `calendar: $livewireId` to target one. If your widget defines its own `next()`, `previous()`, `today()`, `goToDate()` or `changeView()`, rename it or make it compatible.
+
+### The widget has `$filters` and `$activeTab` properties
+
+The widget now declares `public ?array $filters = []` and `public ?string $activeTab = null` for the new [filter form and tabs](README.md#filtering-events), and the methods `filtersSchema()` and `getTabs()`. If your widget already has a property or method with one of these names, give it the same type and default, or rename it.
 
 ### `fetchEvents()` and the event handlers take info objects
 
