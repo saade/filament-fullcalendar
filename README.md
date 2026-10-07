@@ -59,6 +59,13 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
 - [Intercepting events](#intercepting-events)
 - [Controlling the calendar](#controlling-the-calendar)
   - [Refreshing automatically](#refreshing-automatically)
+- [More views and options](#more-views-and-options)
+  - [Views of your own length](#views-of-your-own-length)
+  - [Yesterday, today and tomorrow](#yesterday-today-and-tomorrow)
+  - [A year at a glance](#a-year-at-a-glance)
+  - [Options worth knowing](#options-worth-knowing)
+  - [Background events](#background-events)
+  - [When the view changes](#when-the-view-changes)
 - [Business hours and constraints](#business-hours-and-constraints)
   - [Business hours](#business-hours)
   - [Limiting the dates](#limiting-the-dates)
@@ -1177,6 +1184,119 @@ protected ?string $pollingInterval = '30s';
 
 The interval is a number followed by `ms`, `s` or `m`. It is off by default. The calendar skips a turn while its browser tab is in the background, while one of its modals is open, and while an event is being dragged or resized, so it never changes under the user's hands.
 
+# More views and options
+
+Everything FullCalendar offers is reachable: plain values through `config()`, functions through [`jsCallbacks()`](#javascript-callbacks). These are the ones that are asked for most and are easy to miss.
+
+## Views of your own length
+
+FullCalendar's views can be given [any duration](https://fullcalendar.io/docs/custom-view-with-settings). Define the view under `views` and add its name to the toolbar:
+
+```php
+public function config(): array
+{
+    return [
+        'views' => [
+            'dayGridThreeDay' => ['type' => 'dayGrid', 'duration' => ['days' => 3], 'buttonText' => '3 days'],
+            'timeGridFourDay' => ['type' => 'timeGrid', 'duration' => ['days' => 4], 'buttonText' => '4 days'],
+        ],
+        'headerToolbar' => [
+            'left' => 'prev,next today',
+            'center' => 'title',
+            'right' => 'dayGridMonth,dayGridThreeDay,timeGridFourDay',
+        ],
+    ];
+}
+```
+
+Such a view starts on the current date and moves by its own length, so three days from today shows today, tomorrow and the day after.
+
+## Yesterday, today and tomorrow
+
+A view that is centered on a date needs to compute its range, which takes a function, so it goes in `jsCallbacks()`:
+
+```php
+public function jsCallbacks(): array
+{
+    return [
+        'views' => <<<'JS'
+            ({
+                aroundToday: {
+                    type: 'dayGrid',
+                    buttonText: 'Around today',
+                    dateIncrement: { days: 1 },
+                    visibleRange: (currentDate) => {
+                        const day = (offset) => new Date(Date.UTC(
+                            currentDate.getUTCFullYear(),
+                            currentDate.getUTCMonth(),
+                            currentDate.getUTCDate() + offset,
+                        ))
+
+                        return { start: day(-1), end: day(2) }
+                    },
+                },
+            })
+        JS,
+    ];
+}
+```
+
+Add `aroundToday` to the toolbar as above. `views` in `jsCallbacks()` replaces `views` in `config()`, so when you use it, define all your own views there.
+
+## A year at a glance
+
+Add the `multiMonth` plugin and use the `multiMonthYear` view:
+
+```php
+public function getPlugins(): array
+{
+    return [...parent::getPlugins(), 'multiMonth'];
+}
+
+public function config(): array
+{
+    return ['initialView' => 'multiMonthYear'];
+}
+```
+
+## Options worth knowing
+
+| Goal | Option |
+| ---- | ------ |
+| A line at the current time | [`nowIndicator`](https://fullcalendar.io/docs/nowIndicator) |
+| Week numbers | [`weekNumbers`](https://fullcalendar.io/docs/weekNumbers) |
+| Day and week headings that open that day or week | [`navLinks`](https://fullcalendar.io/docs/navLinks) |
+| Shorter or longer time slots | [`slotDuration`](https://fullcalendar.io/docs/slotDuration), [`snapDuration`](https://fullcalendar.io/docs/snapDuration) |
+| The time the day opens at | [`scrollTime`](https://fullcalendar.io/docs/scrollTime) |
+| A calendar as tall as its content, or filling a fixed height | [`height`](https://fullcalendar.io/docs/height), [`contentHeight`](https://fullcalendar.io/docs/contentHeight), [`expandRows`](https://fullcalendar.io/docs/expandRows) |
+| What "+2 more" does, and how many rows show before it | [`moreLinkClick`](https://fullcalendar.io/docs/moreLinkClick), [`dayMaxEventRows`](https://fullcalendar.io/docs/dayMaxEventRows) |
+| The order of events within a day | [`eventOrder`](https://fullcalendar.io/docs/eventOrder) |
+| Right-to-left | [`direction`](https://fullcalendar.io/docs/direction) |
+| Group, sort and filter the rows of a resource view | [`resourceGroupField`](https://fullcalendar.io/docs/resourceGroupField), [`resourceOrder`](https://fullcalendar.io/docs/resourceOrder), [`filterResourcesWithEvents`](https://fullcalendar.io/docs/filterResourcesWithEvents) |
+
+## Background events
+
+An event with `display` set to `background` shades its dates instead of showing as an event:
+
+```php
+EventData::make()
+    ->start('2026-12-24')
+    ->end('2026-12-27')
+    ->extraProperties(['display' => 'background', 'color' => 'red'])
+```
+
+## When the view changes
+
+[`viewDidMount`](https://fullcalendar.io/docs/view-render-hooks) runs in the browser when a view is put on the page:
+
+```php
+'viewDidMount' => <<<'JS'
+    ({ view, el }) => el.classList.toggle('is-list', view.type.startsWith('list'))
+JS,
+```
+
+It does not run when the calendar moves between two views of the same kind, such as from the month to a three-day grid. To hear about every change of view or dates, use [`onDatesSet()`](#reacting-to-navigation) on the server or a `datesSet` entry in `jsCallbacks()`.
+
 # Business hours and constraints
 
 FullCalendar can shade the hours you are closed and limit where events may go. Options that are plain values go in `config()`, and options that are functions go in [`jsCallbacks()`](#javascript-callbacks).
@@ -1567,6 +1687,21 @@ EventData::make()
             'dtstart' => '2026-10-05T10:00:00',
         ],
         'duration' => '01:00',
+    ])
+```
+
+An event that repeats on fixed weekdays does not need the plugin. FullCalendar's own [recurrence properties](https://fullcalendar.io/docs/recurring-events) are enough:
+
+```php
+EventData::make()
+    ->id($event->id)
+    ->title($event->name)
+    ->extraProperties([
+        'daysOfWeek' => [1, 3],
+        'startTime' => '10:00',
+        'endTime' => '11:00',
+        'startRecur' => '2026-10-01',
+        'endRecur' => '2026-12-31',
     ])
 ```
 
