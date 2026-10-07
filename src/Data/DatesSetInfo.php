@@ -23,7 +23,8 @@ final readonly class DatesSetInfo
         public CarbonImmutable $currentStart,
         public CarbonImmutable $currentEnd,
         public string $timezone,
-    ) {}
+    ) {
+    }
 
     /**
      * @param  array{view: string, title: string, start: string, end: string, currentStart: string, currentEnd: string}  $info

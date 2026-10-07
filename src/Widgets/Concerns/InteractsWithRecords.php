@@ -3,14 +3,15 @@
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Filament\Facades\Filament;
+
+use function Filament\Support\get_model_label;
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\Locked;
 use Saade\FilamentFullCalendar\Contracts\Eventable;
-
-use function Filament\Support\get_model_label;
 
 trait InteractsWithRecords
 {
@@ -33,7 +34,7 @@ trait InteractsWithRecords
         $record = $this->resolveEventRecordRouteBinding($key);
 
         if ($record === null) {
-            throw (new ModelNotFoundException)->setModel($this->getModel(), [$key]);
+            throw (new ModelNotFoundException())->setModel($this->getModel(), [$key]);
         }
 
         return $record;
@@ -149,7 +150,7 @@ trait InteractsWithRecords
             ->first();
 
         if ($record === null) {
-            throw (new ModelNotFoundException)->setModel($modelClass, [$key]);
+            throw (new ModelNotFoundException())->setModel($modelClass, [$key]);
         }
 
         return $record;

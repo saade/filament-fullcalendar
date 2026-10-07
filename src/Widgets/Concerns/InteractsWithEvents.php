@@ -269,7 +269,6 @@ trait InteractsWithEvents
         ], fn (mixed $value, string $attribute): bool => filled($attribute) && filled($value), ARRAY_FILTER_USE_BOTH);
     }
 
-
     /**
      * Fetch the events again.
      */

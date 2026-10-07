@@ -40,7 +40,9 @@ class CalendarTool
 
     protected bool $isVisible = true;
 
-    public function __construct(protected string $name) {}
+    public function __construct(protected string $name)
+    {
+    }
 
     public static function make(string $name): static
     {

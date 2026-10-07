@@ -4,15 +4,18 @@ namespace Saade\FilamentFullCalendar\Commands;
 
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
+
+use function Filament\Support\discover_app_classes;
+
 use Filament\Widgets\Commands\MakeWidgetCommand;
 use Illuminate\Database\Eloquent\Model;
+
+use function Laravel\Prompts\suggest;
+use function Laravel\Prompts\text;
+
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Throwable;
-
-use function Filament\Support\discover_app_classes;
-use function Laravel\Prompts\suggest;
-use function Laravel\Prompts\text;
 
 #[AsCommand(name: 'make:filament-fullcalendar-widget', aliases: [
     'filament-fullcalendar:make-widget',
