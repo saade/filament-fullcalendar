@@ -93,14 +93,57 @@ html.dark .filament-fullcalendar .fc-button:not([disabled]) {
     }
 }
 
-.filament-fullcalendar .fc-view table,
-.filament-fullcalendar .fc-view:not(.fc-list) table th,
-.filament-fullcalendar .fc-list {
-    @apply rounded-t-xl;
+.filament-fullcalendar .fc-button::first-letter {
+    text-transform: uppercase;
 }
 
-.filament-fullcalendar .fc-list {
-    @apply overflow-hidden;
+.filament-fullcalendar .fc-toolbar-title {
+    @apply text-base font-semibold text-gray-950 dark:text-white;
+}
+
+/*
+ * The view is framed like a Filament table: rounded, with a ring. The ring
+ * replaces the grid's own outer border, which would otherwise double it.
+ */
+.filament-fullcalendar .fc-view {
+    @apply overflow-hidden rounded-xl ring-1 ring-gray-950/5 dark:ring-white/10;
+}
+
+.filament-fullcalendar.fc .fc-scrollgrid,
+.filament-fullcalendar.fc .fc-list {
+    border-width: 0;
+}
+
+.filament-fullcalendar.fc .fc-scrollgrid-section > :last-child {
+    border-right-width: 0;
+}
+
+.filament-fullcalendar.fc .fc-scrollgrid-section:last-child > * {
+    border-bottom-width: 0;
+}
+
+.filament-fullcalendar .fc-col-header-cell {
+    @apply bg-gray-50 dark:bg-white/5;
+}
+
+.filament-fullcalendar .fc-col-header-cell-cushion {
+    @apply px-3 py-2.5 text-sm font-semibold text-gray-950 dark:text-white;
+}
+
+.filament-fullcalendar.fc .fc-daygrid-more-link {
+    @apply text-xs font-medium text-primary-600 hover:bg-transparent hover:underline dark:text-primary-400;
+}
+
+.filament-fullcalendar.fc .fc-popover {
+    @apply overflow-hidden rounded-lg border-0 bg-white shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+}
+
+.filament-fullcalendar.fc .fc-popover-header {
+    @apply border-b border-gray-100 bg-transparent px-3 py-2 text-sm font-semibold text-gray-950 dark:border-white/5 dark:text-white;
+}
+
+.filament-fullcalendar.fc .fc-popover-body {
+    @apply p-2;
 }
 
 .filament-fullcalendar .fc-list .fc-list-event-title a {
