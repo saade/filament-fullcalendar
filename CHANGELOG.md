@@ -15,7 +15,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - Records are scoped to the current tenant in panels with tenancy.
 - The toolbar shows the month, week and day view buttons by default, as it did in 3.x.
 - The toolbar buttons look like Filament's primary buttons: the same background, text and hover colors that Filament picks for the panel's primary color, in light and dark mode.
-- The calendar is framed like a Filament table, with rounded corners, a ring and a header band for the day names. Button labels are capitalised, the title is smaller and semibold, the "+more" link uses the primary color, and its popover looks like a Filament dropdown.
+- The calendar is framed like a Filament table, with rounded corners, a ring and a header band for the day names. Button labels are capitalised, the title is smaller and semibold, the "+more" link uses the primary color, and its popover looks like a Filament dropdown. The list view's day rows and the resource timeline's header use the same header band, and the navigation arrows and the popover's close button are Filament's icons.
 - Date selection uses the timezone configured on the panel plugin.
 - `selectable` and `editable` set in a widget's `config()` are respected by the date click and selection handlers.
 - The calendar refetches its events after any action other than viewing has run, not only after the package's own actions.
