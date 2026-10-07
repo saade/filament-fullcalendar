@@ -111,6 +111,19 @@ function addTooltip({ event, el }) {
     )
 }
 
+// FullCalendar writes the title as text. Only the element that holds the
+// title is rewritten, so the time, the dot and the link stay as they are.
+function renderHtmlTitle({ event, el }) {
+    if (!event.extendedProps.isTitleHtml) return
+
+    const title =
+        el.querySelector('.fc-event-title') ??
+        el.querySelector('.fc-list-event-title a') ??
+        el.querySelector('.fc-list-event-title')
+
+    if (title) title.innerHTML = event.title
+}
+
 const isEnglish = (locale) => !locale || /^en([-_]us)?$/i.test(locale)
 
 async function loadLocales(locale) {
@@ -241,6 +254,7 @@ export default function fullcalendar({
                 ...callbacks,
                 eventDidMount: (info) => {
                     addTooltip(info)
+                    renderHtmlTitle(info)
 
                     callbacks.eventDidMount?.(info)
                 },

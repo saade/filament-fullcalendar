@@ -1471,11 +1471,16 @@ function en({ event: e, el: t }) {
 	let i = window.Alpine.store("theme") ?? "light";
 	t.setAttribute(`x-tooltip.html.raw.theme.${i}`, [n].flat().map((e) => r ? e : $t(e)).join("<br>"));
 }
-var tn = (e) => !e || /^en([-_]us)?$/i.test(e);
-async function nn(e) {
-	return tn(e) ? [] : (await import("../filament-fullcalendar-locales-D70-mQ5L.js")).default;
+function tn({ event: e, el: t }) {
+	if (!e.extendedProps.isTitleHtml) return;
+	let n = t.querySelector(".fc-event-title") ?? t.querySelector(".fc-list-event-title a") ?? t.querySelector(".fc-list-event-title");
+	n && (n.innerHTML = e.title);
 }
-function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, resources: o, eventSources: s, googleCalendarApiKey: c, editable: l, selectable: u, toolbarButtons: d, pollingInterval: f, droppable: p, widget: m, hasSpaMode: ee, shouldReportDates: te, callbacks: h }) {
+var nn = (e) => !e || /^en([-_]us)?$/i.test(e);
+async function rn(e) {
+	return nn(e) ? [] : (await import("../filament-fullcalendar-locales-D70-mQ5L.js")).default;
+}
+function an({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, resources: o, eventSources: s, googleCalendarApiKey: c, editable: l, selectable: u, toolbarButtons: d, pollingInterval: f, droppable: p, widget: m, hasSpaMode: ee, shouldReportDates: te, callbacks: h }) {
 	let g = (e, ...t) => typeof h[e] == "function" && h[e](...t) === !1;
 	return {
 		calendar: null,
@@ -1492,7 +1497,7 @@ function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 				...n,
 				...ne,
 				...x
-			])]), nn(a.locale ?? t)]);
+			])]), rn(a.locale ?? t)]);
 			if (this.isDestroyed) return;
 			this.calendar = new Ne(this.$el, {
 				headerToolbar: {
@@ -1522,7 +1527,7 @@ function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 				locales: [...oe, ...re],
 				...h,
 				eventDidMount: (e) => {
-					en(e), h.eventDidMount?.(e);
+					en(e), tn(e), h.eventDidMount?.(e);
 				},
 				...c && { googleCalendarApiKey: c },
 				eventSources: [{
@@ -1689,4 +1694,4 @@ function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 	};
 }
 //#endregion
-export { rn as default };
+export { an as default };

@@ -46,6 +46,8 @@ class EventData implements Arrayable, JsonSerializable
 
     protected bool $isTooltipHtml = false;
 
+    protected bool $isTitleHtml = false;
+
     protected array $extraProperties = [];
 
     public static function make(): static
@@ -127,10 +129,13 @@ class EventData implements Arrayable, JsonSerializable
 
     /**
      * The text that will appear on an event.
+     *
+     * @param  bool  $html  Rendered as HTML and not escaped.
      */
-    public function title(string $title): static
+    public function title(string $title, bool $html = false): static
     {
         $this->title = $title;
+        $this->isTitleHtml = $html;
 
         return $this;
     }
@@ -226,8 +231,9 @@ class EventData implements Arrayable, JsonSerializable
             ...$this->backgroundColor ? ['backgroundColor' => $this->backgroundColor] : [],
             ...$this->borderColor ? ['borderColor' => $this->borderColor] : [],
             ...$this->textColor ? ['textColor' => $this->textColor] : [],
-            ...($this->extendedProps || filled($this->tooltip)) ? ['extendedProps' => [
+            ...($this->extendedProps || filled($this->tooltip) || $this->isTitleHtml) ? ['extendedProps' => [
                 ...$this->extendedProps ?? [],
+                ...$this->isTitleHtml ? ['isTitleHtml' => true] : [],
                 ...filled($this->tooltip) ? ['tooltip' => $this->tooltip] : [],
                 ...(filled($this->tooltip) && $this->isTooltipHtml) ? ['isTooltipHtml' => true] : [],
             ]] : [],

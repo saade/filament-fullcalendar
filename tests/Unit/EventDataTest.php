@@ -72,3 +72,10 @@ it('says whether an event is all-day only when told', function () {
         ->and(EventData::make()->start('2026-10-06')->allDay()->toArray()['allDay'])->toBeTrue()
         ->and(EventData::make()->start('2026-10-06')->allDay(false)->toArray()['allDay'])->toBeFalse();
 });
+
+it('marks a title as HTML only when asked', function () {
+    expect(EventData::make()->title('<b>Standup</b>')->toArray())->not->toHaveKey('extendedProps');
+
+    expect(EventData::make()->title('<b>Standup</b>', html: true)->extendedProps(['kind' => 'daily'])->toArray())
+        ->toMatchArray(['title' => '<b>Standup</b>', 'extendedProps' => ['kind' => 'daily', 'isTitleHtml' => true]]);
+});

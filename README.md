@@ -227,7 +227,7 @@ public function fetchEvents(FetchInfo $info): array
 | Method | Description |
 | ------ | ----------- |
 | `id(int \| string $id)` | Identifies the event. Required for the view, edit and delete actions to find the record. An event without one, such as a holiday, does nothing when clicked. |
-| `title(string $title)` | The text shown on the event. |
+| `title(string $title, bool $html = false)` | The text shown on the event. With `html: true` it is rendered as HTML and not escaped. |
 | `start(DateTimeInterface \| string $start)` | When the event begins. |
 | `end(DateTimeInterface \| string \| null $end)` | When the event ends (exclusive). |
 | `allDay(bool $allDay = true)` | Shows the event in the all-day section, without a time. |
@@ -1513,6 +1513,22 @@ EventData::make()
     ->backgroundColor($event->status->isConfirmed() ? '#16a34a' : '#f59e0b')
     ->borderColor('transparent')
 ```
+
+## HTML in the event title
+
+Titles are plain text. To format one, pass `html: true`:
+
+```php
+EventData::make()
+    ->title('<strong>' . e($event->name) . '</strong> ' . e($event->room->name), html: true)
+```
+
+Only the title is replaced, so the time and, in list views, the colored dot stay as they are. In a plain array, set `isTitleHtml` in `extendedProps`.
+
+> [!WARNING]
+> An HTML title is not escaped. Escape any user data in it yourself, with `e()`.
+
+To change more than the title, use the [`eventContent` render hook](#render-hooks).
 
 ## Event tooltip on hover
 
