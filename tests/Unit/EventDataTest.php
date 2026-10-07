@@ -66,3 +66,9 @@ it('marks a tooltip as HTML only when asked', function () {
     expect(EventData::make()->tooltip('<b>Room 2</b>', html: true)->toArray()['extendedProps'])
         ->toBe(['tooltip' => '<b>Room 2</b>', 'isTooltipHtml' => true]);
 });
+
+it('says whether an event is all-day only when told', function () {
+    expect(EventData::make()->start('2026-10-06')->toArray())->not->toHaveKey('allDay')
+        ->and(EventData::make()->start('2026-10-06')->allDay()->toArray()['allDay'])->toBeTrue()
+        ->and(EventData::make()->start('2026-10-06')->allDay(false)->toArray()['allDay'])->toBeFalse();
+});

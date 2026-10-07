@@ -19,7 +19,7 @@ class EventData implements Arrayable, JsonSerializable
 
     protected ?array $resourceIds = null;
 
-    protected bool $allDay = false;
+    protected ?bool $allDay = null;
 
     protected DateTimeInterface|string|null $start = null;
 
@@ -222,7 +222,7 @@ class EventData implements Arrayable, JsonSerializable
             ...$this->resourceIds ? ['resourceIds' => $this->resourceIds] : [],
             ...$this->url ? ['url' => $this->url, 'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab] : [],
             ...$this->groupId ? ['groupId' => $this->groupId] : [],
-            ...$this->allDay ? ['allDay' => $this->allDay] : [],
+            ...$this->allDay !== null ? ['allDay' => $this->allDay] : [],
             ...$this->backgroundColor ? ['backgroundColor' => $this->backgroundColor] : [],
             ...$this->borderColor ? ['borderColor' => $this->borderColor] : [],
             ...$this->textColor ? ['textColor' => $this->textColor] : [],
