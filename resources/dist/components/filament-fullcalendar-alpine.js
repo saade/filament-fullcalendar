@@ -1456,24 +1456,26 @@ function Zt() {
 		}
 	});
 }
-var $ = (e) => ({
+var Qt = "filament-fullcalendar", $ = (e) => ({
 	...e.toPlainObject(),
-	isRecurring: !!e._def.recurringDef
-}), Qt = (e) => {
+	isRecurring: !!e._def.recurringDef,
+	source: e.source?.id || null,
+	resourceIds: e.getResources?.().map((e) => e.id) ?? []
+}), $t = (e) => {
 	let t = document.createElement("div");
 	return t.textContent = e, t.innerHTML;
 };
-function $t({ event: e, el: t }) {
+function en({ event: e, el: t }) {
 	let { tooltip: n, isTooltipHtml: r } = e.extendedProps;
 	if (!n || Array.isArray(n) && !n.length) return;
 	let i = window.Alpine.store("theme") ?? "light";
-	t.setAttribute(`x-tooltip.html.raw.theme.${i}`, [n].flat().map((e) => r ? e : Qt(e)).join("<br>"));
+	t.setAttribute(`x-tooltip.html.raw.theme.${i}`, [n].flat().map((e) => r ? e : $t(e)).join("<br>"));
 }
-var en = (e) => !e || /^en([-_]us)?$/i.test(e);
-async function tn(e) {
-	return en(e) ? [] : (await import("../filament-fullcalendar-locales-D70-mQ5L.js")).default;
+var tn = (e) => !e || /^en([-_]us)?$/i.test(e);
+async function nn(e) {
+	return tn(e) ? [] : (await import("../filament-fullcalendar-locales-D70-mQ5L.js")).default;
 }
-function nn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, resources: o, eventSources: s, googleCalendarApiKey: c, editable: l, selectable: u, toolbarButtons: d, pollingInterval: f, droppable: p, widget: m, hasSpaMode: ee, shouldReportDates: te, callbacks: h }) {
+function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, resources: o, eventSources: s, googleCalendarApiKey: c, editable: l, selectable: u, toolbarButtons: d, pollingInterval: f, droppable: p, widget: m, hasSpaMode: ee, shouldReportDates: te, callbacks: h }) {
 	let g = (e, ...t) => typeof h[e] == "function" && h[e](...t) === !1;
 	return {
 		calendar: null,
@@ -1486,7 +1488,7 @@ function nn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 		lastWidth: null,
 		initialResources: Array.isArray(o) ? o : null,
 		async init() {
-			let { mobileInitialView: _, mobileBreakpoint: v = 768, ...ne } = a, re = window.matchMedia(`(max-width: ${v - 1}px)`).matches, y = [...a.eventSources ?? [], ...s], ie = [y.some((e) => e.googleCalendarId) && "googleCalendar", y.some((e) => e.format === "ics") && "iCalendar"].filter(Boolean), [ae, b] = await Promise.all([Xt([.../* @__PURE__ */ new Set([...n, ...ie])]), tn(a.locale ?? t)]);
+			let { mobileInitialView: _, mobileBreakpoint: v = 768, ...ne } = a, re = window.matchMedia(`(max-width: ${v - 1}px)`).matches, y = [...a.eventSources ?? [], ...s], ie = [y.some((e) => e.googleCalendarId) && "googleCalendar", y.some((e) => e.format === "ics") && "iCalendar"].filter(Boolean), [ae, b] = await Promise.all([Xt([.../* @__PURE__ */ new Set([...n, ...ie])]), nn(a.locale ?? t)]);
 			if (this.isDestroyed) return;
 			this.calendar = new Ne(this.$el, {
 				headerToolbar: {
@@ -1516,16 +1518,25 @@ function nn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 				locales: b,
 				...h,
 				eventDidMount: (e) => {
-					$t(e), h.eventDidMount?.(e);
+					en(e), h.eventDidMount?.(e);
 				},
 				...c && { googleCalendarApiKey: c },
-				eventSources: y.map((e) => e.googleCalendarId ? {
+				eventSources: [{
+					id: Qt,
+					events: (e, t, n) => {
+						this.$wire.handleFetchEvents({
+							start: e.startStr,
+							end: e.endStr,
+							timezone: e.timeZone
+						}).then(t).catch(n);
+					}
+				}, ...y.map((e) => e.googleCalendarId ? {
 					...e,
 					eventDataTransform: (e) => ({
 						...e,
 						shouldOpenUrlInNewTab: !0
 					})
-				} : e),
+				} : e)],
 				customButtons: {
 					...a.customButtons,
 					...h.customButtons,
@@ -1566,13 +1577,6 @@ function nn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 						currentStart: this.calendar.formatIso(e.view.currentStart),
 						currentEnd: this.calendar.formatIso(e.view.currentEnd)
 					});
-				},
-				events: (e, t, n) => {
-					this.$wire.handleFetchEvents({
-						start: e.startStr,
-						end: e.endStr,
-						timezone: e.timeZone
-					}).then(t).catch(n);
 				},
 				eventClick: (e) => {
 					let { event: t, jsEvent: n } = e;
@@ -1669,4 +1673,4 @@ function nn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 	};
 }
 //#endregion
-export { nn as default };
+export { rn as default };

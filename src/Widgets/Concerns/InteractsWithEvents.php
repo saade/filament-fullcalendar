@@ -538,7 +538,8 @@ trait InteractsWithEvents
             return;
         }
 
-        if (blank($this->getModel()) || blank($event->id)) {
+        // An id from another source, such as a feed, is not a key of the model.
+        if (blank($this->getModel()) || blank($event->id) || ($event->source !== EventInfo::OWN_SOURCE)) {
             return;
         }
 

@@ -26,6 +26,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 
 - In dark mode, the popover that lists a day's hidden events had a white background and an unreadable title.
 - The popover that lists a day's hidden events stayed on top of the modal opened from it.
+- An event from another event source that happened to have an id was looked up in the widget's `$model`, which could open or move the wrong record, or fail when no record matched. Only the widget's own events are looked up now.
 - Dragging or resizing one occurrence of a recurring event wrote that occurrence's dates to the record, moving the start of the whole series. A recurring event now moves back unless the widget handles it, and `$info->event->isRecurring` tells the handlers which is which.
 - An all-day event dragged to a time slot was saved with its new start and its old end. It is now saved with the default duration the calendar shows, an hour unless `defaultTimedEventDuration` says otherwise.
 - A calendar created while hidden, in a closed modal or an inactive tab, rendered collapsed. It now sizes itself when it becomes visible.
@@ -39,6 +40,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` drive the calendar from PHP.
 - Models that implement `Eventable` describe their own event, and `fetchEvents()` can return them as an array, a collection or a query. One calendar can show several models: each event resolves to a record of its own model through a signed reference, with that model's label and policy.
 - When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.
+- `$info->event->source` and `$info->event->resourceIds` tell the event handlers which event source an event came from and which resources it is shown in.
 - `$isReadOnly` makes a calendar read-only: events can be viewed, and nothing can be created, changed, moved or deleted.
 - `php artisan make:filament-fullcalendar-widget` creates a working calendar widget, optionally for a model.
 - Testing helpers for Livewire tests, such as `clickCalendarEvent()`, `dropCalendarEvent()`, `selectCalendarDates()` and `assertCalendarHasEvent()`.

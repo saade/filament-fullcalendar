@@ -13,9 +13,13 @@ use LogicException;
  */
 final readonly class EventInfo implements ArrayAccess
 {
+    public const OWN_SOURCE = 'filament-fullcalendar';
+
     /**
      * @param  array<string, mixed>  $extendedProps
      * @param  array<string, mixed>  $raw
+     * @param  string | null  $source  The id of the event source the event came from. The widget's own events have `EventInfo::OWN_SOURCE`.
+     * @param  array<string>  $resourceIds  The resources the event is shown in.
      * @param  bool  $isRecurring  Whether this is one occurrence of a recurring event. Its dates are those of the occurrence, not of the series.
      */
     public function __construct(
@@ -27,6 +31,8 @@ final readonly class EventInfo implements ArrayAccess
         public array $extendedProps,
         public array $raw,
         public bool $isRecurring = false,
+        public ?string $source = self::OWN_SOURCE,
+        public array $resourceIds = [],
     ) {}
 
     /**
@@ -43,6 +49,8 @@ final readonly class EventInfo implements ArrayAccess
             extendedProps: $event['extendedProps'] ?? [],
             raw: $event,
             isRecurring: (bool) ($event['isRecurring'] ?? false),
+            source: array_key_exists('source', $event) ? $event['source'] : self::OWN_SOURCE,
+            resourceIds: array_map(strval(...), $event['resourceIds'] ?? []),
         );
     }
 

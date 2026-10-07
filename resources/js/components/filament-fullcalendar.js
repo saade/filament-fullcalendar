@@ -78,9 +78,13 @@ function makeItemsDraggable() {
     })
 }
 
+const ownSourceId = 'filament-fullcalendar'
+
 const serializeEvent = (event) => ({
     ...event.toPlainObject(),
     isRecurring: Boolean(event._def.recurringDef),
+    source: event.source?.id || null,
+    resourceIds: event.getResources?.().map((resource) => resource.id) ?? [],
 })
 
 const escapeHtml = (text) => {
@@ -239,17 +243,32 @@ export default function fullcalendar({
                 ...(googleCalendarApiKey && { googleCalendarApiKey }),
                 // A Google Calendar event links to its page on Google, which
                 // should not replace the application's own page.
-                eventSources: allEventSources.map((source) =>
-                    source.googleCalendarId
-                        ? {
-                              ...source,
-                              eventDataTransform: (event) => ({
-                                  ...event,
-                                  shouldOpenUrlInNewTab: true,
-                              }),
-                          }
-                        : source,
-                ),
+                eventSources: [
+                    {
+                        id: ownSourceId,
+                        events: (info, successCallback, failureCallback) => {
+                            this.$wire
+                                .handleFetchEvents({
+                                    start: info.startStr,
+                                    end: info.endStr,
+                                    timezone: info.timeZone,
+                                })
+                                .then(successCallback)
+                                .catch(failureCallback)
+                        },
+                    },
+                    ...allEventSources.map((source) =>
+                        source.googleCalendarId
+                            ? {
+                                  ...source,
+                                  eventDataTransform: (event) => ({
+                                      ...event,
+                                      shouldOpenUrlInNewTab: true,
+                                  }),
+                              }
+                            : source,
+                    ),
+                ],
                 customButtons: {
                     ...config.customButtons,
                     ...callbacks.customButtons,
@@ -347,16 +366,6 @@ export default function fullcalendar({
                             info.view.currentEnd,
                         ),
                     })
-                },
-                events: (info, successCallback, failureCallback) => {
-                    this.$wire
-                        .handleFetchEvents({
-                            start: info.startStr,
-                            end: info.endStr,
-                            timezone: info.timeZone,
-                        })
-                        .then(successCallback)
-                        .catch(failureCallback)
                 },
                 eventClick: (info) => {
                     const { event, jsEvent } = info
