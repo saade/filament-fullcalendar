@@ -58,3 +58,15 @@ it('works on a panel that does not register the plugin', function () {
         ->and($component->instance()->isEditable())->toBeFalse()
         ->and($component->instance()->isSelectable())->toBeFalse();
 });
+
+it('uses a timeZone set in config() on the server as well as in the browser', function () {
+    $component = Livewire::test(\Saade\FilamentFullCalendar\Tests\Fixtures\ConfigTimezoneCalendarWidget::class);
+
+    expect($component->instance()->getTimezone())->toBe('Europe/Lisbon');
+
+    $component
+        ->assertSeeHtml('Europe\/Lisbon')
+        ->assertDontSeeHtml('America\/Sao_Paulo')
+        ->call('handleDateSelect', '2026-10-06T09:00:00', '2026-10-06T10:00:00', false, null, null)
+        ->assertSchemaStateSet(['starts_at' => '2026-10-06 08:00:00', 'ends_at' => '2026-10-06 09:00:00'], 'mountedActionSchema0');
+});

@@ -426,6 +426,8 @@ public function getSchedulerLicenseKey(): ?string
 }
 ```
 
+FullCalendar's own `timeZone` key in `config()` works as well. Whichever you use, the browser and the server read dates in the same timezone.
+
 Options people ask about most often:
 
 | Goal | Option |

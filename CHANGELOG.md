@@ -26,6 +26,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 
 - In dark mode, the popover that lists a day's hidden events had a white background and an unreadable title.
 - The popover that lists a day's hidden events stayed on top of the modal opened from it.
+- A `timeZone` set in `config()` changed the calendar in the browser while the server kept reading dates in the panel's timezone. Both use it now.
 - An event from another event source that happened to have an id was looked up in the widget's `$model`, which could open or move the wrong record, or fail when no record matched. Only the widget's own events are looked up now.
 - Dragging or resizing one occurrence of a recurring event wrote that occurrence's dates to the record, moving the start of the whole series. A recurring event now moves back unless the widget handles it, and `$info->event->isRecurring` tells the handlers which is which.
 - An all-day event dragged to a time slot was saved with its new start and its old end. It is now saved with the default duration the calendar shows, an hour unless `defaultTimedEventDuration` says otherwise.

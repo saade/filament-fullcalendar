@@ -204,7 +204,6 @@ export default function fullcalendar({
                 plugins: loadedPlugins,
                 locale,
                 ...(schedulerLicenseKey && { schedulerLicenseKey }),
-                timeZone,
                 editable,
                 selectable,
                 ...(resources !== false && {
@@ -231,6 +230,7 @@ export default function fullcalendar({
                     },
                 }),
                 ...fullCalendarConfig,
+                timeZone,
                 ...(isMobile &&
                     mobileInitialView && { initialView: mobileInitialView }),
                 locales,

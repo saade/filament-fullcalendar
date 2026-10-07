@@ -31,7 +31,7 @@ trait CanBeConfigured
 
     public function getTimezone(): string
     {
-        return FilamentFullCalendarPlugin::current()->getTimezone();
+        return data_get($this->getConfig(), 'timeZone') ?? FilamentFullCalendarPlugin::current()->getTimezone();
     }
 
     public function getLocale(): string
