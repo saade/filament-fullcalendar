@@ -145,6 +145,7 @@ export default function fullcalendar({
     editable,
     selectable,
     toolbarButtons,
+    filtersCount,
     pollingInterval,
     droppable,
     widget,
@@ -171,6 +172,16 @@ export default function fullcalendar({
         isDragging: false,
 
         isDestroyed: false,
+
+        id,
+
+        filtersCount,
+
+        title: '',
+
+        viewType: null,
+
+        isTodayInRange: false,
 
         resizeObserver: null,
 
@@ -212,12 +223,7 @@ export default function fullcalendar({
 
             if (this.isDestroyed) return
 
-            this.calendar = new Calendar(this.$el, {
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,dayGridWeek,dayGridDay',
-                },
+            this.calendar = new Calendar(this.$refs.calendar, {
                 plugins: loadedPlugins,
                 locale,
                 ...(schedulerLicenseKey && { schedulerLicenseKey }),
@@ -247,6 +253,8 @@ export default function fullcalendar({
                     },
                 }),
                 ...fullCalendarConfig,
+                // The widget draws the header toolbar itself.
+                headerToolbar: false,
                 timeZone,
                 ...(isMobile &&
                     mobileInitialView && { initialView: mobileInitialView }),
@@ -367,11 +375,13 @@ export default function fullcalendar({
                     },
                 }),
                 loading: (isLoading) => {
-                    this.$el.setAttribute('aria-busy', isLoading)
+                    this.$refs.calendar.setAttribute('aria-busy', isLoading)
 
                     isCancelledByCallback('loading', isLoading)
                 },
                 datesSet: (info) => {
+                    this.syncToolbar()
+
                     if (isCancelledByCallback('datesSet', info)) return
 
                     if (!shouldReportDates) return
@@ -525,6 +535,7 @@ export default function fullcalendar({
             })
 
             this.calendar.render()
+            this.syncToolbar()
 
             if (droppable) makeItemsDraggable()
 
@@ -556,7 +567,7 @@ export default function fullcalendar({
                 requestAnimationFrame(() => this.calendar?.updateSize())
             })
 
-            this.resizeObserver.observe(this.$el)
+            this.resizeObserver.observe(this.$refs.calendar)
 
             const handlers = {
                 refresh: () => this.calendar.refetchEvents(),
@@ -570,6 +581,9 @@ export default function fullcalendar({
                 scroll: ({ time }) => this.calendar.scrollToTime(time),
                 option: ({ option, value }) =>
                     this.calendar.setOption(option, value),
+                filters: ({ count }) => {
+                    this.filtersCount = count
+                },
             }
 
             // An event that names a calendar is only meant for that one.
@@ -587,6 +601,45 @@ export default function fullcalendar({
 
             Object.entries(this.listeners).forEach(([name, listener]) =>
                 window.addEventListener(name, listener),
+            )
+        },
+
+        syncToolbar() {
+            const { view } = this.calendar
+            const { dateEnv, dateProfile } = this.calendar.getCurrentData()
+            const now = dateEnv.createMarker(new Date())
+
+            this.title = view.title
+
+            window.dispatchEvent(
+                new CustomEvent('filament-fullcalendar--title', {
+                    detail: { calendar: id, title: view.title },
+                }),
+            )
+            this.viewType = view.type
+            this.isTodayInRange =
+                now >= dateProfile.currentRange.start &&
+                now < dateProfile.currentRange.end
+        },
+
+        getToolLabel(name) {
+            if (!this.viewType) return ''
+
+            const { viewSpecs, options } = this.calendar.getCurrentData()
+            const spec = viewSpecs[name]
+
+            return (
+                spec?.buttonTextOverride ??
+                spec?.buttonTextDefault ??
+                options.buttonText?.[name] ??
+                name
+            )
+        },
+
+        clickCustomButton(name, event, element) {
+            this.calendar?.getOption('customButtons')?.[name]?.click?.(
+                event,
+                element,
             )
         },
 

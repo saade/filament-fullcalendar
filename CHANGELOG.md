@@ -14,7 +14,8 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - The view, create, edit and delete actions follow the model's policy when it has one. In 4.x, any user who could see the widget could open, edit or delete any record of the model by id unless `authorize()` was called on each action.
 - Records are scoped to the current tenant in panels with tenancy.
 - The toolbar shows the month, week and day view buttons by default, as it did in 3.x.
-- The toolbar buttons look like Filament's primary buttons: the same background, text and hover colors that Filament picks for the panel's primary color, in light and dark mode.
+- The calendar has no header actions by default. The create button is gone unless `headerActions()` returns a `CreateAction`; selecting dates still opens the create modal.
+- The header toolbar is drawn by the widget with Filament buttons, in place of FullCalendar's own. `headerToolbar` and `customButtons` are still read for its layout. CSS that targets `.fc-header-toolbar` or its buttons no longer applies to it.
 - The calendar is framed like a Filament table, with rounded corners, a ring and a header band for the day names. Button labels are capitalised, the title is smaller and semibold, the "+more" link uses the primary color, and its popover looks like a Filament dropdown. The list view's day rows and the resource timeline's header use the same header band, and the navigation arrows and the popover's close button are Filament's icons.
 - Events look like Filament badges: a tinted background with colored text, in the panel's primary color unless the event has its own. Before, they were filled with the primary color.
 - FullCalendar's `color` property on an event, set in a plain array or through `extraProperties()`, only takes the name of a Filament color, such as `success`. A CSS color there now throws. Use `backgroundColor`, `borderColor` and `textColor` for CSS colors.
@@ -65,9 +66,11 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `eventSources()` shows read-only events from iCalendar feeds and public Google Calendars next to the calendar's own. iCalendar feeds are read by the application and cached, so private feed addresses stay out of the page.
 - Items from outside the calendar can be dragged onto it with the `draggable` Blade component and `droppable` in `config()`. A dropped record is saved with its new dates, and any other item opens the create action.
 - `jsCallbacks()` passes any FullCalendar option that takes a function, such as `selectAllow` or `dayCellClassNames`. A callback for something the calendar handles itself runs first and can cancel it by returning `false`.
-- `toolbarActions()` turns Filament actions into toolbar buttons.
+- `$heading` and `$description` give the widget's card a header, where `:title` stands for the period the calendar is showing. Header actions are shown in that header, as on a table.
+- `toolbarButtons()` lays out the toolbar by tool name, like the toolbar of Filament's rich editor. The calendar comes with tools for navigation, the title, each view and the filters. `toolbarActions()` adds Filament actions as tools, `tools()` adds `CalendarTool`s of your own, and `ToolbarButtonGroup` puts several tools in a dropdown.
 - `onDatesSet()` is called with the view and its dates when the user navigates, and the calendar is marked `aria-busy` and dimmed while it fetches events.
-- `filtersSchema()` shows a filter form above the calendar, with its state in `$this->filters`, and `getTabs()` shows tabs like the ones on a resource's list page. Changing either fetches the events again, and both are remembered in the session.
+- `filtersSchema()` filters the calendar with form fields, laid out like the filters of a Filament table: in a dropdown opened by a filter button in the calendar's toolbar by default, or in a modal, above or below the calendar, with the same layout, column, width, deferral and action settings. The applied state is in `$this->filters`.
+- `getTabs()` shows tabs above the calendar, like the ones on a resource's list page. Filters and the active tab are remembered in the session, and changing either fetches the events again.
 - `fetchResources()` returns the resources of a resource view from PHP, as arrays or `ResourceData` objects. They are sent with the page, `refreshResources()` fetches them again, and `$resourceAttribute` saves the resource an event was dragged to.
 - The timezone, locale, plugins and license key can be overridden per widget, and the panel plugin's setters accept closures.
 - The calendar works on a panel that does not register the plugin and on Filament pages outside a panel ([#67](https://github.com/saade/filament-fullcalendar/issues/67)).

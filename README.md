@@ -73,6 +73,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Rules of your own](#rules-of-your-own)
 - [JavaScript callbacks](#javascript-callbacks)
   - [Render hooks](#render-hooks)
+  - [Heading and header actions](#heading-and-header-actions)
   - [Toolbar buttons](#toolbar-buttons)
   - [Reacting to navigation](#reacting-to-navigation)
   - [Loading state](#loading-state)
@@ -596,9 +597,12 @@ use Filament\Actions\ViewAction;
 
 protected function headerActions(): array
 {
-    return [
-        CreateAction::make(),
-    ];
+    return [];
+}
+
+protected function createAction(): Action
+{
+    return CreateAction::make();
 }
 
 protected function modalActions(): array
@@ -621,6 +625,21 @@ protected function viewAction(): Action
         ]);
 }
 ```
+
+`createAction()` is the action opened when the user selects dates or drops something on the calendar. The calendar has no button for it by default. To add one, return a `CreateAction` from `headerActions()`, and it is shown in the widget's header:
+
+```php
+use Filament\Actions\CreateAction;
+
+protected function headerActions(): array
+{
+    return [
+        CreateAction::make(),
+    ];
+}
+```
+
+That action then replaces `createAction()`, so the button and a date selection open the same modal, and anything you change on it applies to both.
 
 Two parts of that are easy to lose when you replace an action:
 
@@ -905,7 +924,7 @@ The key is sent to the browser, so restrict it in the Google Cloud console to yo
 
 ## Filter form
 
-Define `filtersSchema()` to show fields above the calendar. Their state is in `$this->filters`, and the events are fetched again whenever a field changes:
+Define `filtersSchema()` to filter the calendar with form fields. They work like the [filters of a Filament table](https://filamentphp.com/docs/5.x/tables/filters/layout): the `filters` tool of the [toolbar](#toolbar-buttons), after the view buttons by default, opens them in a dropdown and shows how many filters are set, and the events are fetched again when the user applies them. The applied state is in `$this->filters`:
 
 ```php
 use App\Models\Event;
@@ -931,9 +950,47 @@ public function fetchEvents(FetchInfo $info): Builder
 }
 ```
 
+## Filter layout
+
+The filters are laid out with the same options as a table's. Set the layout on the widget:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+
+protected FiltersLayout $filtersLayout = FiltersLayout::AboveContent;
+```
+
+| Layout | Where the filters are |
+| --- | --- |
+| `Dropdown` | In a dropdown opened by the filter button. The default. |
+| `Modal` | In a modal opened by the filter button. |
+| `AboveContent` | Above the calendar. |
+| `AboveContentCollapsible` | Above the calendar, shown and hidden by the filter button. |
+| `BelowContent` | Below the calendar. |
+| `Hidden` | Not shown. |
+
+The layouts that put a table's filters beside it are not supported.
+
+The filter button is the `filters` tool. `toolbarButtons()` decides where it goes, and a toolbar without it has no filter button.
+
+These properties and methods adjust the rest:
+
+| Setting | What it does |
+| --- | --- |
+| `protected bool $hasDeferredFilters = false;` | Filters as each field changes, with no "Apply filters" button. |
+| `protected int \| array \| null $filtersFormColumns = 2;` | The columns of the filter form. One in a dropdown or modal, and up to five above or below the calendar, by default. |
+| `protected Width \| string \| null $filtersFormWidth = Width::Large;` | The width of the dropdown or modal. |
+| `protected ?string $filtersFormMaxHeight = '400px';` | The height at which the dropdown starts to scroll. |
+| `protected FiltersResetActionPosition $filtersResetActionPosition = FiltersResetActionPosition::Footer;` | Moves the "Reset" link next to the "Apply filters" button. |
+| `filtersTriggerAction(Action $action): Action` | Changes what the filter button opens: `->label()` sets its tooltip, `->modalHeading()` the modal's heading, and `->slideOver()` opens the filters in a slide-over. To change the button itself, define a tool named `filters`. |
+| `filtersApplyAction(Action $action): Action`, `filtersResetAction(Action $action): Action` | Change the "Apply filters" and "Reset" actions. |
+| `getActiveFiltersCount(): int` | The number on the filter button. By default, the fields that have a value. |
+
+Each property also has a getter, such as `getFiltersLayout()`, to override when the value depends on something.
+
 ## Tabs
 
-Define `getTabs()` to filter with tabs, the same way as on the [list page of a resource](https://filamentphp.com/docs/5.x/resources/listing-records#using-tabs-to-filter-the-records):
+The tabs are shown above the calendar's card. Define `getTabs()` to filter with tabs, the same way as on the [list page of a resource](https://filamentphp.com/docs/5.x/resources/listing-records#using-tabs-to-filter-the-records):
 
 ```php
 use Filament\Schemas\Components\Tabs\Tab;
@@ -1425,22 +1482,70 @@ public function eventDidMount(): string
 }
 ```
 
+## Heading and header actions
+
+The widget's card can have a heading and a description, like a table's, with the actions from `headerActions()` next to them. There are none by default; see [Customizing actions](#customizing-actions) to add a create button:
+
+```php
+protected ?string $heading = 'Meetings';
+
+protected ?string $description = 'Every room, in :title.';
+```
+
+`:title` is replaced with the period the calendar is showing, such as "October 2026", and follows the calendar as the user navigates. It works in both, so the heading alone can be the title:
+
+```php
+protected ?string $heading = ':title';
+```
+
+The [toolbar](#toolbar-buttons) shows the title too, by default. Leave `title` out of `toolbarButtons()` to have it only in the heading. Override `getHeading()` and `getDescription()` when they depend on something.
+
 ## Toolbar buttons
 
-`toolbarActions()` turns [Filament actions](https://filamentphp.com/docs/5.x/actions/overview) into buttons of the calendar's toolbar. Put the action's name where the button should go:
+The toolbar above the calendar is drawn by the widget with Filament buttons, and works like the toolbar of Filament's [rich editor](https://filamentphp.com/docs/5.x/forms/rich-editor#customizing-the-toolbar-buttons): `toolbarButtons()` says which tools go where, by name.
+
+```php
+protected function toolbarButtons(): array
+{
+    return [
+        'start' => [['prev', 'next'], 'today'],
+        'center' => ['title'],
+        'end' => [['dayGridMonth', 'timeGridWeek', 'listWeek'], 'filters'],
+    ];
+}
+```
+
+The toolbar has three sections, `start`, `center` and `end`. Tools in an array are joined into one group of buttons, and a tool on its own is a separate button. Without `toolbarButtons()`, the toolbar is the one above with the day grid views.
+
+These tools come with the calendar:
+
+| Tool | What it does |
+| --- | --- |
+| `prev`, `next` | Move to the previous or next period. |
+| `prevYear`, `nextYear` | Move a year back or forward. |
+| `today` | Goes to today. Disabled while today is in view. |
+| `title` | The current period, such as "October 2026". |
+| `filters` | Opens the [filters](#filter-layout), with a count of the ones that are set. |
+| Any view name, such as `dayGridMonth`, `timeGridWeek`, `listWeek`, or a view defined in `views` | Switches to that view. The button of the current view is highlighted. |
+
+The labels of `today` and of the view buttons are FullCalendar's, so they follow the calendar's locale and its `buttonText` option.
+
+A name that matches no tool throws `Toolbar button [name] cannot be found.`, and a tool that is not named in `toolbarButtons()` is not shown.
+
+### Actions in the toolbar
+
+Every action in `toolbarActions()` is a tool with the action's name, label and icon. Name it in `toolbarButtons()` to show it:
 
 ```php
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 
-public function config(): array
+protected function toolbarButtons(): array
 {
     return [
-        'headerToolbar' => [
-            'left' => 'prev,next today goToDate',
-            'center' => 'title',
-            'right' => 'dayGridMonth,dayGridWeek',
-        ],
+        'start' => [['prev', 'next'], 'today', 'goToDate'],
+        'center' => ['title'],
+        'end' => [['dayGridMonth', 'dayGridWeek']],
     ];
 }
 
@@ -1457,9 +1562,9 @@ protected function toolbarActions(): array
 }
 ```
 
-The button shows the action's label, and clicking it runs the action with its modal, form and confirmation like any other. An action that is hidden, disabled or not authorized gets no button.
+Clicking the button runs the action with its modal, form and confirmation like any other. An action that is hidden, disabled or not authorized gets no button.
 
-A button can also run JavaScript in the browser or open a page, without a request to the server:
+An action can also run JavaScript in the browser or open a page, without a request to the server:
 
 ```php
 Action::make('print')
@@ -1469,13 +1574,101 @@ Action::make('help')
     ->url('https://example.com/help', shouldOpenInNewTab: true),
 ```
 
-The JavaScript is evaluated by Alpine on the calendar's element, so `$wire` and the component's `calendar` (the FullCalendar instance) are in scope. This button shows and hides the weekend columns with FullCalendar's own API:
+### Custom tools
+
+Define `tools()` for a button that only acts in the browser, or that has a state an action cannot show, such as being pressed. A tool is a `CalendarTool`, the calendar's counterpart of the rich editor's `RichEditorTool`:
 
 ```php
-Action::make('toggleWeekends')
-    ->label('Weekends')
-    ->alpineClickHandler("calendar.setOption('weekends', ! calendar.getOption('weekends'))"),
+use Filament\Support\Icons\Heroicon;
+use Saade\FilamentFullCalendar\Toolbar\CalendarTool;
+
+protected function tools(): array
+{
+    return [
+        CalendarTool::make('weekends')
+            ->label('Weekends')
+            ->icon(Heroicon::CalendarDays)
+            ->jsHandler("calendar.setOption('weekends', ! calendar.getOption('weekends'))")
+            ->activeJsExpression("calendar?.getOption('weekends')")
+            ->toggle(),
+    ];
+}
 ```
+
+The JavaScript runs in the calendar's Alpine component, so `calendar` (the FullCalendar instance) and `$wire` are in scope.
+
+| Method | What it does |
+| --- | --- |
+| `label(string $label)`, `hiddenLabel(bool $condition = true)` | The label. It is hidden by default and shown as a tooltip, so a tool is an icon button unless you call `hiddenLabel(false)`. |
+| `icon($icon)`, `color(string $color)` | The icon and the Filament color. Tools are `gray` by default. |
+| `jsHandler(string $handler)` | JavaScript to run when the tool is clicked. |
+| `action(?string $action = null, ?string $arguments = null)` | Opens an action from `toolbarActions()`: the one with the tool's name, or the one named. `$arguments` is a JavaScript object passed to it. |
+| `activeJsExpression(string $expression)`, `toggle()` | When the tool is highlighted, and whether it is announced as a toggle. |
+| `disabledJsExpression(string $expression)` | When the tool is disabled. |
+| `labelJsExpression(string $expression)` | A label computed in the browser. |
+| `badgeJsExpression(string $expression)` | A number shown on the corner of the tool while it is not zero. |
+| `heading()` | Shows the label as the toolbar's heading and not as a button. |
+| `visible(bool $condition = true)`, `hidden(bool $condition = true)` | Whether the tool is shown where it is named. |
+
+A tool with the name of one that comes with the calendar replaces it.
+
+### A tool that opens an action
+
+A tool is only a button: it has no modal, form or server code. An action has those. To give an action a button that looks or behaves differently from the one it gets by default, define a tool that opens it with `action()`:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
+use Filament\Support\Icons\Heroicon;
+use Saade\FilamentFullCalendar\Toolbar\CalendarTool;
+
+protected function toolbarActions(): array
+{
+    return [
+        Action::make('goToDate')
+            ->schema([
+                DatePicker::make('date')->required(),
+            ])
+            ->action(fn (array $data) => $this->goToDate($data['date'])),
+    ];
+}
+
+protected function tools(): array
+{
+    return [
+        CalendarTool::make('goToDate')
+            ->label('Go to date')
+            ->icon(Heroicon::CalendarDays)
+            ->action(),
+    ];
+}
+```
+
+The tool has the action's name, so it replaces the action's own button, here with an icon button that shows "Go to date" as a tooltip. A tool with another name opens the action by naming it: `->action('goToDate')`.
+
+| The button should | Define |
+| --- | --- |
+| Open a modal, run PHP or be authorized | An action in `toolbarActions()` |
+| Only do something in the browser, or have a pressed or disabled state | A tool in `tools()` |
+| Open an action, with its own icon, state or badge | Both, with the tool calling `action()` |
+
+### Dropdowns
+
+`ToolbarButtonGroup` puts several tools behind one button:
+
+```php
+use Saade\FilamentFullCalendar\Toolbar\ToolbarButtonGroup;
+
+'end' => [
+    ToolbarButtonGroup::make('View', ['dayGridMonth', 'timeGridWeek', 'timeGridDay', 'listWeek']),
+],
+```
+
+### FullCalendar's own toolbar options
+
+A calendar that sets FullCalendar's `headerToolbar` option and has no `toolbarButtons()` keeps its layout: the option is read the same way, with a space between buttons and a comma joining them. Buttons from `customButtons` work there too. `'headerToolbar' => false` hides the toolbar.
+
+`footerToolbar` is still drawn by FullCalendar. It can name the toolbar actions, but not the tools.
 
 ## Reacting to navigation
 

@@ -12,8 +12,8 @@ trait InteractsWithToolbarActions
     protected array $cachedToolbarActions = [];
 
     /**
-     * Actions that become buttons of the calendar's toolbar. Place one by
-     * putting its name in `headerToolbar` or `footerToolbar`.
+     * Actions the toolbar can open. Each one is also a tool of the same name,
+     * to be placed with `toolbarButtons()`.
      *
      * @return array<Action>
      */
@@ -31,9 +31,11 @@ trait InteractsWithToolbarActions
     }
 
     /**
+     * The actions as FullCalendar custom buttons, for its footer toolbar.
+     *
      * @return array<string, array{text: string, hint: string, alpineClickHandler: ?string, url: ?string, shouldOpenUrlInNewTab: bool}>
      */
-    public function getToolbarButtons(): array
+    public function getFooterToolbarButtons(): array
     {
         $buttons = [];
 

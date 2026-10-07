@@ -56,6 +56,25 @@ public function config(): array
 }
 ```
 
+### There is no create button by default
+
+`headerActions()` returns nothing now, so a calendar that relied on the default has lost its "New" button. Selecting dates still opens the create modal. To get the button back:
+
+```php
+use Filament\Actions\CreateAction;
+
+protected function headerActions(): array
+{
+    return [
+        CreateAction::make(),
+    ];
+}
+```
+
+### The widget draws the header toolbar
+
+The header toolbar is made of Filament buttons now, not FullCalendar's. Your `headerToolbar` option keeps working, including buttons from `customButtons`, but CSS written for `.fc-header-toolbar`, `.fc-toolbar-title` or `.fc-button` no longer reaches it. The new elements are `.fi-fc-toolbar`, `.fi-fc-toolbar-heading` and `.fi-fc-tool`. See [Toolbar buttons](README.md#toolbar-buttons) for the new `toolbarButtons()` method.
+
 ### Date selection uses the panel's timezone
 
 The `start` and `end` passed to the create action after a date selection are now in the timezone set with `FilamentFullCalendarPlugin::timezone()`. In 4.x they were always in `config('app.timezone')`. If you did not set a timezone on the plugin, nothing changes.

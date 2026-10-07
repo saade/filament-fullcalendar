@@ -32,9 +32,16 @@ trait InteractsWithCalendarActions
 
     protected function headerActions(): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        return [];
+    }
+
+    /**
+     * Opened when dates are selected or something is dropped on the calendar.
+     * A `create` action in `headerActions()` takes its place.
+     */
+    protected function createAction(): Action
+    {
+        return CreateAction::make();
     }
 
     protected function modalActions(): array

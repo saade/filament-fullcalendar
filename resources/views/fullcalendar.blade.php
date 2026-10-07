@@ -1,24 +1,114 @@
+@php
+    use Filament\Support\Enums\Width;
+    use Filament\Tables\Enums\FiltersLayout;
+
+    $headerActions = $this->getCachedHeaderActions();
+    $toolbar = $this->getToolbarButtons();
+    $hasFilters = $this->isFilterable();
+    $filtersLayout = $this->getFiltersLayout();
+    $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
+    $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
+    $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
+    $hasCollapsibleFilters = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
+
+    if ($hasFilters) {
+        $filtersTriggerAction = $this->getFiltersTriggerAction();
+        $filtersApplyAction = $this->getFiltersApplyAction();
+        $filtersResetAction = $this->getFiltersResetAction();
+        $filtersResetActionPosition = $this->getFiltersResetActionPosition();
+        $filtersFormWidth = $this->getFiltersFormWidth();
+        $filtersModalId = $this->getId() . '-filters';
+    }
+@endphp
+
 <x-filament-widgets::widget>
-    <x-filament::section>
-        <div class="flex justify-end flex-1 mb-4">
-            <x-filament::actions :actions="$this->getCachedHeaderActions()" class="shrink-0" />
+    @if (filled($this->getCachedTabs()))
+        <div class="fi-fc-tabs">
+            {{ $this->getSchema('calendarTabs') }}
         </div>
+    @endif
 
-        @if ($this->hasFiltersSchema())
-            <div class="mb-4">
-                {{ $this->getFiltersSchema() }}
+    <x-filament::section
+        :heading="$this->getHeadingHtml()"
+        :description="$this->getDescriptionHtml()"
+    >
+        @if (filled($headerActions))
+            <x-slot name="afterHeader">
+                <x-filament::actions :actions="$headerActions" />
+            </x-slot>
+        @endif
+
+        @if ($hasFiltersDialog && (($filtersLayout === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver()))
+            <div
+                x-data
+                x-on:filament-fullcalendar--toggle-filters.window="if ($event.detail.calendar === @js($this->getId())) $dispatch('open-modal', { id: @js($filtersModalId) })"
+            >
+                <x-filament::modal
+                    :id="$filtersModalId"
+                    :heading="$filtersTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.filters.heading')"
+                    :slide-over="$filtersTriggerAction->isModalSlideOver()"
+                    :width="$filtersFormWidth ?? Width::Medium"
+                    :wire:key="$this->getId() . '.filters'"
+                    class="fi-fc-filters-modal"
+                >
+                    {{ $this->getFiltersSchema() }}
+
+                    <x-slot name="footerActions">
+                        @if ($filtersApplyAction->isVisible())
+                            {{ $filtersApplyAction->close() }}
+                        @endif
+
+                        {{ $filtersResetAction }}
+                    </x-slot>
+                </x-filament::modal>
+            </div>
+        @elseif ($hasFiltersDialog)
+            <x-filament::dropdown
+                :max-height="$this->getFiltersFormMaxHeight()"
+                placement="bottom-end"
+                shift
+                :flip="false"
+                :width="$filtersFormWidth ?? Width::ExtraSmall"
+                :wire:key="$this->getId() . '.filters'"
+                class="fi-fc-filters-dropdown"
+                x-on:filament-fullcalendar--toggle-filters.window="if ($event.detail.calendar === {{ \Illuminate\Support\Js::from($this->getId()) }}) toggle($event.detail.element)"
+            >
+                <x-slot name="trigger"></x-slot>
+
+                <x-filament-fullcalendar::filters
+                    :apply-action="$filtersApplyAction"
+                    :form="$this->getFiltersSchema()"
+                    :reset-action="$filtersResetAction"
+                    :reset-action-position="$filtersResetActionPosition"
+                />
+            </x-filament::dropdown>
+        @endif
+
+        @if ($hasFiltersAboveContent)
+            <div
+                @if ($hasCollapsibleFilters)
+                    x-data="{ areFiltersOpen: false }"
+                    x-on:filament-fullcalendar--toggle-filters.window="if ($event.detail.calendar === @js($this->getId())) areFiltersOpen = ! areFiltersOpen"
+                    x-show="areFiltersOpen"
+                    x-cloak
+                @endif
+            >
+                <x-filament-fullcalendar::filters
+                    :apply-action="$filtersApplyAction"
+                    :form="$this->getFiltersSchema()"
+                    :reset-action="$filtersResetAction"
+                    :reset-action-position="$filtersResetActionPosition"
+                    class="fi-fc-filters-above-content"
+                />
             </div>
         @endif
 
-        @if (filled($this->getCachedTabs()))
-            <div class="mb-4">
-                {{ $this->getSchema('calendarTabs') }}
-            </div>
-        @endif
-
-        <div wire:ignore x-load
+        <div
+            wire:ignore
+            x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-fullcalendar-alpine', 'saade/filament-fullcalendar') }}"
-            x-ignore x-data="fullcalendar({
+            x-ignore
+            x-data="fullcalendar({
                 id: @js($this->getId()),
                 locale: @js($this->getLocale()),
                 plugins: @js($this->getPlugins()),
@@ -30,7 +120,8 @@
                 googleCalendarApiKey: @js($this->getGoogleCalendarApiKey()),
                 editable: @json($this->isEditable()),
                 selectable: @json($this->isSelectable()),
-                toolbarButtons: @js($this->getToolbarButtons()),
+                toolbarButtons: @js($this->getFooterToolbarButtons()),
+                filtersCount: @js($this->getActiveFiltersCount()),
                 pollingInterval: @js($this->getPollingIntervalInMilliseconds()),
                 droppable: @json($this->isDroppable()),
                 widget: @js(static::class),
@@ -41,10 +132,31 @@
                         {{ $name }}: ({!! htmlspecialchars($callback, ENT_COMPAT) !!}),
                     @endforeach
                 },
-            })" @class([
-                'filament-fullcalendar',
-                ...\Filament\Support\Facades\FilamentColor::getComponentClasses(\Filament\Support\View\Components\ButtonComponent::make(), 'primary'),
-            ]) style="{{ $this->getDefaultEventColorStyles() }}"></div>
+            })"
+        >
+            @if (filled($toolbar))
+                @include('filament-fullcalendar::toolbar.index', ['toolbar' => $toolbar])
+            @endif
+
+            <div
+                x-ref="calendar"
+                @class([
+                    'filament-fullcalendar',
+                    ...\Filament\Support\Facades\FilamentColor::getComponentClasses(\Filament\Support\View\Components\ButtonComponent::make(), 'primary'),
+                ])
+                style="{{ $this->getDefaultEventColorStyles() }}"
+            ></div>
+        </div>
+
+        @if ($hasFiltersBelowContent)
+            <x-filament-fullcalendar::filters
+                :apply-action="$filtersApplyAction"
+                :form="$this->getFiltersSchema()"
+                :reset-action="$filtersResetAction"
+                :reset-action-position="$filtersResetActionPosition"
+                class="fi-fc-filters-below-content"
+            />
+        @endif
     </x-filament::section>
 
     <x-filament-actions::modals />

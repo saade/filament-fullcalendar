@@ -287,3 +287,63 @@ html.dark .filament-fullcalendar .fc-event.fc-event-gray {
 .filament-fullcalendar .fc-event.fc-event-gray .fc-list-event-dot {
     border-color: var(--color-gray-400);
 }
+
+.fi-fc-tabs {
+    @apply mb-4;
+}
+
+.fi-fc-filters {
+    @apply grid gap-y-4;
+
+    & .fi-fc-filters-header {
+        @apply flex items-center justify-between;
+    }
+
+    & .fi-fc-filters-heading {
+        @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
+    }
+
+    & .fi-fc-filters-actions {
+        @apply flex gap-3;
+    }
+
+    &.fi-fc-filters-above-content {
+        @apply mb-4;
+    }
+
+    &.fi-fc-filters-below-content {
+        @apply mt-4;
+    }
+}
+
+.fi-fc-filters-dropdown .fi-fc-filters {
+    @apply p-6;
+}
+
+.fi-fc-toolbar {
+    @apply mb-4 flex flex-wrap items-center justify-between gap-3;
+
+    & .fi-fc-toolbar-section {
+        @apply flex flex-wrap items-center gap-3;
+    }
+
+    & .fi-fc-toolbar-heading {
+        @apply text-base font-semibold text-gray-950 dark:text-white;
+    }
+
+    & .fi-fc-tool {
+        @apply relative;
+
+        & > span:first-letter {
+            @apply uppercase;
+        }
+
+        &.fi-active {
+            @apply bg-gray-50 text-primary-600 dark:bg-white/10 dark:text-primary-400;
+        }
+    }
+
+    & .fi-fc-tool-badge {
+        @apply absolute -end-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-md bg-primary-50 px-1 text-xs font-medium text-primary-600 ring-1 ring-primary-600/10 dark:bg-gray-900 dark:text-primary-400 dark:ring-primary-400/30;
+    }
+}

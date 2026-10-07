@@ -26,28 +26,36 @@ it('refuses a callback name that is not an option name', function () {
     Livewire::test(CallbacksCalendarWidget::class, ['callbackName' => 'x: alert(1), y']);
 })->throws(Exception::class, 'is not a valid name for a FullCalendar option');
 
-it('turns toolbar actions into toolbar buttons', function () {
+it('makes each toolbar action a tool that opens it', function () {
     $component = Livewire::test(CallbacksCalendarWidget::class);
 
-    expect($component->instance()->getToolbarButtons())->toBe([
-        'export' => ['text' => 'Export', 'hint' => 'Download the month', 'alpineClickHandler' => null, 'url' => null, 'shouldOpenUrlInNewTab' => false],
-    ]);
+    $tool = $component->instance()->getTool('export');
+
+    expect($tool->getLabel())->toBe('Export')
+        ->and($tool->isLabelHidden())->toBeFalse()
+        ->and($tool->getJsHandler())->toBe("\$wire.mountAction('export')");
 
     $component
         ->callAction('export')
         ->assertSet('exported', 'done');
 });
 
-it('leaves out the button of an action the user cannot see', function () {
-    expect(Livewire::test(CallbacksCalendarWidget::class, ['canPrint' => true])->instance()->getToolbarButtons())
-        ->toHaveKeys(['export', 'print', 'docs']);
+it('hides the tool of an action the user cannot see', function () {
+    expect(Livewire::test(CallbacksCalendarWidget::class)->instance()->getTool('print')->isVisible())->toBeFalse()
+        ->and(Livewire::test(CallbacksCalendarWidget::class, ['canPrint' => true])->instance()->getTool('print')->isVisible())->toBeTrue();
 });
 
-it('passes on the JavaScript or the URL of a toolbar action that has one', function () {
-    $buttons = Livewire::test(CallbacksCalendarWidget::class, ['canPrint' => true])->instance()->getToolbarButtons();
+it('runs the JavaScript or opens the URL of a toolbar action that has one', function () {
+    $widget = Livewire::test(CallbacksCalendarWidget::class, ['canPrint' => true])->instance();
 
-    expect($buttons['print']['alpineClickHandler'])->toBe('window.print()')
-        ->and($buttons['docs'])->toMatchArray(['url' => 'https://example.com/docs', 'shouldOpenUrlInNewTab' => true]);
+    expect($widget->getTool('print')->getJsHandler())->toBe('window.print()')
+        ->and($widget->getTool('docs')->getJsHandler())->toBe("window.open('https:\/\/example.com\/docs', '_blank')");
+});
+
+it('still gives the actions to FullCalendar for its footer toolbar', function () {
+    expect(Livewire::test(CallbacksCalendarWidget::class)->instance()->getFooterToolbarButtons())->toBe([
+        'export' => ['text' => 'Export', 'hint' => 'Download the month', 'alpineClickHandler' => null, 'url' => null, 'shouldOpenUrlInNewTab' => false],
+    ]);
 });
 
 it('only asks the browser for the dates when onDatesSet() is defined', function () {
