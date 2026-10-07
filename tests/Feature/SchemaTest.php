@@ -101,3 +101,8 @@ it('still edits with the form when the widget has an infolist', function () {
         ->assertActionMounted('edit')
         ->assertSchemaComponentExists('title', 'mountedActionSchema0', fn ($component): bool => $component instanceof TextInput);
 });
+
+it('says what to do when the widget has no fields to show', function () {
+    Livewire::test(\Saade\FilamentFullCalendar\Tests\Fixtures\FormlessCalendarWidget::class)
+        ->mountAction('create');
+})->throws(Exception::class, 'has no fields to show. Define [form(Schema $schema)] on the widget, or give [Saade\FilamentFullCalendar\Tests\Fixtures\Event] a resource in this panel.');

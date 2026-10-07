@@ -16,6 +16,7 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
+use LogicException;
 use Throwable;
 
 use function Filament\get_authorization_response;
@@ -124,7 +125,11 @@ trait InteractsWithCalendarActions
 
         $resource = $this->getModelResource($model);
 
-        return $resource ? $resource::form($schema) : $form;
+        if ($resource) {
+            return $resource::form($schema);
+        }
+
+        throw new LogicException('[' . static::class . '] has no fields to show. Define [form(Schema $schema)] on the widget' . (filled($model) ? ", or give [{$model}] a resource in this panel." : '.'));
     }
 
     protected function hasSchemaComponents(Schema $schema): bool

@@ -100,6 +100,10 @@ The `filament-fullcalendar--*` browser events still reach every calendar when di
 
 The calendar's script is no longer one file. `php artisan filament:assets` publishes the component and the parts it loads on demand, so run it after updating, as after any Filament update. If you referenced `resources/dist/filament-fullcalendar.js` in a build of your own, the component is now `resources/dist/components/filament-fullcalendar-alpine.js` and imports the files next to it by relative path.
 
+### A calendar with nothing to show in its modal fails with a message
+
+Opening the create, edit or view modal of a widget that defines no `form()`, and whose model has no resource in the panel, now fails with a message that says so. In 4.x it opened an empty modal.
+
 ### The widget has `$filters` and `$activeTab` properties
 
 The widget now declares `public ?array $filters = []` and `public ?string $activeTab = null` for the new [filter form and tabs](README.md#filtering-events), and the methods `filtersSchema()` and `getTabs()`. If your widget already has a property or method with one of these names, give it the same type and default, or rename it.
