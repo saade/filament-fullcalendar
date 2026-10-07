@@ -1,26 +1,63 @@
-name: PHPStan
+name: phpstan
 
 on:
   push:
     paths:
       - '**.php'
       - 'phpstan.neon.dist'
+      - 'composer.json'
+      - '.github/workflows/phpstan.yml'
+  pull_request:
+    paths:
+      - '**.php'
+      - 'phpstan.neon.dist'
+      - 'composer.json'
+      - '.github/workflows/phpstan.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   phpstan:
-    name: phpstan
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        filament: ['^4.0', '^5.0']
+
+    name: F${{ matrix.filament }}
+
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.composer/cache/files
+          key: composer-phpstan-${{ matrix.filament }}-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            composer-phpstan-${{ matrix.filament }}-
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
+          extensions: mbstring, pdo, pdo_sqlite
           coverage: none
 
-      - name: Install composer dependencies
-        uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6 # v4
+      - name: Install dependencies
+        env:
+          FILAMENT: ${{ matrix.filament }}
+        run: |
+          composer require "filament/filament:${FILAMENT}" --no-interaction --no-update
+          composer update --prefer-stable --prefer-dist --no-interaction
 
       - name: Run PHPStan
         run: ./vendor/bin/phpstan --error-format=github

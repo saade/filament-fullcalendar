@@ -6,7 +6,6 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "@awcodes/filament-plugin-purge": "^1.1.1",
         "@fullcalendar/adaptive": "^6.1.21",
         "@fullcalendar/core": "^6.1.21",
         "@fullcalendar/daygrid": "^6.1.21",
@@ -26,23 +25,11 @@
         "@fullcalendar/timegrid": "^6.1.21",
         "@fullcalendar/timeline": "^6.1.21",
         "@shufo/prettier-plugin-blade": "^1.16.2",
-        "@tailwindcss/forms": "^0.5.11",
-        "@tailwindcss/typography": "^0.5.20",
-        "autoprefixer": "^10.5.2",
-        "esbuild": "^0.28.1",
         "ical.js": "^1.5.0",
         "moment": "^2.29.4",
         "moment-timezone": "^0.5.48",
-        "npm-run-all": "^4.1.5",
-        "postcss": "^8.4.24",
-        "postcss-import": "^16.1.1",
         "prettier": "^3.9.5",
-        "prettier-plugin-tailwindcss": "^0.8.0",
         "rrule": "^2.7.2",
         "vite": "^8.1.5"
-    },
-    "dependencies": {
-        "@tailwindcss/cli": "^4.3.2",
-        "tailwindcss": "^4.1.12"
     }
 }
