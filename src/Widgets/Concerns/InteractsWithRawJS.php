@@ -10,7 +10,7 @@ trait InteractsWithRawJS
      * A ClassName Input for adding classNames to the outermost event element.
      * If supplied as a callback function, it is called every time the associated event data changes.
      *
-     * @see https://fullcalendar.io/docs/event-render-hooks
+     * @see https://legacy.fullcalendar.io/v6/event-render-hooks
      *
      * @return string
      */
@@ -25,7 +25,7 @@ trait InteractsWithRawJS
      * A Content Injection Input. Generated content is inserted inside the inner-most wrapper of the event element.
      * If supplied as a callback function, it is called every time the associated event data changes.
      *
-     * @see https://fullcalendar.io/docs/event-render-hooks
+     * @see https://legacy.fullcalendar.io/v6/event-render-hooks
      *
      * @return string
      */
@@ -39,7 +39,7 @@ trait InteractsWithRawJS
     /**
      * Called right after the element has been added to the DOM. If the event data changes, this is NOT called again.
      *
-     * @see https://fullcalendar.io/docs/event-render-hooks
+     * @see https://legacy.fullcalendar.io/v6/event-render-hooks
      *
      * @return string
      */
@@ -53,7 +53,7 @@ trait InteractsWithRawJS
     /**
      * Called right before the element will be removed from the DOM.
      *
-     * @see https://fullcalendar.io/docs/event-render-hooks
+     * @see https://legacy.fullcalendar.io/v6/event-render-hooks
      *
      * @return string
      */
@@ -68,7 +68,7 @@ trait InteractsWithRawJS
      * Any other FullCalendar option that takes a function, by name, as
      * JavaScript. These are merged over `config()`.
      *
-     * @see https://fullcalendar.io/docs
+     * @see https://legacy.fullcalendar.io/v6
      *
      * @return array<string, string>
      */
