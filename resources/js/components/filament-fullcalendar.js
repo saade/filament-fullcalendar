@@ -169,6 +169,7 @@ export default function fullcalendar({
             const {
                 mobileInitialView,
                 mobileBreakpoint = 768,
+                locales: configLocales = [],
                 ...fullCalendarConfig
             } = config
 
@@ -233,7 +234,7 @@ export default function fullcalendar({
                 timeZone,
                 ...(isMobile &&
                     mobileInitialView && { initialView: mobileInitialView }),
-                locales,
+                locales: [...locales, ...configLocales],
                 ...callbacks,
                 eventDidMount: (info) => {
                     addTooltip(info)
