@@ -11,19 +11,19 @@ use JsonSerializable;
  */
 class EventData implements Arrayable, JsonSerializable
 {
-    protected int|string|null $id = null;
+    protected int | string | null $id = null;
 
-    protected int|string|null $groupId = null;
+    protected int | string | null $groupId = null;
 
-    protected int|string|null $resourceId = null;
+    protected int | string | null $resourceId = null;
 
     protected ?array $resourceIds = null;
 
     protected ?bool $allDay = null;
 
-    protected DateTimeInterface|string|null $start = null;
+    protected DateTimeInterface | string | null $start = null;
 
-    protected DateTimeInterface|string|null $end = null;
+    protected DateTimeInterface | string | null $end = null;
 
     protected ?string $title = null;
 
@@ -54,13 +54,13 @@ class EventData implements Arrayable, JsonSerializable
 
     public static function make(): static
     {
-        return new static();
+        return new static;
     }
 
     /**
      * A unique identifier of an event.
      */
-    public function id(int|string $id): static
+    public function id(int | string $id): static
     {
         $this->id = $id;
 
@@ -70,7 +70,7 @@ class EventData implements Arrayable, JsonSerializable
     /**
      * Events that share a groupId will be dragged and resized together automatically.
      */
-    public function groupId(int|string $groupId): static
+    public function groupId(int | string $groupId): static
     {
         $this->groupId = $groupId;
 
@@ -80,7 +80,7 @@ class EventData implements Arrayable, JsonSerializable
     /**
      * Events can be associated with a resource when its resourceId property matches one of the resource object’s id field.
      */
-    public function resourceId(int|string $resourceId): static
+    public function resourceId(int | string $resourceId): static
     {
         $this->resourceId = $resourceId;
 
@@ -111,7 +111,7 @@ class EventData implements Arrayable, JsonSerializable
     /**
      * 	Date object that obeys the current timeZone. When an event begins.
      */
-    public function start(DateTimeInterface|string $start): static
+    public function start(DateTimeInterface | string $start): static
     {
         $this->start = $start;
 
@@ -122,7 +122,7 @@ class EventData implements Arrayable, JsonSerializable
      * Date object that obeys the current timeZone. When an event ends. It’s exclusive. It could be null if an end wasn’t specified.
      * This value is exclusive. For example, an event with the end of 2018-09-03 will appear to span through 2018-09-02 but end before the start of 2018-09-03.
      */
-    public function end(DateTimeInterface|string|null $end): static
+    public function end(DateTimeInterface | string | null $end): static
     {
         $this->end = $end;
 
@@ -260,7 +260,7 @@ class EventData implements Arrayable, JsonSerializable
         return $this->toArray();
     }
 
-    protected function formatDate(DateTimeInterface|string|null $date): ?string
+    protected function formatDate(DateTimeInterface | string | null $date): ?string
     {
         if ($date instanceof DateTimeInterface) {
             return $date->format(DateTimeInterface::ATOM);

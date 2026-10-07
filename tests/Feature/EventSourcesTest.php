@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Saade\FilamentFullCalendar\Tests\Fixtures\EventCalendarWidget;

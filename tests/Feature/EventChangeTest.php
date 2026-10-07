@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
+use Saade\FilamentFullCalendar\Data\EventInfo;
 use Saade\FilamentFullCalendar\Tests\Fixtures\ConfirmingCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\Event;
 use Saade\FilamentFullCalendar\Tests\Fixtures\EventCalendarWidget;
@@ -267,8 +268,8 @@ it('still opens the edit action for a recurring event when the widget does not s
 });
 
 it('tells the handlers whether an event is an occurrence of a recurring one', function () {
-    $info = Saade\FilamentFullCalendar\Data\EventInfo::fromArray(['id' => 1, 'start' => '2026-10-08T10:00:00Z', 'isRecurring' => true], 'UTC');
+    $info = EventInfo::fromArray(['id' => 1, 'start' => '2026-10-08T10:00:00Z', 'isRecurring' => true], 'UTC');
 
     expect($info->isRecurring)->toBeTrue()
-        ->and(Saade\FilamentFullCalendar\Data\EventInfo::fromArray(['id' => 1, 'start' => '2026-10-08T10:00:00Z'], 'UTC')->isRecurring)->toBeFalse();
+        ->and(EventInfo::fromArray(['id' => 1, 'start' => '2026-10-08T10:00:00Z'], 'UTC')->isRecurring)->toBeFalse();
 });

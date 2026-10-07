@@ -43,7 +43,7 @@ class ResourceData implements Arrayable, JsonSerializable
 
     public static function make(): static
     {
-        return new static();
+        return new static;
     }
 
     public function id(int | string $id): static

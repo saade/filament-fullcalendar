@@ -34,7 +34,7 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
             $this->getAssetPackageName(),
         );
 
-        Testable::mixin(new TestsCalendar());
+        Testable::mixin(new TestsCalendar);
     }
 
     protected function getAssetPackageName(): ?string

@@ -5,6 +5,7 @@ use Filament\Infolists\Components\TextEntry;
 use Livewire\Livewire;
 use Saade\FilamentFullCalendar\Tests\Fixtures\Event;
 use Saade\FilamentFullCalendar\Tests\Fixtures\EventCalendarWidget;
+use Saade\FilamentFullCalendar\Tests\Fixtures\FormlessCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\InfolistCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\LegacyFormCalendarWidget;
 
@@ -103,6 +104,6 @@ it('still edits with the form when the widget has an infolist', function () {
 });
 
 it('says what to do when the widget has no fields to show', function () {
-    Livewire::test(\Saade\FilamentFullCalendar\Tests\Fixtures\FormlessCalendarWidget::class)
+    Livewire::test(FormlessCalendarWidget::class)
         ->mountAction('create');
 })->throws(Exception::class, 'has no fields to show. Define [form(Schema $schema)] on the widget, or give [Saade\FilamentFullCalendar\Tests\Fixtures\Event] a resource in this panel.');

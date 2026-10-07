@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Carbon;
 use Livewire\Livewire;
+use PHPUnit\Framework\ExpectationFailedException;
 use Saade\FilamentFullCalendar\Tests\Fixtures\Event;
 use Saade\FilamentFullCalendar\Tests\Fixtures\EventCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\Meeting;
@@ -34,7 +35,7 @@ it('asserts on the events a calendar shows', function () {
         ->assertCalendarDoesNotHaveEvent(fn (array $event): bool => ($event['allDay'] ?? false) && $event['title'] === 'Standup');
 
     expect(fn () => Livewire::test(MixedCalendarWidget::class)->assertCalendarHasEvent('Retro'))
-        ->toThrow(PHPUnit\Framework\ExpectationFailedException::class, 'the calendar shows the event');
+        ->toThrow(ExpectationFailedException::class, 'the calendar shows the event');
 });
 
 it('clicks an event by record, by id or as the browser sends it', function (Closure $event) {

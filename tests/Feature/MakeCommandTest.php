@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\File;
 use Saade\FilamentFullCalendar\Tests\Fixtures\Event;
 use Saade\FilamentFullCalendar\Tests\Fixtures\TaskResource;
@@ -114,7 +115,7 @@ it('creates the widget in a resource, for the model of the resource', function (
 });
 
 it('has the options of the Filament widget command that apply to a calendar', function () {
-    $options = array_keys($this->app[Illuminate\Contracts\Console\Kernel::class]->all()['make:filament-fullcalendar-widget']->getDefinition()->getOptions());
+    $options = array_keys($this->app[Kernel::class]->all()['make:filament-fullcalendar-widget']->getDefinition()->getOptions());
 
     expect($options)
         ->toContain('panel', 'resource', 'resource-namespace', 'cluster', 'force', 'model', 'title', 'start', 'end')

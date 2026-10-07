@@ -134,4 +134,3 @@ it('keeps the action arguments as plain arrays', function () {
         ->assertSet('mountedActions.0.arguments.event.start', '2026-10-07T09:00:00-03:00')
         ->assertSet('mountedActions.0.arguments.oldEvent.start', '2026-10-06T09:00:00-03:00');
 });
-

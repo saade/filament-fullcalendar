@@ -4,6 +4,7 @@ use Carbon\CarbonInterface;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
+use Saade\FilamentFullCalendar\Tests\Fixtures\ConfigTimezoneCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\EventCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\LisbonCalendarWidget;
 
@@ -60,7 +61,7 @@ it('works on a panel that does not register the plugin', function () {
 });
 
 it('uses a timeZone set in config() on the server as well as in the browser', function () {
-    $component = Livewire::test(\Saade\FilamentFullCalendar\Tests\Fixtures\ConfigTimezoneCalendarWidget::class);
+    $component = Livewire::test(ConfigTimezoneCalendarWidget::class);
 
     expect($component->instance()->getTimezone())->toBe('Europe/Lisbon');
 

@@ -33,8 +33,7 @@ final readonly class EventInfo implements ArrayAccess
         public bool $isRecurring = false,
         public ?string $source = self::OWN_SOURCE,
         public array $resourceIds = [],
-    ) {
-    }
+    ) {}
 
     /**
      * @param  array<string, mixed>  $event

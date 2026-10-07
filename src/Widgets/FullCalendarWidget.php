@@ -2,9 +2,12 @@
 
 namespace Saade\FilamentFullCalendar\Widgets;
 
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -16,27 +19,27 @@ use Saade\FilamentFullCalendar\Data\FetchInfo;
 
 class FullCalendarWidget extends Widget implements HasActions, HasSchemas
 {
-    use InteractsWithSchemas;
+    use Concerns\CanBeConfigured;
     use Concerns\CanPoll;
     use Concerns\HasEventColors;
+    use Concerns\HasHeading;
+    use Concerns\HasToolbar;
     use Concerns\InteractsWithCalendarActions;
     use Concerns\InteractsWithEvents;
     use Concerns\InteractsWithEventSources;
     use Concerns\InteractsWithExternalDrops;
     use Concerns\InteractsWithFilters;
+    use Concerns\InteractsWithRawJS;
     use Concerns\InteractsWithRecords;
     use Concerns\InteractsWithResources;
-    use Concerns\HasHeading;
-    use Concerns\HasToolbar;
     use Concerns\InteractsWithToolbarActions;
-    use InteractsWithHeaderActions;
-    use InteractsWithFormActions;
-    use Concerns\InteractsWithRawJS;
-    use Concerns\CanBeConfigured;
     use Concerns\IsBackwardCompatible{
         Concerns\IsBackwardCompatible::getHeaderActions insteadof InteractsWithHeaderActions;
         Concerns\IsBackwardCompatible::getFormActions insteadof InteractsWithFormActions;
     }
+    use InteractsWithFormActions;
+    use InteractsWithHeaderActions;
+    use InteractsWithSchemas;
 
     protected string $view = 'filament-fullcalendar::fullcalendar';
 
@@ -81,7 +84,7 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
     /**
      * @deprecated Define the fields in `form()` instead.
      *
-     * @return array<\Filament\Schemas\Components\Component | \Filament\Actions\Action | \Filament\Actions\ActionGroup>
+     * @return array<Component | Action | ActionGroup>
      */
     public function getFormSchema(): array
     {

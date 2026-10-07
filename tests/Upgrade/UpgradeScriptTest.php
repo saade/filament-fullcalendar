@@ -27,7 +27,7 @@ function upgradeFixtures(array $options = []): string
 
 afterEach(function () {
     foreach (glob(sys_get_temp_dir() . '/filament-fullcalendar-upgrade-*') as $directory) {
-        (new Filesystem())->deleteDirectory($directory);
+        (new Filesystem)->deleteDirectory($directory);
     }
 });
 

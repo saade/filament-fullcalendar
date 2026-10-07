@@ -10,20 +10,17 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
-
-use function Filament\get_authorization_response;
-
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-
-use function Filament\Support\get_model_label;
-
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use LogicException;
 use Throwable;
+
+use function Filament\get_authorization_response;
+use function Filament\Support\get_model_label;
 
 trait InteractsWithCalendarActions
 {

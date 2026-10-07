@@ -1,6 +1,7 @@
 <?php
 
 use Livewire\Livewire;
+use Saade\FilamentFullCalendar\Tests\Fixtures\CallbacksCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\EventCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\FilteredCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\ToolbarCalendarWidget;
@@ -190,7 +191,7 @@ it('leaves the toolbars to Livewire and only keeps the calendar itself out of it
 });
 
 it('takes a name for a view when the views are defined in JavaScript', function () {
-    $tool = Livewire::test(Saade\FilamentFullCalendar\Tests\Fixtures\CallbacksCalendarWidget::class, ['callbackName' => 'views'])
+    $tool = Livewire::test(CallbacksCalendarWidget::class, ['callbackName' => 'views'])
         ->instance()
         ->getTool('aroundToday');
 

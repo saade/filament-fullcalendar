@@ -44,7 +44,7 @@ class EventSourceData implements Arrayable, JsonSerializable
      */
     public static function googleCalendar(string $calendarId): static
     {
-        $source = new static();
+        $source = new static;
         $source->googleCalendarId = $calendarId;
 
         return $source;
@@ -55,7 +55,7 @@ class EventSourceData implements Arrayable, JsonSerializable
      */
     public static function iCalendar(string $url): static
     {
-        $source = new static();
+        $source = new static;
         $source->iCalendarUrl = $url;
 
         return $source;

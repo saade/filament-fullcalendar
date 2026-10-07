@@ -19,6 +19,5 @@ final readonly class EventResizeInfo
         public array $relatedEvents,
         public CarbonInterval $startDelta,
         public CarbonInterval $endDelta,
-    ) {
-    }
+    ) {}
 }

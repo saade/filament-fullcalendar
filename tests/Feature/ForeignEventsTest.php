@@ -1,6 +1,7 @@
 <?php
 
 use Livewire\Livewire;
+use Saade\FilamentFullCalendar\Data\EventInfo;
 use Saade\FilamentFullCalendar\Tests\Fixtures\Event;
 use Saade\FilamentFullCalendar\Tests\Fixtures\SavingCalendarWidget;
 
@@ -47,9 +48,9 @@ it('looks up an event of its own source, and one that does not say where it is f
 ]);
 
 it('gives the handlers the source and the resources of an event', function () {
-    $info = Saade\FilamentFullCalendar\Data\EventInfo::fromArray(['id' => 1, 'start' => '2026-10-07', 'source' => 'holidays', 'resourceIds' => ['a', 'b']], 'UTC');
+    $info = EventInfo::fromArray(['id' => 1, 'start' => '2026-10-07', 'source' => 'holidays', 'resourceIds' => ['a', 'b']], 'UTC');
 
     expect($info->source)->toBe('holidays')
         ->and($info->resourceIds)->toBe(['a', 'b'])
-        ->and(Saade\FilamentFullCalendar\Data\EventInfo::fromArray(['id' => 1, 'start' => '2026-10-07'], 'UTC')->resourceIds)->toBe([]);
+        ->and(EventInfo::fromArray(['id' => 1, 'start' => '2026-10-07'], 'UTC')->resourceIds)->toBe([]);
 });
