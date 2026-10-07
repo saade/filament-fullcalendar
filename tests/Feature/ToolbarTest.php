@@ -9,6 +9,7 @@ use Saade\FilamentFullCalendar\Toolbar\ToolbarButtonGroup;
 
 afterEach(function () {
     ToolbarCalendarWidget::$buttons = null;
+    ToolbarCalendarWidget::$footerButtons = null;
     ToolbarCalendarWidget::$calendarConfig = [];
 });
 
@@ -142,4 +143,48 @@ it('takes the tooltips of its own tools from the button hints of FullCalendar', 
     Livewire::test(EventCalendarWidget::class)
         ->assertSeeHtml('x-tooltip="{ content: getToolHint(\'prev\'), theme: $store.theme }"')
         ->assertSeeHtml('x-tooltip="{ content: getToolHint(\'dayGridMonth\'), theme: $store.theme }"');
+});
+
+it('has no footer toolbar by default', function () {
+    $component = Livewire::test(EventCalendarWidget::class)->assertDontSeeHtml('fi-fc-footer-toolbar');
+
+    expect($component->instance()->getFooterToolbarButtons())->toBe([]);
+});
+
+it('lays out a footer toolbar with the same tools', function () {
+    ToolbarCalendarWidget::$footerButtons = [
+        'start' => ['weekends', 'goToDate'],
+        'end' => [['prev', 'next'], ToolbarCalendarWidget::group()],
+    ];
+
+    $component = Livewire::test(ToolbarCalendarWidget::class)
+        ->assertSeeHtml(['fi-fc-footer-toolbar', 'data-tool="weekends"', 'fi-fc-tool-group']);
+
+    $footer = $component->instance()->getFooterToolbarButtons();
+
+    expect(array_map(fn (array $group): string => $group[0]->getName(), $footer['start']))->toBe(['weekends', 'goToDate'])
+        ->and($footer['end'][0])->toHaveCount(2);
+});
+
+it('reads the footer layout from the footerToolbar option when footerToolbarButtons() is not defined', function () {
+    ToolbarCalendarWidget::$calendarConfig = ['footerToolbar' => ['left' => 'today', 'right' => 'prev,next']];
+
+    $footer = Livewire::test(ToolbarCalendarWidget::class)->instance()->getFooterToolbarButtons();
+
+    expect($footer['start'][0][0]->getName())->toBe('today')
+        ->and($footer['end'][0])->toHaveCount(2);
+});
+
+it('refuses a footer button that cannot be found', function () {
+    ToolbarCalendarWidget::$footerButtons = ['start' => ['nope']];
+
+    Livewire::test(ToolbarCalendarWidget::class);
+})->throws(Exception::class, 'Toolbar button [nope] cannot be found.');
+
+it('leaves the toolbars to Livewire and only keeps the calendar itself out of its updates', function () {
+    $html = Livewire::test(EventCalendarWidget::class)->html();
+
+    expect($html)->toContain('wire:ignore.self')
+        ->and($html)->not->toContain('x-ignore')
+        ->and(substr_count($html, 'wire:ignore'))->toBe(2);
 });

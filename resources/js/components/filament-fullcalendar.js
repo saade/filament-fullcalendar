@@ -144,7 +144,6 @@ export default function fullcalendar({
     googleCalendarApiKey,
     editable,
     selectable,
-    toolbarButtons,
     filtersCount,
     pollingInterval,
     droppable,
@@ -253,8 +252,9 @@ export default function fullcalendar({
                     },
                 }),
                 ...fullCalendarConfig,
-                // The widget draws the header toolbar itself.
+                // The widget draws the toolbars itself.
                 headerToolbar: false,
+                footerToolbar: false,
                 timeZone,
                 ...(isMobile &&
                     mobileInitialView && { initialView: mobileInitialView }),
@@ -298,45 +298,6 @@ export default function fullcalendar({
                 customButtons: {
                     ...config.customButtons,
                     ...callbacks.customButtons,
-                    ...Object.fromEntries(
-                        Object.entries(toolbarButtons).map(
-                            ([
-                                name,
-                                {
-                                    text,
-                                    hint,
-                                    alpineClickHandler,
-                                    url,
-                                    shouldOpenUrlInNewTab,
-                                },
-                            ]) => [
-                                name,
-                                {
-                                    text,
-                                    hint,
-                                    click: () => {
-                                        if (alpineClickHandler) {
-                                            return window.Alpine.evaluate(
-                                                this.$el,
-                                                alpineClickHandler,
-                                            )
-                                        }
-
-                                        if (url) {
-                                            return window.open(
-                                                url,
-                                                shouldOpenUrlInNewTab
-                                                    ? '_blank'
-                                                    : '_self',
-                                            )
-                                        }
-
-                                        this.$wire.mountAction(name)
-                                    },
-                                },
-                            ],
-                        ),
-                    ),
                 },
                 ...(droppable && {
                     droppable: true,

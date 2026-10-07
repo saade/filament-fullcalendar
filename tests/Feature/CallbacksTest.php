@@ -52,10 +52,9 @@ it('runs the JavaScript or opens the URL of a toolbar action that has one', func
         ->and($widget->getTool('docs')->getJsHandler())->toBe("window.open('https:\/\/example.com\/docs', '_blank')");
 });
 
-it('still gives the actions to FullCalendar for its footer toolbar', function () {
-    expect(Livewire::test(CallbacksCalendarWidget::class)->instance()->getFooterToolbarButtons())->toBe([
-        'export' => ['text' => 'Export', 'hint' => 'Download the month', 'alpineClickHandler' => null, 'url' => null, 'shouldOpenUrlInNewTab' => false],
-    ]);
+it('shows the tooltip of a toolbar action on its tool', function () {
+    expect(Livewire::test(CallbacksCalendarWidget::class)->instance()->getTool('export')->getTooltipJsExpression())
+        ->toBe("'Download the month'");
 });
 
 it('only asks the browser for the dates when onDatesSet() is defined', function () {

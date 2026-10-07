@@ -71,9 +71,9 @@ protected function headerActions(): array
 }
 ```
 
-### The widget draws the header toolbar
+### The widget draws the toolbars
 
-The header toolbar is made of Filament buttons now, not FullCalendar's. Your `headerToolbar` option keeps working, including buttons from `customButtons`, but CSS written for `.fc-header-toolbar`, `.fc-toolbar-title` or `.fc-button` no longer reaches it. The new elements are `.fi-fc-toolbar`, `.fi-fc-toolbar-heading` and `.fi-fc-tool`. See [Toolbar buttons](README.md#toolbar-buttons) for the new `toolbarButtons()` method.
+The header and footer toolbars are made of Filament buttons now, not FullCalendar's. Your `headerToolbar` and `footerToolbar` options keep working, including buttons from `customButtons`, but CSS written for `.fc-toolbar`, `.fc-toolbar-title` or `.fc-button` no longer reaches them. The new elements are `.fi-fc-toolbar`, `.fi-fc-toolbar-heading` and `.fi-fc-tool`. See [Toolbar buttons](README.md#toolbar-buttons) for the new `toolbarButtons()` method.
 
 ### Date selection uses the panel's timezone
 

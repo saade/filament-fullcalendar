@@ -51,12 +51,41 @@ trait HasToolbar
     }
 
     /**
+     * The same as `toolbarButtons()`, for a toolbar under the calendar.
+     *
+     * @return array{start?: array<mixed>, center?: array<mixed>, end?: array<mixed>} | null
+     */
+    protected function footerToolbarButtons(): ?array
+    {
+        return null;
+    }
+
+    /**
      * @return array<string, array<int, array<int, CalendarTool | ToolbarButtonGroup>>>
      */
     public function getToolbarButtons(): array
     {
-        $buttons = $this->toolbarButtons() ?? $this->getHeaderToolbarButtonsFromConfig() ?? $this->getDefaultToolbarButtons();
+        return $this->resolveToolbarButtons(
+            $this->toolbarButtons() ?? $this->getToolbarButtonsFromConfig('headerToolbar') ?? $this->getDefaultToolbarButtons(),
+        );
+    }
 
+    /**
+     * @return array<string, array<int, array<int, CalendarTool | ToolbarButtonGroup>>>
+     */
+    public function getFooterToolbarButtons(): array
+    {
+        return $this->resolveToolbarButtons(
+            $this->footerToolbarButtons() ?? $this->getToolbarButtonsFromConfig('footerToolbar') ?? [],
+        );
+    }
+
+    /**
+     * @param  array<string, array<mixed>>  $buttons
+     * @return array<string, array<int, array<int, CalendarTool | ToolbarButtonGroup>>>
+     */
+    protected function resolveToolbarButtons(array $buttons): array
+    {
         $toolbar = [];
 
         foreach (['start', 'center', 'end'] as $section) {
@@ -157,8 +186,10 @@ trait HasToolbar
     protected function makeActionTool(Action $action): CalendarTool
     {
         $url = $action->getUrl();
+        $tooltip = $action->getTooltip();
 
         return CalendarTool::make($action->getName())
+            ->tooltipJsExpression(filled($tooltip) ? Js::from((string) $tooltip)->toHtml() : null)
             ->label((string) $action->getLabel())
             ->hiddenLabel(false)
             ->icon($action->getIcon())
@@ -203,20 +234,20 @@ trait HasToolbar
     }
 
     /**
-     * FullCalendar's own `headerToolbar` option, read as the layout: a space
-     * separates buttons and a comma joins them.
+     * FullCalendar's own `headerToolbar` or `footerToolbar` option, read as
+     * the layout: a space separates buttons and a comma joins them.
      *
      * @return array{start: array<mixed>, center: array<mixed>, end: array<mixed>} | null
      */
-    protected function getHeaderToolbarButtonsFromConfig(): ?array
+    protected function getToolbarButtonsFromConfig(string $option): ?array
     {
         $config = $this->getConfig();
 
-        if (! array_key_exists('headerToolbar', $config)) {
+        if (! array_key_exists($option, $config)) {
             return null;
         }
 
-        $toolbar = (array) ($config['headerToolbar'] ?: []);
+        $toolbar = (array) ($config[$option] ?: []);
 
         $parse = fn (?string $section): array => array_map(
             fn (string $group): array | string => str_contains($group, ',') ? explode(',', $group) : $group,

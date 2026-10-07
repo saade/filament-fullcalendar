@@ -15,6 +15,11 @@ class ToolbarCalendarWidget extends EventCalendarWidget
     public static ?array $buttons = null;
 
     /**
+     * @var array<string, mixed> | null
+     */
+    public static ?array $footerButtons = null;
+
+    /**
      * @var array<string, mixed>
      */
     public static array $calendarConfig = [];
@@ -27,6 +32,11 @@ class ToolbarCalendarWidget extends EventCalendarWidget
     protected function toolbarButtons(): ?array
     {
         return static::$buttons;
+    }
+
+    protected function footerToolbarButtons(): ?array
+    {
+        return static::$footerButtons;
     }
 
     protected function tools(): array

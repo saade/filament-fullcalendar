@@ -29,30 +29,4 @@ trait InteractsWithToolbarActions
             $this->cachedToolbarActions[] = $action;
         }
     }
-
-    /**
-     * The actions as FullCalendar custom buttons, for its footer toolbar.
-     *
-     * @return array<string, array{text: string, hint: string, alpineClickHandler: ?string, url: ?string, shouldOpenUrlInNewTab: bool}>
-     */
-    public function getFooterToolbarButtons(): array
-    {
-        $buttons = [];
-
-        foreach ($this->cachedToolbarActions as $action) {
-            if ($action->isHidden() || $action->isDisabled()) {
-                continue;
-            }
-
-            $buttons[$action->getName()] = [
-                'text' => (string) $action->getLabel(),
-                'hint' => (string) ($action->getTooltip() ?? $action->getLabel()),
-                'alpineClickHandler' => $action->getAlpineClickHandler(),
-                'url' => $action->getUrl(),
-                'shouldOpenUrlInNewTab' => $action->shouldOpenUrlInNewTab(),
-            ];
-        }
-
-        return $buttons;
-    }
 }

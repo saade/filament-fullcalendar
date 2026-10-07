@@ -4,6 +4,7 @@
 
     $headerActions = $this->getCachedHeaderActions();
     $toolbar = $this->getToolbarButtons();
+    $footerToolbar = $this->getFooterToolbarButtons();
     $hasFilters = $this->isFilterable();
     $filtersLayout = $this->getFiltersLayout();
     $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
@@ -104,10 +105,9 @@
         @endif
 
         <div
-            wire:ignore
+            wire:ignore.self
             x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-fullcalendar-alpine', 'saade/filament-fullcalendar') }}"
-            x-ignore
             x-data="fullcalendar({
                 id: @js($this->getId()),
                 locale: @js($this->getLocale()),
@@ -120,7 +120,6 @@
                 googleCalendarApiKey: @js($this->getGoogleCalendarApiKey()),
                 editable: @json($this->isEditable()),
                 selectable: @json($this->isSelectable()),
-                toolbarButtons: @js($this->getFooterToolbarButtons()),
                 filtersCount: @js($this->getActiveFiltersCount()),
                 pollingInterval: @js($this->getPollingIntervalInMilliseconds()),
                 droppable: @json($this->isDroppable()),
@@ -139,13 +138,15 @@
             @endif
 
             <div
+                wire:ignore
                 x-ref="calendar"
-                @class([
-                    'filament-fullcalendar',
-                    ...\Filament\Support\Facades\FilamentColor::getComponentClasses(\Filament\Support\View\Components\ButtonComponent::make(), 'primary'),
-                ])
+                class="filament-fullcalendar"
                 style="{{ $this->getDefaultEventColorStyles() }}"
             ></div>
+
+            @if (filled($footerToolbar))
+                @include('filament-fullcalendar::toolbar.index', ['toolbar' => $footerToolbar, 'isFooter' => true])
+            @endif
         </div>
 
         @if ($hasFiltersBelowContent)

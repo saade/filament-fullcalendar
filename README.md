@@ -1532,6 +1532,8 @@ The labels of `today` and of the view buttons are FullCalendar's, so they follow
 
 A name that matches no tool throws `Toolbar button [name] cannot be found.`, and a tool that is not named in `toolbarButtons()` is not shown.
 
+The toolbars are part of the widget's view, so they follow it: an action that becomes hidden, or a layout that depends on a property, changes the toolbar the next time the widget renders.
+
 ### Actions in the toolbar
 
 Every action in `toolbarActions()` is a tool with the action's name, label and icon. Name it in `toolbarButtons()` to show it:
@@ -1665,11 +1667,25 @@ use Saade\FilamentFullCalendar\Toolbar\ToolbarButtonGroup;
 ],
 ```
 
+### Footer toolbar
+
+`footerToolbarButtons()` lays out a second toolbar under the calendar, with the same sections, tools, actions and dropdowns. There is none by default:
+
+```php
+protected function footerToolbarButtons(): array
+{
+    return [
+        'start' => ['today'],
+        'end' => [['prev', 'next']],
+    ];
+}
+```
+
 ### FullCalendar's own toolbar options
 
 A calendar that sets FullCalendar's `headerToolbar` option and has no `toolbarButtons()` keeps its layout: the option is read the same way, with a space between buttons and a comma joining them. Buttons from `customButtons` work there too. `'headerToolbar' => false` hides the toolbar.
 
-`footerToolbar` is still drawn by FullCalendar. It can name the toolbar actions, but not the tools.
+FullCalendar's `footerToolbar` option is read the same way for the [footer toolbar](#footer-toolbar).
 
 ## Reacting to navigation
 
