@@ -28,7 +28,8 @@ abstract class AbstractWidgetRector extends AbstractRector
 
     public function __construct(
         protected readonly UseImportsResolver $useImportsResolver,
-    ) {}
+    ) {
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
