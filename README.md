@@ -1115,7 +1115,7 @@ The widget has methods to drive its calendar. Call them from the widget itself, 
 | ------ | ------ |
 | `refreshRecords()` | Fetches the events again. The built-in actions already do this after they run. |
 | `goToDate(DateTimeInterface \| string $date)` | Moves to a date |
-| `changeView(string $view)` | Switches view, for example to `timeGridWeek` |
+| `changeView(string $view, $date = null)` | Switches view, for example to `timeGridWeek`, and goes to a date when one is given |
 | `next()`, `previous()`, `today()` | Navigates |
 
 ```php

@@ -550,7 +550,8 @@ export default function fullcalendar({
                 prev: () => this.calendar.prev(),
                 next: () => this.calendar.next(),
                 today: () => this.calendar.today(),
-                view: ({ view }) => this.calendar.changeView(view),
+                view: ({ view, date }) =>
+                    this.calendar.changeView(view, date ?? undefined),
                 goto: ({ date }) => this.calendar.gotoDate(date),
             }
 

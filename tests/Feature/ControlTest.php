@@ -35,3 +35,11 @@ it('gives every calendar a different id to listen for', function () {
 
     $first->assertSeeHtml($first->instance()->getId());
 });
+
+it('goes to a date while changing the view', function () {
+    $component = Livewire::test(EventCalendarWidget::class);
+
+    $component
+        ->call('changeView', 'timeGridWeek', '2026-12-01')
+        ->assertDispatched('filament-fullcalendar--view', view: 'timeGridWeek', date: '2026-12-01', calendar: $component->instance()->getId());
+});

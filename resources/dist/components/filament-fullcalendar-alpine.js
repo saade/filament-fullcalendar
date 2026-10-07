@@ -1649,7 +1649,7 @@ function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 				prev: () => this.calendar.prev(),
 				next: () => this.calendar.next(),
 				today: () => this.calendar.today(),
-				view: ({ view: e }) => this.calendar.changeView(e),
+				view: ({ view: e, date: t }) => this.calendar.changeView(e, t ?? void 0),
 				goto: ({ date: e }) => this.calendar.gotoDate(e)
 			};
 			this.listeners = Object.fromEntries(Object.entries(S).map(([t, n]) => [`filament-fullcalendar--${t}`, ({ detail: t }) => {

@@ -287,10 +287,14 @@ trait InteractsWithEvents
 
     /**
      * @param  string  $view  A FullCalendar view name, such as `dayGridMonth` or `timeGridWeek`.
+     * @param  DateTimeInterface | string | null  $date  A date to go to at the same time.
      */
-    public function changeView(string $view): void
+    public function changeView(string $view, DateTimeInterface | string | null $date = null): void
     {
-        $this->dispatchCalendarEvent('view', ['view' => $view]);
+        $this->dispatchCalendarEvent('view', [
+            'view' => $view,
+            ...filled($date) ? ['date' => $date instanceof DateTimeInterface ? $date->format(DateTimeInterface::ATOM) : $date] : [],
+        ]);
     }
 
     public function next(): void
