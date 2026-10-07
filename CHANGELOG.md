@@ -6,7 +6,7 @@ All notable changes to `filament-fullcalendar` will be documented in this file.
 
 ### Changed
 
-These change the behavior of existing calendars. See the [upgrade guide](UPGRADING.md#from-4x-to-5x).
+These change the behavior of existing calendars. See the [upgrade guide](UPGRADING.md).
 
 - Moving, resizing and selecting are refused on the server when the calendar is not `editable` or `selectable`. Before, those settings only stopped the calendar itself from asking.
 - `editable`, `selectable` and `droppable` set in the panel plugin's `config()` array are now respected.
@@ -103,12 +103,12 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 ### Added
 
 - A test suite, running against Filament 4 and 5.
-- An [upgrade guide](UPGRADING.md) from 3.x.
+- An [upgrade guide](https://github.com/saade/filament-fullcalendar/blob/4.x/UPGRADING.md) from 3.x.
 
 ## v4.0.0 - 2026-10-02
 
 - Support for Filament 4 and Filament 5, and for Laravel 13.
-- The stylesheet is now compiled with your panel's custom theme. See the [upgrade guide](UPGRADING.md).
+- The stylesheet is now compiled with your panel's custom theme. See the [upgrade guide](https://github.com/saade/filament-fullcalendar/blob/4.x/UPGRADING.md).
 
 ## v1.9.2 - 2023-07-11
 
