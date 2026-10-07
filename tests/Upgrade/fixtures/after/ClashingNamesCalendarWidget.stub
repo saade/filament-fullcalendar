@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Support\FetchInfo;
+use Illuminate\Support\Facades\Schema;
+use Filament\Actions\ViewAction;
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+
+class ClashingNamesCalendarWidget extends FullCalendarWidget
+{
+    public function fetchEvents(\Saade\FilamentFullCalendar\Data\FetchInfo $fetchInfo): array
+    {
+        return Schema::hasTable('events') ? FetchInfo::all() : [];
+    }
+
+    public function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    {
+        return $schema->components([]);
+    }
+
+    protected function viewAction(): \Filament\Actions\Action
+    {
+        return ViewAction::make()->modalFooterActions(fn(ViewAction $action): array => [...$this->getCachedFormActions(), $action->getModalCancelAction()])->cancelParentActions();
+    }
+}

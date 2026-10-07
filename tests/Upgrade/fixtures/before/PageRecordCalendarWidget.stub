@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\Project;
+use Illuminate\Database\Eloquent\Model;
+use Saade\FilamentFullCalendar\Data\EventClickInfo;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+
+class PageRecordCalendarWidget extends FullCalendarWidget
+{
+    public ?Model $record = null;
+
+    public function fetchEvents(FetchInfo $info): array
+    {
+        return $this->record instanceof Project ? $this->record->tasks->all() : [];
+    }
+
+    protected function onEventClick(EventClickInfo $info): void
+    {
+        logger()->info('clicked', ['id' => $info->event->id]);
+    }
+
+    protected function headerActions(): array
+    {
+        return [];
+    }
+}

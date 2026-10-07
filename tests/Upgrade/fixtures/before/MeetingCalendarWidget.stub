@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\Meeting;
+use Filament\Actions\Action;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Model;
+use Saade\FilamentFullCalendar\Actions;
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+
+class MeetingCalendarWidget extends FullCalendarWidget
+{
+    public Model | string | null $model = Meeting::class;
+
+    protected static ?string $recordRouteKeyName = 'uuid';
+
+    public function fetchEvents(array $info): array
+    {
+        return Meeting::query()
+            ->where('starts_at', '>=', $info['start'])
+            ->where('ends_at', '<=', $info['end'])
+            ->get()
+            ->all();
+    }
+
+    public function getFormSchema(): array
+    {
+        return [
+            TextInput::make('name'),
+            DateTimePicker::make('starts_at'),
+        ];
+    }
+
+    protected function modalActions(): array
+    {
+        return [
+            Actions\EditAction::make()
+                ->mountUsing(function (Meeting $record, $form, array $arguments) {
+                    $form->fill(['name' => $record->name]);
+                }),
+            Actions\DeleteAction::make(),
+        ];
+    }
+
+    protected function viewAction(): Action
+    {
+        return Actions\ViewAction::make();
+    }
+
+    public function onEventClick(array $event): void
+    {
+        $this->record = $this->resolveRecord($event['id']);
+
+        $this->mountAction('view');
+    }
+
+    public function onEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta, ?array $oldResource, ?array $newResource): bool
+    {
+        $this->record = $this->resolveRecord($event['id']);
+
+        $this->getRecord()->update([
+            'starts_at' => $event['start'],
+            'ends_at' => $event['end'],
+        ]);
+
+        logger()->info('moved', ['from' => $oldEvent['start']]);
+
+        return false;
+    }
+
+    public function onDateSelect(string $start, ?string $end, bool $allDay, ?array $view, ?array $resource): void
+    {
+        $this->mountAction('create', ['start' => $start, 'end' => $end]);
+    }
+
+    protected function getRecordRouteKeyName(): ?string
+    {
+        return static::$recordRouteKeyName;
+    }
+}

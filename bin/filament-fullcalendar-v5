@@ -1,0 +1,141 @@
+#!/usr/bin/env php
+<?php
+
+// Applies the changes of the upgrade guide that can be made automatically.
+// Run it from the root of your application: vendor/bin/filament-fullcalendar-v5
+
+use Composer\InstalledVersions;
+
+$autoloadPath = $GLOBALS['_composer_autoload_path'] ?? (dirname(__DIR__, 3) . '/autoload.php');
+
+if (! file_exists($autoloadPath)) {
+    $autoloadPath = getcwd() . '/vendor/autoload.php';
+}
+
+if (! file_exists($autoloadPath)) {
+    $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
+}
+
+$composerBinDirectory = $GLOBALS['_composer_bin_dir'] ?? (dirname($autoloadPath) . '/bin');
+
+require $autoloadPath;
+
+$hasColors = getenv('FORCE_COLOR') || (stream_isatty(STDOUT) && (getenv('NO_COLOR') === false) && (getenv('TERM') !== 'dumb'));
+
+$color = fn (string $text, string $code): string => $hasColors ? "\e[{$code}m{$text}\e[0m" : $text;
+
+$line = fn (string $text = ''): int => fwrite(STDOUT, $text . PHP_EOL);
+$title = fn (string $text): int => $line($color($text, '1'));
+$info = fn (string $text): int => $line($color($text, '36'));
+$success = fn (string $text): int => $line($color($text, '32'));
+$warn = fn (string $text): int => $line($color($text, '33'));
+$error = fn (string $text): int => $line($color($text, '31'));
+$command = fn (string $text): int => $line('    ' . $color($text, '1'));
+
+$arguments = array_slice($argv, 1);
+$options = array_values(array_filter($arguments, fn (string $argument): bool => str_starts_with($argument, '--')));
+$arguments = array_values(array_diff($arguments, $options));
+
+$isInteractive = (! in_array('--no-interaction', $options)) && stream_isatty(STDIN);
+
+$ask = function (string $question, string $default) use ($isInteractive): string {
+    if (! $isInteractive) {
+        return $default;
+    }
+
+    fwrite(STDOUT, $question . ' ');
+
+    return trim((string) fgets(STDIN)) ?: $default;
+};
+
+$rectorScriptPath = $composerBinDirectory . DIRECTORY_SEPARATOR . 'rector';
+
+if (! file_exists($rectorScriptPath)) {
+    $error('Rector is needed to run the upgrade. Install it and run this again:');
+    $line();
+    $command('composer require rector/rector:^2.5 --dev --no-scripts');
+
+    exit(1);
+}
+
+if (version_compare((string) InstalledVersions::getVersion('rector/rector'), '2.4.7', '<')) {
+    $error('The upgrade needs Rector 2.4.7 or newer. Update it and run this again:');
+    $line();
+    $command('composer require rector/rector:^2.5 --dev --no-scripts');
+
+    exit(1);
+}
+
+$title('Filament FullCalendar 5 upgrade');
+$line();
+$line('This changes your files to match the upgrade guide where that can be done');
+$line('automatically. ' . $color('Commit your work first', '33') . ', so you can review and revert it.');
+$line();
+
+$directories = $arguments[0] ?? $ask('Directories with calendar widgets and their tests, separated by commas [app,tests]:', 'app,tests');
+
+$keepsCreateButton = in_array('--keep-create-button', $options)
+    || ((! in_array('--no-create-button', $options)) && in_array(strtolower($ask('5.x has no create button unless a widget adds one. Add it to the widgets that had it in 4.x? [Y/n]:', 'y')), ['y', 'yes']));
+
+putenv('FILAMENT_FULLCALENDAR_KEEP_CREATE_BUTTON=' . ($keepsCreateButton ? '1' : ''));
+
+$rectorConfigurationPath = implode(DIRECTORY_SEPARATOR, [
+    rtrim((string) InstalledVersions::getInstallPath('saade/filament-fullcalendar'), '/\\'),
+    'src',
+    'Upgrade',
+    'rector.php',
+]);
+
+$exitCode = 0;
+
+foreach (explode(',', $directories) as $directory) {
+    $directory = rtrim(trim($directory), DIRECTORY_SEPARATOR);
+
+    if (! is_dir($directory)) {
+        $warn("Skipping {$directory}, which is not a directory.");
+
+        continue;
+    }
+
+    $line();
+    $info("Processing {$directory}...");
+
+    $process = proc_open(
+        [PHP_BINARY, $rectorScriptPath, 'process', $directory, "--config={$rectorConfigurationPath}", '--clear-cache', '--no-diffs', ...(in_array('--dry-run', $options) ? ['--dry-run'] : [])],
+        [STDIN, STDOUT, STDERR],
+        $pipes,
+    );
+
+    $exitCode = max($exitCode, proc_close($process));
+}
+
+$publishedViewsPath = implode(DIRECTORY_SEPARATOR, ['resources', 'views', 'vendor', 'filament-fullcalendar']);
+
+if (is_dir($publishedViewsPath)) {
+    $line();
+    $warn("Your application has published views of the package, in {$publishedViewsPath}.");
+    $warn('They were written for 4.x and replace the views of 5.x, which are entirely');
+    $warn('different, so the calendar will not work with them. Delete that directory,');
+    $warn('and publish the views again if you still need to change them:');
+    $line();
+    $command('rm -r ' . $publishedViewsPath);
+}
+
+$line();
+$exitCode === 0 ? $success('Done.') : $warn('Finished, but Rector reported a problem above.');
+$line();
+$title('What is left to do by hand:');
+$line();
+$line('  1. Format the changed files, for example with vendor/bin/pint.');
+$line('  2. Event handlers now read their old arguments from $info. Check the ones that');
+$line('     use $delta, $startDelta or $endDelta (now CarbonInterval objects) and the');
+$line('     $start and $end of onDateSelect() (now CarbonImmutable objects).');
+$line('  3. Rename any method or property of your widgets that the widget now defines.');
+$line('  4. In tests, pass the schema name to form assertions made after an action has');
+$line('     finished, as in ->assertHasNoFormErrors([], \'form\').');
+$line('  5. Review the behavior changes: policies, tenancy, the toolbar and the rest.');
+$line();
+$line('The upgrade guide explains each of these:');
+$info('https://github.com/saade/filament-fullcalendar/blob/5.x/UPGRADING.md');
+
+exit($exitCode);

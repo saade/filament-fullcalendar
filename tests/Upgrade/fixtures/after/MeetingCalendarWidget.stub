@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use Saade\FilamentFullCalendar\Data\FetchInfo;
+use Saade\FilamentFullCalendar\Data\EventClickInfo;
+use Saade\FilamentFullCalendar\Data\EventDropInfo;
+use Saade\FilamentFullCalendar\Data\DateSelectInfo;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
+use App\Models\Meeting;
+use Filament\Actions\Action;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Model;
+use Saade\FilamentFullCalendar\Actions;
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+
+class MeetingCalendarWidget extends FullCalendarWidget
+{
+    public Model | string | null $model = Meeting::class;
+
+    protected static ?string $eventRecordRouteKeyName = 'uuid';
+
+    public function fetchEvents(FetchInfo $info): array
+    {
+        return Meeting::query()
+            ->where('starts_at', '>=', $info['start'])
+            ->where('ends_at', '<=', $info['end'])
+            ->get()
+            ->all();
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->components([
+            TextInput::make('name'),
+            DateTimePicker::make('starts_at'),
+        ]);
+    }
+
+    protected function modalActions(): array
+    {
+        return [
+            EditAction::make()->cancelParentActions()
+                ->mountUsing(function (Meeting $record, $form, array $arguments) {
+                    $form->fill(['name' => $record->name]);
+                }),
+            DeleteAction::make()->cancelParentActions(),
+        ];
+    }
+
+    protected function viewAction(): Action
+    {
+        return ViewAction::make()->modalFooterActions(fn(ViewAction $action): array => [...$this->getCachedFormActions(), $action->getModalCancelAction()])->cancelParentActions();
+    }
+
+    protected function onEventClick(EventClickInfo $info): void
+    {
+        $info = $info->event;
+        $event = $info->event;
+        $this->eventRecord = $this->resolveEventRecord($event['id']);
+
+        $this->mountAction('view');
+    }
+
+    protected function onEventDrop(EventDropInfo $info): bool
+    {
+        $info = $info->event;
+        $event = $info->event;
+        $oldEvent = $info->oldEvent;
+        $this->eventRecord = $this->resolveEventRecord($event['id']);
+        $this->getEventRecord()->update([
+            'starts_at' => $event['start'],
+            'ends_at' => $event['end'],
+        ]);
+        logger()->info('moved', ['from' => $oldEvent['start']]);
+        return false;
+    }
+
+    protected function onDateSelect(DateSelectInfo $info): void
+    {
+        $info = $info->start;
+        $start = $info->start;
+        $end = $info->end;
+        $this->mountAction('create', ['start' => $start, 'end' => $end]);
+    }
+
+    protected function getEventRecordRouteKeyName(): ?string
+    {
+        return static::$eventRecordRouteKeyName;
+    }
+}

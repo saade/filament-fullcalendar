@@ -59,6 +59,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `$info->event->source` and `$info->event->resourceIds` tell the event handlers which event source an event came from and which resources it is shown in.
 - `$isReadOnly` makes a calendar read-only: events can be viewed, and nothing can be created, changed, moved or deleted.
 - `php artisan make:filament-fullcalendar-widget` creates a working calendar widget, optionally for a model.
+- `vendor/bin/filament-fullcalendar-v5` applies the changes of the upgrade guide to your widgets and their tests with Rector.
 - Testing helpers for Livewire tests, such as `clickCalendarEvent()`, `dropCalendarEvent()`, `selectCalendarDates()` and `assertCalendarHasEvent()`.
 - `$pollingInterval` makes the calendar fetch its events again at an interval.
 - `mobileInitialView` in `config()` opens the calendar in a different view on narrow screens.

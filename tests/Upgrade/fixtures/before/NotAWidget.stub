@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Support;
+
+class NotAWidget
+{
+    public $record;
+
+    public function fetchEvents(array $info): array
+    {
+        return [$this->record, $this->getRecord()];
+    }
+
+    public function getRecord(): mixed
+    {
+        return $this->record;
+    }
+
+    public function getFormSchema(): array
+    {
+        return [];
+    }
+}

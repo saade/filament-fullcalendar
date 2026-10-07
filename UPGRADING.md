@@ -3,6 +3,8 @@
 - [Upgrading](#upgrading)
   - [What to expect](#what-to-expect)
   - [Installing](#installing)
+  - [Published views](#published-views)
+  - [Automated upgrade](#automated-upgrade)
   - [Required changes](#required-changes)
     - [Step 1: Change the type hint of `fetchEvents()`](#step-1-change-the-type-hint-of-fetchevents)
     - [Step 2: Update the event handlers](#step-2-update-the-event-handlers)
@@ -42,8 +44,66 @@ For what is new in 5.x, see the [changelog](CHANGELOG.md) and the [README](READM
 
 ```bash
 composer require saade/filament-fullcalendar:"^5.0"
+```
+
+Composer installs the package and then, in most applications, ends with an error like this one:
+
+```
+Declaration of App\Filament\Widgets\CalendarWidget::fetchEvents(array $info): array must be compatible with
+Saade\FilamentFullCalendar\Widgets\FullCalendarWidget::fetchEvents(Saade\FilamentFullCalendar\Data\FetchInfo $info)
+```
+
+That is expected. The package is installed; it is Laravel's `package:discover`, which runs afterwards, that loads your widget and finds it still has the 4.x signature. The application will not boot until the [required changes](#required-changes) are made, which the [upgrade script](#automated-upgrade) does without booting it. Once it boots again, publish the assets:
+
+```bash
 php artisan filament:assets
 ```
+
+## Published views
+
+If you published the package's views in 4.x, delete them:
+
+```bash
+rm -r resources/views/vendor/filament-fullcalendar
+```
+
+The widget's view was rewritten for 5.x, and a published copy from 4.x replaces it, so the calendar would render without its toolbar, filters and header, or not at all. Publish the views again afterwards if you still need to change them. The [upgrade script](#automated-upgrade) tells you when it finds them.
+
+## Automated upgrade
+
+Most of the required changes can be made for you. Install [Rector](https://getrector.com) if your application does not have it, commit your work, and run the script from the root of your application:
+
+```bash
+composer require rector/rector:^2.5 --dev --no-scripts
+vendor/bin/filament-fullcalendar-v5
+```
+
+`--no-scripts` keeps Composer from booting the application, which cannot boot yet.
+
+The script asks which directories to go through (`app,tests` by default; add others, such as `app-modules`, if your widgets live there) and whether to keep the create button. It only changes classes that extend the calendar widget, and `->call()` in tests:
+
+| Change | What the script does |
+| --- | --- |
+| [Step 1](#step-1-change-the-type-hint-of-fetchevents) | Changes the type hint of `fetchEvents()` to `FetchInfo`. |
+| [Step 2](#step-2-update-the-event-handlers) | Gives the event handlers their new signature, and reads the old arguments from `$info` at the top of the method so the body keeps working. |
+| [Step 3](#step-3-rename-record-to-eventrecord) | Renames `$this->record`, `getRecord()`, `resolveRecord()` and the others, except in a widget that declares `$record` itself. |
+| [Step 5](#step-5-update-your-tests) | Renames `->call('onEventClick')` and the like to the `handle*` methods. |
+| [The package's action classes](#the-packages-action-classes-are-deprecated-in-favor-of-filaments) | Replaces them with Filament's, adding what they did for you. |
+| [`getFormSchema()`](#getformschema-is-deprecated-in-favor-of-form) | Turns it into `form(Schema $schema)`. |
+| [No create button by default](#there-is-no-create-button-by-default) | If you say yes, adds `headerActions()` with a `CreateAction` to the widgets that do not define it. |
+
+Pass the directories and your answer to skip the questions, and `--dry-run` to see what would change without changing it:
+
+```bash
+vendor/bin/filament-fullcalendar-v5 app,tests --keep-create-button --dry-run
+```
+
+Afterwards, format the changed files (the script does not keep your code style), then go through what it cannot do:
+
+- In the event handlers, `$delta`, `$startDelta` and `$endDelta` are `CarbonInterval` objects now, and the `$start` and `$end` of `onDateSelect()` are `CarbonImmutable` objects. Check the code that uses them.
+- [Step 4](#step-4-rename-what-clashes-with-the-widgets-new-names), the name clashes.
+- The schema name in form assertions, in [step 5](#step-5-update-your-tests).
+- The [behavior changes](#behavior-changes).
 
 ## Required changes
 

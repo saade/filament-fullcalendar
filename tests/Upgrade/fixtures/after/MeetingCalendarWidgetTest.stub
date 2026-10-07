@@ -1,0 +1,11 @@
+<?php
+
+use App\Filament\Widgets\MeetingCalendarWidget;
+use Livewire\Livewire;
+
+it('opens a meeting', function () {
+    Livewire::test(MeetingCalendarWidget::class)
+        ->call('handleEventClick', ['id' => 1])
+        ->call('handleFetchEvents', ['start' => '2026-10-01', 'end' => '2026-11-01'])
+        ->call('refreshRecords');
+});
