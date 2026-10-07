@@ -78,6 +78,11 @@ function makeItemsDraggable() {
     })
 }
 
+const serializeEvent = (event) => ({
+    ...event.toPlainObject(),
+    isRecurring: Boolean(event._def.recurringDef),
+})
+
 const escapeHtml = (text) => {
     const el = document.createElement('div')
     el.textContent = text
@@ -385,7 +390,7 @@ export default function fullcalendar({
                         )
                     }
 
-                    this.$wire.handleEventClick(event)
+                    this.$wire.handleEventClick(serializeEvent(event))
                 },
                 eventDragStart: (info) => {
                     this.isDragging = true
@@ -421,9 +426,9 @@ export default function fullcalendar({
                     if (isCancelledByCallback('eventDrop', info)) return
 
                     const shouldRevert = await this.$wire.handleEventDrop(
-                        event,
-                        oldEvent,
-                        relatedEvents,
+                        serializeEvent(event),
+                        serializeEvent(oldEvent),
+                        relatedEvents.map(serializeEvent),
                         delta,
                         oldResource,
                         newResource,
@@ -446,9 +451,9 @@ export default function fullcalendar({
                     if (isCancelledByCallback('eventResize', info)) return
 
                     const shouldRevert = await this.$wire.handleEventResize(
-                        event,
-                        oldEvent,
-                        relatedEvents,
+                        serializeEvent(event),
+                        serializeEvent(oldEvent),
+                        relatedEvents.map(serializeEvent),
                         startDelta,
                         endDelta,
                     )

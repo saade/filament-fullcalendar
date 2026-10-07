@@ -235,3 +235,40 @@ it('keeps the end of a timed event that has one', function () {
 
     expect($event->refresh()->ends_at->toDateTimeString())->toBe('2026-10-07 11:30:00');
 });
+
+it('does not write the dates of one occurrence to the record of a recurring event', function (string $method, array $deltas) {
+    $event = Event::create(['title' => 'Standup', 'starts_at' => '2026-10-05 10:00:00', 'ends_at' => '2026-10-05 11:00:00']);
+
+    $occurrence = ['id' => $event->getKey(), 'start' => '2026-10-08T10:00:00Z', 'end' => '2026-10-08T11:00:00Z', 'isRecurring' => true];
+    $before = ['id' => $event->getKey(), 'start' => '2026-10-07T10:00:00Z', 'end' => '2026-10-07T11:00:00Z', 'isRecurring' => true];
+
+    Livewire::test(SavingCalendarWidget::class)
+        ->call($method, $occurrence, $before, [], ...$deltas)
+        ->assertReturned(true)
+        ->assertSet('mountedActions', []);
+
+    expect($event->refresh())
+        ->starts_at->toDateTimeString()->toBe('2026-10-05 10:00:00')
+        ->ends_at->toDateTimeString()->toBe('2026-10-05 11:00:00');
+})->with([
+    'drop' => ['handleEventDrop', [['days' => 1], null, null]],
+    'resize' => ['handleEventResize', [['days' => 0], ['days' => 1]]],
+]);
+
+it('still opens the edit action for a recurring event when the widget does not save dates itself', function () {
+    $event = Event::create(['title' => 'Standup', 'starts_at' => '2026-10-05 10:00:00', 'ends_at' => '2026-10-05 11:00:00']);
+
+    $occurrence = ['id' => $event->getKey(), 'start' => '2026-10-08T10:00:00Z', 'end' => '2026-10-08T11:00:00Z', 'isRecurring' => true];
+
+    Livewire::test(EventCalendarWidget::class)
+        ->call('handleEventDrop', $occurrence, $occurrence, [], ['days' => 1], null, null)
+        ->assertActionMounted('edit')
+        ->assertSchemaStateSet(['starts_at' => '2026-10-05 10:00:00'], 'mountedActionSchema0');
+});
+
+it('tells the handlers whether an event is an occurrence of a recurring one', function () {
+    $info = Saade\FilamentFullCalendar\Data\EventInfo::fromArray(['id' => 1, 'start' => '2026-10-08T10:00:00Z', 'isRecurring' => true], 'UTC');
+
+    expect($info->isRecurring)->toBeTrue()
+        ->and(Saade\FilamentFullCalendar\Data\EventInfo::fromArray(['id' => 1, 'start' => '2026-10-08T10:00:00Z'], 'UTC')->isRecurring)->toBeFalse();
+});

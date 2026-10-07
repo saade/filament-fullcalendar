@@ -16,6 +16,7 @@ final readonly class EventInfo implements ArrayAccess
     /**
      * @param  array<string, mixed>  $extendedProps
      * @param  array<string, mixed>  $raw
+     * @param  bool  $isRecurring  Whether this is one occurrence of a recurring event. Its dates are those of the occurrence, not of the series.
      */
     public function __construct(
         public int | string | null $id,
@@ -25,6 +26,7 @@ final readonly class EventInfo implements ArrayAccess
         public bool $allDay,
         public array $extendedProps,
         public array $raw,
+        public bool $isRecurring = false,
     ) {}
 
     /**
@@ -40,6 +42,7 @@ final readonly class EventInfo implements ArrayAccess
             allDay: (bool) ($event['allDay'] ?? false),
             extendedProps: $event['extendedProps'] ?? [],
             raw: $event,
+            isRecurring: (bool) ($event['isRecurring'] ?? false),
         );
     }
 

@@ -1534,6 +1534,30 @@ EventData::make()
     ])
 ```
 
+What a user drags or resizes is one occurrence, and its dates say nothing about where the series starts. So a recurring event is never saved automatically: with [`$startAttribute`](#dragging-and-resizing-events) set, it moves back. To support moving a series, handle it in `onEventDrop()`, where `$info->event->isRecurring` tells the two apart and `$info->delta` is how far the occurrence was moved:
+
+```php
+use Saade\FilamentFullCalendar\Data\EventDropInfo;
+
+protected function onEventDrop(EventDropInfo $info): bool
+{
+    if (! $info->event->isRecurring) {
+        return parent::onEventDrop($info);
+    }
+
+    $series = $this->getEventRecord();
+
+    $series->update([
+        'starts_at' => $series->starts_at->add($info->delta),
+        'ends_at' => $series->ends_at->add($info->delta),
+    ]);
+
+    $this->refreshRecords();
+
+    return false;
+}
+```
+
 ## Remembering the view and date
 
 Store them in [`onDatesSet()`](#reacting-to-navigation) and open the calendar with them:

@@ -99,6 +99,12 @@ trait InteractsWithEvents
             return true;
         }
 
+        // The dates of an occurrence say nothing about where its series
+        // starts, so they are never written to the record.
+        if ($event->isRecurring && filled($this->getStartAttribute())) {
+            return true;
+        }
+
         $canSaveDates = filled($this->getStartAttribute());
 
         if ($canSaveDates) {
