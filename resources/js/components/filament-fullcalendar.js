@@ -481,7 +481,12 @@ export default function fullcalendar({
                     const { dateStr, allDay, view, resource } = info
 
                     this.queueDateInteraction({
-                        click: { dateStr, allDay, view, resource },
+                        click: {
+                            dateStr,
+                            allDay,
+                            view: this.serializeView(view),
+                            resource,
+                        },
                     })
                 },
                 select: (info) => {
@@ -490,7 +495,13 @@ export default function fullcalendar({
                     const { startStr, endStr, allDay, view, resource } = info
 
                     this.queueDateInteraction({
-                        selection: { startStr, endStr, allDay, view, resource },
+                        selection: {
+                            startStr,
+                            endStr,
+                            allDay,
+                            view: this.serializeView(view),
+                            resource,
+                        },
                     })
                 },
             })
@@ -555,6 +566,18 @@ export default function fullcalendar({
             Object.entries(this.listeners).forEach(([name, listener]) =>
                 window.addEventListener(name, listener),
             )
+        },
+
+        // A view only serialises to its type; the rest are getters.
+        serializeView(view) {
+            return {
+                type: view.type,
+                title: view.title,
+                currentStart: this.calendar.formatIso(view.currentStart),
+                currentEnd: this.calendar.formatIso(view.currentEnd),
+                activeStart: this.calendar.formatIso(view.activeStart),
+                activeEnd: this.calendar.formatIso(view.activeEnd),
+            }
         },
 
         destroy() {

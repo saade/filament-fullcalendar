@@ -1618,7 +1618,7 @@ function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 					this.queueDateInteraction({ click: {
 						dateStr: t,
 						allDay: n,
-						view: r,
+						view: this.serializeView(r),
 						resource: i
 					} });
 				},
@@ -1629,7 +1629,7 @@ function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 						startStr: t,
 						endStr: n,
 						allDay: r,
-						view: i,
+						view: this.serializeView(i),
 						resource: a
 					} });
 				}
@@ -1651,6 +1651,16 @@ function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 			this.listeners = Object.fromEntries(Object.entries(oe).map(([t, n]) => [`filament-fullcalendar--${t}`, ({ detail: t }) => {
 				t?.calendar && t.calendar !== e || n(t ?? {});
 			}])), Object.entries(this.listeners).forEach(([e, t]) => window.addEventListener(e, t));
+		},
+		serializeView(e) {
+			return {
+				type: e.type,
+				title: e.title,
+				currentStart: this.calendar.formatIso(e.currentStart),
+				currentEnd: this.calendar.formatIso(e.currentEnd),
+				activeStart: this.calendar.formatIso(e.activeStart),
+				activeEnd: this.calendar.formatIso(e.activeEnd)
+			};
 		},
 		destroy() {
 			this.isDestroyed = !0, Object.entries(this.listeners).forEach(([e, t]) => window.removeEventListener(e, t)), clearInterval(this.pollingTimer), this.resizeObserver?.disconnect(), this.calendar?.destroy(), this.calendar = null;
