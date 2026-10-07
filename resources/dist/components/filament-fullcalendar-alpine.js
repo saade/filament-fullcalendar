@@ -1560,7 +1560,7 @@ function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 						return typeof n == "function" ? n(e) : typeof n != "string" || e.matches(n);
 					},
 					drop: (e) => {
-						if (g("drop", e)) return;
+						if (g("drop", e) || !e.draggedEl.matches(Z)) return;
 						let { calendar: t, ...n } = Q(e.draggedEl);
 						this.$wire.handleExternalDrop(n, e.dateStr, e.allDay, e.resource ?? null);
 					}

@@ -332,6 +332,10 @@ export default function fullcalendar({
                     drop: (info) => {
                         if (isCancelledByCallback('drop', info)) return
 
+                        // An event dragged over from another calendar ends
+                        // up here too, and is not one of our items.
+                        if (!info.draggedEl.matches(draggableSelector)) return
+
                         const { calendar, ...item } = readDraggable(
                             info.draggedEl,
                         )
