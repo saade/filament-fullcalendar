@@ -30,6 +30,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `$info->view` in `onDateClick()` and `onDateSelect()` held only the view's type and a large block of internals. It now holds `type`, `title`, `currentStart`, `currentEnd`, `activeStart` and `activeEnd`.
 - `EventData::allDay(false)` was not sent, so an event with a date-only start could not be shown as timed.
 - Custom locale objects in the `locales` key of `config()` were discarded.
+- A `plugins` key in `config()` stopped the calendar from rendering. Its names are now loaded like the ones from `plugins()`.
 - A `timeZone` set in `config()` changed the calendar in the browser while the server kept reading dates in the panel's timezone. Both use it now.
 - An event from another event source that happened to have an id was looked up in the widget's `$model`, which could open or move the wrong record, or fail when no record matched. Only the widget's own events are looked up now.
 - Dragging or resizing one occurrence of a recurring event wrote that occurrence's dates to the record, moving the start of the whole series. A recurring event now moves back unless the widget handles it, and `$info->event->isRecurring` tells the handlers which is which.

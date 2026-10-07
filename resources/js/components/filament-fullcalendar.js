@@ -169,6 +169,7 @@ export default function fullcalendar({
             const {
                 mobileInitialView,
                 mobileBreakpoint = 768,
+                plugins: configPlugins = [],
                 locales: configLocales = [],
                 ...fullCalendarConfig
             } = config
@@ -190,7 +191,9 @@ export default function fullcalendar({
             ].filter(Boolean)
 
             const [loadedPlugins, locales] = await Promise.all([
-                loadPlugins([...new Set([...plugins, ...sourcePlugins])]),
+                loadPlugins([
+                    ...new Set([...plugins, ...configPlugins, ...sourcePlugins]),
+                ]),
                 loadLocales(config.locale ?? locale),
             ])
 
