@@ -76,6 +76,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Heading and header actions](#heading-and-header-actions)
   - [Toolbar buttons](#toolbar-buttons)
   - [Reacting to navigation](#reacting-to-navigation)
+  - [Styling](#styling)
   - [Loading state](#loading-state)
 - [Testing](#testing)
 - [Recipes](#recipes)
@@ -397,11 +398,6 @@ public function config(): array
 {
     return [
         'initialView' => 'timeGridWeek',
-        'headerToolbar' => [
-            'left' => 'prev,next today',
-            'center' => 'title',
-            'right' => 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
-        ],
         'firstDay' => 1,
         'slotMinTime' => '08:00:00',
         'slotMaxTime' => '20:00:00',
@@ -441,7 +437,7 @@ Options people ask about most often:
 
 | Goal | Option |
 | ---- | ------ |
-| Choose which views the toolbar offers | [`headerToolbar`](https://legacy.fullcalendar.io/v6/headerToolbar), with view names such as `dayGridMonth`, `timeGridWeek`, `timeGridDay`, `listWeek` or `multiMonthYear` (needs the `multiMonth` plugin) |
+| Choose which views the toolbar offers | [`toolbarButtons()`](#toolbar-buttons), with view names such as `dayGridMonth`, `timeGridWeek`, `timeGridDay`, `listWeek` or `multiMonthYear` (needs the `multiMonth` plugin) |
 | Choose the first view | [`initialView`](https://legacy.fullcalendar.io/v6/initialView) |
 | Start the week on Monday | [`firstDay`](https://legacy.fullcalendar.io/v6/firstDay) |
 | Limit the events shown per day | [`dayMaxEvents`](https://legacy.fullcalendar.io/v6/dayMaxEvents) |
@@ -553,7 +549,7 @@ class CalendarWidget extends FullCalendarWidget
 }
 ```
 
-That is all it takes: a "New event" button appears above the calendar, clicking an event opens it, and the modal offers Edit and Delete. The form does not have to match the FullCalendar event object; add whichever fields your model has.
+That is all it takes: selecting dates on the calendar opens the form to create an event, clicking an event opens it, and the modal offers Edit and Delete. For a "New event" button, add a `CreateAction` to [`headerActions()`](#customizing-actions). The form does not have to match the FullCalendar event object; add whichever fields your model has.
 
 ## Viewing events with an infolist
 
@@ -973,6 +969,8 @@ The layouts that put a table's filters beside it are not supported.
 
 The filter button is the `filters` tool. `toolbarButtons()` decides where it goes, and a toolbar without it has no filter button.
 
+While the user is filling the form, its state is in `$this->deferredFilters`. "Apply filters" copies it to `$this->filters`, calls `updatedFilters()` and fetches the events again, and "Reset" puts the fields back to their defaults and does the same. With `$hasDeferredFilters = false` the fields write to `$this->filters` directly.
+
 These properties and methods adjust the rest:
 
 | Setting | What it does |
@@ -1062,12 +1060,16 @@ class RoomTimelineWidget extends FullCalendarWidget
     {
         return [
             'initialView' => 'resourceTimelineWeek',
-            'headerToolbar' => [
-                'left' => 'prev,next today',
-                'center' => 'title',
-                'right' => 'resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth',
-            ],
             'resourceAreaHeaderContent' => 'Rooms',
+        ];
+    }
+
+    protected function toolbarButtons(): array
+    {
+        return [
+            'start' => [['prev', 'next'], 'today'],
+            'center' => ['title'],
+            'end' => [['resourceTimelineDay', 'resourceTimelineWeek', 'resourceTimelineMonth']],
         ];
     }
 
@@ -1249,7 +1251,7 @@ Everything FullCalendar offers is reachable: plain values through `config()`, fu
 
 ## Views of your own length
 
-FullCalendar's views can be given [any duration](https://legacy.fullcalendar.io/v6/custom-view-with-settings). Define the view under `views` and add its name to the toolbar:
+FullCalendar's views can be given [any duration](https://legacy.fullcalendar.io/v6/custom-view-with-settings). Define the view under `views` and name it in [`toolbarButtons()`](#toolbar-buttons):
 
 ```php
 public function config(): array
@@ -1259,11 +1261,15 @@ public function config(): array
             'dayGridThreeDay' => ['type' => 'dayGrid', 'duration' => ['days' => 3], 'buttonText' => '3 days'],
             'timeGridFourDay' => ['type' => 'timeGrid', 'duration' => ['days' => 4], 'buttonText' => '4 days'],
         ],
-        'headerToolbar' => [
-            'left' => 'prev,next today',
-            'center' => 'title',
-            'right' => 'dayGridMonth,dayGridThreeDay,timeGridFourDay',
-        ],
+    ];
+}
+
+protected function toolbarButtons(): array
+{
+    return [
+        'start' => [['prev', 'next'], 'today'],
+        'center' => ['title'],
+        'end' => [['dayGridMonth', 'dayGridThreeDay', 'timeGridFourDay']],
     ];
 }
 ```
@@ -1300,7 +1306,7 @@ public function jsCallbacks(): array
 }
 ```
 
-Add `aroundToday` to the toolbar as above. `views` in `jsCallbacks()` replaces `views` in `config()`, so when you use it, define all your own views there.
+Name `aroundToday` in `toolbarButtons()` as above. `views` in `jsCallbacks()` replaces `views` in `config()`, so when you use it, define all your own views there.
 
 ## A year at a glance
 
@@ -1707,6 +1713,23 @@ protected function onDatesSet(DatesSetInfo $info): void
 
 The browser only reports this when the method exists, since it costs a request on every navigation. For JavaScript that needs no server, use a `datesSet` entry in `jsCallbacks()`.
 
+## Styling
+
+The widget's own elements have classes to style from your theme. FullCalendar's elements keep their `fc-` classes, inside `.filament-fullcalendar`.
+
+| Class | Element |
+| --- | --- |
+| `.fi-fc-tabs` | The tabs above the card. |
+| `.fi-fc-toolbar`, `.fi-fc-footer-toolbar` | A toolbar, and the one under the calendar. |
+| `.fi-fc-toolbar-section`, `.fi-fc-toolbar-start`, `.fi-fc-toolbar-center`, `.fi-fc-toolbar-end` | A section of a toolbar. |
+| `.fi-fc-toolbar-heading` | The `title` tool. |
+| `.fi-fc-tool`, `.fi-fc-tool.fi-active` | A tool, and one that is active. Each also has a `data-tool` attribute with its name. |
+| `.fi-fc-tool-badge` | The number on a tool. |
+| `.fi-fc-tool-group` | A dropdown of tools. |
+| `.fi-fc-filters`, `.fi-fc-filters-heading`, `.fi-fc-filters-actions` | The filter form, its heading and its buttons. |
+| `.fi-fc-filters-dropdown`, `.fi-fc-filters-modal`, `.fi-fc-filters-above-content`, `.fi-fc-filters-below-content` | The filter form in each layout. |
+| `.filament-fullcalendar` | The calendar itself. |
+
 ## Loading state
 
 While events are being fetched, the calendar has `aria-busy="true"` and its stylesheet dims the view. Style `.filament-fullcalendar[aria-busy='true']` to change that, or add a `loading` entry to `jsCallbacks()`.
@@ -1761,6 +1784,31 @@ it('moves an event', function () {
 | `clickCalendarDate($date, allDay: true, resource: null)` | Click a day or a time slot. |
 
 `$start` and `$end` of the first four are the range to look in, a year either side of today by default. Where a helper takes an event, pass the record, its id, or the event as an array. Dates are strings or date objects.
+
+Filters, tabs and actions are tested with Livewire's and Filament's own helpers. A filter is filled where the form keeps it and then applied, and a toolbar action is called by its name:
+
+```php
+it('filters by room', function () {
+    Livewire::test(CalendarWidget::class)
+        ->set('deferredFilters.room_id', $room->getKey())
+        ->call('applyFilters')
+        ->assertCalendarEventCount(1)
+        ->call('resetFilters')
+        ->assertCalendarEventCount(3);
+});
+
+it('shows only confirmed events in their tab', function () {
+    Livewire::test(CalendarWidget::class)
+        ->set('activeTab', 'confirmed')
+        ->assertCalendarDoesNotHaveEvent('Tentative');
+});
+
+it('goes to a date from the toolbar', function () {
+    Livewire::test(CalendarWidget::class)
+        ->callAction('goToDate', ['date' => '2026-12-01'])
+        ->assertDispatched('filament-fullcalendar--goto');
+});
+```
 
 # Recipes
 

@@ -202,7 +202,8 @@ trait HasToolbar
     protected function makeViewTool(string $name): ?CalendarTool
     {
         $isView = preg_match('/^(dayGrid|timeGrid|list|multiMonth|timeline|resourceTimeline|resourceTimeGrid|resourceDayGrid)([A-Z]\w*)?$/', $name)
-            || array_key_exists($name, (array) ($this->getConfig()['views'] ?? []));
+            || array_key_exists($name, (array) ($this->getConfig()['views'] ?? []))
+            || array_key_exists('views', $this->getJsCallbacks());
 
         if (! $isView) {
             return null;

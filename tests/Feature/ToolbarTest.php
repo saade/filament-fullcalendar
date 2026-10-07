@@ -188,3 +188,11 @@ it('leaves the toolbars to Livewire and only keeps the calendar itself out of it
         ->and($html)->not->toContain('x-ignore')
         ->and(substr_count($html, 'wire:ignore'))->toBe(2);
 });
+
+it('takes a name for a view when the views are defined in JavaScript', function () {
+    $tool = Livewire::test(Saade\FilamentFullCalendar\Tests\Fixtures\CallbacksCalendarWidget::class, ['callbackName' => 'views'])
+        ->instance()
+        ->getTool('aroundToday');
+
+    expect($tool->getJsHandler())->toBe("calendar?.changeView('aroundToday')");
+});
