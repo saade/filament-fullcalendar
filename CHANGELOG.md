@@ -26,6 +26,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 
 - In dark mode, the popover that lists a day's hidden events had a white background and an unreadable title.
 - The popover that lists a day's hidden events stayed on top of the modal opened from it.
+- An all-day event dragged to a time slot was saved with its new start and its old end. It is now saved with the default duration the calendar shows, an hour unless `defaultTimedEventDuration` says otherwise.
 - A calendar created while hidden, in a closed modal or an inactive tab, rendered collapsed. It now sizes itself when it becomes visible.
 - Clicking an event with no record behind it, such as a holiday, opened a broken modal ([#238](https://github.com/saade/filament-fullcalendar/discussions/238)). It now does nothing.
 - An event with a `url` caused a full page load in panels with SPA mode. It now navigates like any other link.

@@ -70,13 +70,13 @@ describe('with the start and end attributes set', function () {
         'a single day, where the calendar reports no end' => [null, '2026-10-07 23:59:59'],
     ]);
 
-    it('keeps the end of a timed event that has none', function () {
+    it('gives a timed event without an end the default duration', function () {
         $withoutEnd = ['id' => $this->event->getKey(), 'start' => '2026-10-07T09:00:00-03:00', 'end' => null];
 
         Livewire::test(SavingCalendarWidget::class)
             ->call('handleEventDrop', $withoutEnd, $this->oldEvent, [], ['days' => 1], null, null);
 
-        expect(eventDates($this->event))->toBe(['2026-10-07 12:00:00', '2026-10-06 13:00:00']);
+        expect(eventDates($this->event))->toBe(['2026-10-07 12:00:00', '2026-10-07 13:00:00']);
     });
 
     it('puts the event back and saves nothing when the policy denies updating', function () {
@@ -171,4 +171,67 @@ it('fetches the events once when a dropped event is saved through the edit actio
         ->where('name', 'filament-fullcalendar--refresh');
 
     expect($refreshes)->toHaveCount(1);
+});
+
+it('gives an all-day event dragged to a time slot the default duration', function () {
+    $event = Event::create(['title' => 'Offsite', 'starts_at' => '2026-10-06 00:00:00', 'ends_at' => '2026-10-08 23:59:59']);
+
+    Livewire::test(SavingCalendarWidget::class)
+        ->call(
+            'handleEventDrop',
+            ['id' => $event->getKey(), 'start' => '2026-10-07T09:00:00Z', 'end' => null, 'allDay' => false],
+            ['id' => $event->getKey(), 'start' => '2026-10-06', 'end' => '2026-10-09', 'allDay' => true],
+            [],
+            ['days' => 1, 'milliseconds' => 32400000],
+            null,
+            null,
+        )
+        ->assertReturned(false);
+
+    expect($event->refresh())
+        ->starts_at->toDateTimeString()->toBe('2026-10-07 09:00:00')
+        ->ends_at->toDateTimeString()->toBe('2026-10-07 10:00:00');
+});
+
+it('reads the default duration of a timed event from the config', function (mixed $duration, string $end) {
+    $event = Event::create(['title' => 'Offsite', 'starts_at' => '2026-10-06 00:00:00', 'ends_at' => '2026-10-06 23:59:59']);
+
+    filament('filament-fullcalendar')->config(['defaultTimedEventDuration' => $duration]);
+
+    Livewire::test(SavingCalendarWidget::class)
+        ->call(
+            'handleEventDrop',
+            ['id' => $event->getKey(), 'start' => '2026-10-07T09:00:00Z', 'end' => null, 'allDay' => false],
+            ['id' => $event->getKey(), 'start' => '2026-10-06', 'end' => '2026-10-07', 'allDay' => true],
+            [],
+            [],
+            null,
+            null,
+        );
+
+    filament('filament-fullcalendar')->config([]);
+
+    expect($event->refresh()->ends_at->toDateTimeString())->toBe($end);
+})->with([
+    'hours and minutes' => ['00:30', '2026-10-07 09:30:00'],
+    'with seconds' => ['02:15:00', '2026-10-07 11:15:00'],
+    'an object' => [['hours' => 1, 'minutes' => 45], '2026-10-07 10:45:00'],
+    'milliseconds' => [5400000, '2026-10-07 10:30:00'],
+]);
+
+it('keeps the end of a timed event that has one', function () {
+    $event = Event::create(['title' => 'Meeting', 'starts_at' => '2026-10-06 09:00:00', 'ends_at' => '2026-10-06 10:00:00']);
+
+    Livewire::test(SavingCalendarWidget::class)
+        ->call(
+            'handleEventDrop',
+            ['id' => $event->getKey(), 'start' => '2026-10-07T09:00:00Z', 'end' => '2026-10-07T11:30:00Z', 'allDay' => false],
+            ['id' => $event->getKey(), 'start' => '2026-10-06T09:00:00Z', 'end' => '2026-10-06T10:00:00Z', 'allDay' => false],
+            [],
+            ['days' => 1],
+            null,
+            null,
+        );
+
+    expect($event->refresh()->ends_at->toDateTimeString())->toBe('2026-10-07 11:30:00');
 });

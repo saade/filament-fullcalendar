@@ -149,13 +149,39 @@ trait InteractsWithEvents
                 : $start->endOfDay();
         } else {
             $start = $event->start->setTimezone($timezone);
-            $end = $event->end?->setTimezone($timezone);
+
+            // An event dragged from the all-day section to a time slot arrives
+            // without an end and is shown with the default duration.
+            $end = $event->end?->setTimezone($timezone) ?? $start->add($this->getDefaultTimedEventDuration());
         }
 
         return array_filter([
             $this->getStartAttribute() => $start,
             $this->getEndAttribute() ?? '' => $end,
         ], fn (?CarbonImmutable $date, string $attribute): bool => filled($attribute) && $date, ARRAY_FILTER_USE_BOTH);
+    }
+
+    protected function getDefaultTimedEventDuration(): CarbonInterval
+    {
+        $duration = data_get($this->getConfig(), 'defaultTimedEventDuration', '01:00');
+
+        if (is_numeric($duration)) {
+            return CarbonInterval::milliseconds((int) $duration)->cascade();
+        }
+
+        if (is_array($duration)) {
+            return $this->makeInterval($duration)->add(CarbonInterval::create(
+                years: 0,
+                weeks: (int) ($duration['weeks'] ?? $duration['week'] ?? 0),
+                hours: (int) ($duration['hours'] ?? $duration['hour'] ?? 0),
+                minutes: (int) ($duration['minutes'] ?? $duration['minute'] ?? 0),
+                seconds: (int) ($duration['seconds'] ?? $duration['second'] ?? 0),
+            ));
+        }
+
+        [$hours, $minutes, $seconds] = array_map(intval(...), [...explode(':', (string) $duration), 0, 0]);
+
+        return CarbonInterval::hours($hours)->minutes($minutes)->seconds($seconds);
     }
 
     protected function getStartAttribute(): ?string
