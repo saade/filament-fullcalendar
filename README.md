@@ -1117,6 +1117,8 @@ The widget has methods to drive its calendar. Call them from the widget itself, 
 | `goToDate(DateTimeInterface \| string $date)` | Moves to a date |
 | `changeView(string $view, $date = null)` | Switches view, for example to `timeGridWeek`, and goes to a date when one is given |
 | `next()`, `previous()`, `today()` | Navigates |
+| `scrollToTime(string $time)` | Scrolls a view with time slots to a time of day, as in `08:00` |
+| `setOption(string $option, mixed $value)` | Changes a [FullCalendar option](https://fullcalendar.io/docs) of the calendar on screen |
 
 ```php
 use Filament\Actions\Action;
@@ -1135,6 +1137,19 @@ protected function headerActions(): array
 
 These only affect the calendar they are called on, so several calendars on one page stay independent.
 
+`setOption()` is for changing how the calendar looks in response to something, such as a filter:
+
+```php
+public function updatedFilters(): void
+{
+    parent::updatedFilters();
+
+    $this->setOption('weekends', (bool) ($this->filters['show_weekends'] ?? true));
+}
+```
+
+The change lasts until the page is loaded again, so an option the calendar should start with belongs in `config()`. Options that take a function cannot be set this way, and neither can `editable`, `selectable`, `droppable` and `timeZone`, which the server has to know about: set those in `config()`.
+
 Other Livewire components and JavaScript can reach a calendar through browser events. An event without a `calendar` reaches every calendar on the page; pass a widget's Livewire id as `calendar` to reach only that one:
 
 | Event | Effect |
@@ -1142,7 +1157,10 @@ Other Livewire components and JavaScript can reach a calendar through browser ev
 | `filament-fullcalendar--refresh` | Fetches the events again |
 | `filament-fullcalendar--prev`, `filament-fullcalendar--next`, `filament-fullcalendar--today` | Navigates |
 | `filament-fullcalendar--goto` with `date` | Moves to a date |
-| `filament-fullcalendar--view` with `view` | Switches view |
+| `filament-fullcalendar--view` with `view`, and optionally `date` | Switches view |
+| `filament-fullcalendar--scroll` with `time` | Scrolls to a time of day |
+| `filament-fullcalendar--option` with `option` and `value` | Changes an option |
+| `filament-fullcalendar--refresh-resources` | Fetches the resources again |
 
 ```php
 $this->dispatch('filament-fullcalendar--refresh');

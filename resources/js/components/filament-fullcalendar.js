@@ -553,6 +553,9 @@ export default function fullcalendar({
                 view: ({ view, date }) =>
                     this.calendar.changeView(view, date ?? undefined),
                 goto: ({ date }) => this.calendar.gotoDate(date),
+                scroll: ({ time }) => this.calendar.scrollToTime(time),
+                option: ({ option, value }) =>
+                    this.calendar.setOption(option, value),
             }
 
             // An event that names a calendar is only meant for that one.

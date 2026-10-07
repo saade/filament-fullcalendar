@@ -46,6 +46,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` drive the calendar from PHP.
 - Models that implement `Eventable` describe their own event, and `fetchEvents()` can return them as an array, a collection or a query. One calendar can show several models: each event resolves to a record of its own model through a signed reference, with that model's label and policy.
 - When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.
+- `scrollToTime()` and `setOption()` join the methods that drive the calendar from PHP.
 - `changeView()` takes an optional date to go to at the same time.
 - `$info->event->source` and `$info->event->resourceIds` tell the event handlers which event source an event came from and which resources it is shown in.
 - `$isReadOnly` makes a calendar read-only: events can be viewed, and nothing can be created, changed, moved or deleted.

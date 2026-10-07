@@ -313,6 +313,27 @@ trait InteractsWithEvents
     }
 
     /**
+     * @param  string  $time  A time of day, as in `08:00`.
+     */
+    public function scrollToTime(string $time): void
+    {
+        $this->dispatchCalendarEvent('scroll', ['time' => $time]);
+    }
+
+    /**
+     * The change lasts until the page is loaded again. An option the
+     * calendar should start with belongs in `config()`.
+     */
+    public function setOption(string $option, mixed $value): void
+    {
+        if (in_array($option, ['editable', 'selectable', 'droppable', 'timeZone', 'plugins', 'locales', 'events', 'eventSources', 'resources'], strict: true)) {
+            throw new LogicException("[{$option}] cannot be changed with setOption(), because the server has to know about it as well. Set it in config().");
+        }
+
+        $this->dispatchCalendarEvent('option', ['option' => $option, 'value' => $value]);
+    }
+
+    /**
      * Tell this calendar, and no other one on the page, to do something.
      *
      * @param  array<string, mixed>  $detail

@@ -17,6 +17,9 @@ it('addresses its own calendar when it controls it', function (string $method, a
     'today()' => ['today', [], 'today', []],
     'changeView()' => ['changeView', ['timeGridWeek'], 'view', ['view' => 'timeGridWeek']],
     'goToDate() with a string' => ['goToDate', ['2026-12-01'], 'goto', ['date' => '2026-12-01']],
+    'scrollToTime()' => ['scrollToTime', ['08:00'], 'scroll', ['time' => '08:00']],
+    'setOption() with a value' => ['setOption', ['weekends', false], 'option', ['option' => 'weekends', 'value' => false]],
+    'setOption() with an array' => ['setOption', ['businessHours', ['daysOfWeek' => [1, 2], 'startTime' => '09:00']], 'option', ['option' => 'businessHours', 'value' => ['daysOfWeek' => [1, 2], 'startTime' => '09:00']]],
 ]);
 
 it('accepts a date object in goToDate()', function () {
@@ -43,3 +46,7 @@ it('goes to a date while changing the view', function () {
         ->call('changeView', 'timeGridWeek', '2026-12-01')
         ->assertDispatched('filament-fullcalendar--view', view: 'timeGridWeek', date: '2026-12-01', calendar: $component->instance()->getId());
 });
+
+it('refuses to change an option the server has to know about', function (string $option) {
+    Livewire::test(EventCalendarWidget::class)->instance()->setOption($option, true);
+})->with(['editable', 'selectable', 'droppable', 'timeZone', 'events'])->throws(LogicException::class, 'Set it in config().');

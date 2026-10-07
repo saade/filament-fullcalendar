@@ -1650,7 +1650,9 @@ function rn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 				next: () => this.calendar.next(),
 				today: () => this.calendar.today(),
 				view: ({ view: e, date: t }) => this.calendar.changeView(e, t ?? void 0),
-				goto: ({ date: e }) => this.calendar.gotoDate(e)
+				goto: ({ date: e }) => this.calendar.gotoDate(e),
+				scroll: ({ time: e }) => this.calendar.scrollToTime(e),
+				option: ({ option: e, value: t }) => this.calendar.setOption(e, t)
 			};
 			this.listeners = Object.fromEntries(Object.entries(S).map(([t, n]) => [`filament-fullcalendar--${t}`, ({ detail: t }) => {
 				t?.calendar && t.calendar !== e || n(t ?? {});
