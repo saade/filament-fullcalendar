@@ -2,6 +2,10 @@ parameters:
     level: 4
     paths:
         - src
+    excludePaths:
+        # Its methods return closures that Livewire binds to the test object,
+        # so inside them `$this` is not the class PHPStan sees.
+        - src/Testing/TestsCalendar.php
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true

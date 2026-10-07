@@ -36,6 +36,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - Models that implement `Eventable` describe their own event, and `fetchEvents()` can return them as an array, a collection or a query. One calendar can show several models: each event resolves to a record of its own model through a signed reference, with that model's label and policy.
 - When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.
 - `php artisan make:filament-fullcalendar-widget` creates a working calendar widget, optionally for a model.
+- Testing helpers for Livewire tests, such as `clickCalendarEvent()`, `dropCalendarEvent()`, `selectCalendarDates()` and `assertCalendarHasEvent()`.
 - `$pollingInterval` makes the calendar fetch its events again at an interval.
 - `mobileInitialView` in `config()` opens the calendar in a different view on narrow screens.
 - `EventData::tooltip()` shows a tooltip when an event is hovered.

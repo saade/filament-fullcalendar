@@ -68,6 +68,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
   - [Toolbar buttons](#toolbar-buttons)
   - [Reacting to navigation](#reacting-to-navigation)
   - [Loading state](#loading-state)
+- [Testing](#testing)
 - [Recipes](#recipes)
 - [Changelog](#changelog)
 - [Contributing](#contributing)
@@ -1335,6 +1336,57 @@ The browser only reports this when the method exists, since it costs a request o
 ## Loading state
 
 While events are being fetched, the calendar has `aria-busy="true"` and its stylesheet dims the view. Style `.filament-fullcalendar[aria-busy='true']` to change that, or add a `loading` entry to `jsCallbacks()`.
+
+# Testing
+
+The package adds helpers to Livewire's tests that do what a user does on the calendar, so a test does not have to write out what the browser sends:
+
+```php
+use App\Filament\Widgets\CalendarWidget;
+use App\Models\Event;
+use Livewire\Livewire;
+
+it('shows the events of this month', function () {
+    $event = Event::factory()->create(['name' => 'Kickoff', 'starts_at' => now()]);
+
+    Livewire::test(CalendarWidget::class)
+        ->assertCalendarHasEvent('Kickoff')
+        ->assertCalendarHasEvent($event)
+        ->assertCalendarDoesNotHaveEvent('Retro');
+});
+
+it('creates an event on the selected days', function () {
+    Livewire::test(CalendarWidget::class)
+        ->selectCalendarDates('2026-10-06', '2026-10-08')
+        ->assertActionMounted('create')
+        ->fillForm(['name' => 'Offsite'])
+        ->callMountedAction()
+        ->assertHasNoFormErrors([], 'form');
+});
+
+it('moves an event', function () {
+    $event = Event::factory()->create();
+
+    Livewire::test(CalendarWidget::class)
+        ->dropCalendarEvent($event, '2026-10-07T09:00:00Z', '2026-10-07T10:00:00Z');
+
+    expect($event->refresh()->starts_at->toDateString())->toBe('2026-10-07');
+});
+```
+
+| Helper | Description |
+| ------ | ----------- |
+| `assertCalendarHasEvent($event, $start, $end)` | The calendar shows the event. `$event` is a title, a record, an array of values the event has to have (with dots for nested ones, as in `'extendedProps.status'`), or a function that is given each event. |
+| `assertCalendarDoesNotHaveEvent($event, $start, $end)` | The opposite. |
+| `assertCalendarEventCount($count, $start, $end)` | How many events the calendar shows. |
+| `getCalendarEvents($start, $end)` | The events as arrays, for assertions of your own. Ends the chain. |
+| `clickCalendarEvent($event)` | Click an event. |
+| `dropCalendarEvent($event, $start, $end, allDay: false, resource: null)` | Drag an event to new dates, and to a resource. |
+| `resizeCalendarEvent($event, $start, $end, allDay: false)` | Resize an event. |
+| `selectCalendarDates($start, $end, allDay: true, resource: null)` | Drag over a range. For whole days, give the first and the last day. |
+| `clickCalendarDate($date, allDay: true, resource: null)` | Click a day or a time slot. |
+
+`$start` and `$end` of the first four are the range to look in, a year either side of today by default. Where a helper takes an event, pass the record, its id, or the event as an array. Dates are strings or date objects.
 
 # Recipes
 

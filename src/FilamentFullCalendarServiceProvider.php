@@ -6,7 +6,9 @@ use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
+use Livewire\Features\SupportTesting\Testable;
 use Saade\FilamentFullCalendar\Commands\MakeFullCalendarWidgetCommand;
+use Saade\FilamentFullCalendar\Testing\TestsCalendar;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -31,6 +33,8 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
             $this->getAssets(),
             $this->getAssetPackageName(),
         );
+
+        Testable::mixin(new TestsCalendar());
     }
 
     protected function getAssetPackageName(): ?string

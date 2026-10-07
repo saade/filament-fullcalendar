@@ -265,6 +265,10 @@ There is also a new `infolist(Schema $schema): Schema`. When it is defined, clic
 
 The widget now implements `Filament\Schemas\Contracts\HasSchemas` and uses `InteractsWithSchemas`, in place of the deprecated `HasForms` and `InteractsWithForms`. This only matters if your code type-hints the widget as `HasForms` or calls `getForm()`, `getForms()` or `getCachedForms()` on it.
 
+#### Tests can use the new helpers
+
+5.x adds [testing helpers](README.md#testing) such as `clickCalendarEvent($record)`, `dropCalendarEvent()` and `selectCalendarDates()`, which replace calls to the `handle*` methods with hand-written payloads.
+
 #### Tests need the schema name after an action has finished
 
 If you test your calendar widget, Filament's form assertions no longer find a default schema once the action has completed. Pass the schema name:
