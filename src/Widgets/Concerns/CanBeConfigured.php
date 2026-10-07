@@ -52,13 +52,32 @@ trait CanBeConfigured
         return FilamentFullCalendarPlugin::current()->getSchedulerLicenseKey();
     }
 
+    /**
+     * A read-only calendar shows events and lets them be viewed, and nothing
+     * on it can be created, changed, moved or deleted.
+     */
+    protected bool $isReadOnly = false;
+
+    public function isReadOnly(): bool
+    {
+        return $this->isReadOnly;
+    }
+
     public function isEditable(): bool
     {
-        return (bool) (data_get($this->config(), 'editable') ?? FilamentFullCalendarPlugin::current()->isEditable());
+        if ($this->isReadOnly()) {
+            return false;
+        }
+
+        return (bool) (data_get($this->getConfig(), 'editable') ?? FilamentFullCalendarPlugin::current()->isEditable());
     }
 
     public function isSelectable(): bool
     {
-        return (bool) (data_get($this->config(), 'selectable') ?? FilamentFullCalendarPlugin::current()->isSelectable());
+        if ($this->isReadOnly()) {
+            return false;
+        }
+
+        return (bool) (data_get($this->getConfig(), 'selectable') ?? FilamentFullCalendarPlugin::current()->isSelectable());
     }
 }

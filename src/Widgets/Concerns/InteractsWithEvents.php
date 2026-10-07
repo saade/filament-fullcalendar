@@ -397,6 +397,10 @@ trait InteractsWithEvents
      */
     public function handleEventDrop(array $event, array $oldEvent, array $relatedEvents, array $delta, ?array $oldResource = null, ?array $newResource = null): bool
     {
+        if (! $this->isEditable()) {
+            return true;
+        }
+
         $info = new EventDropInfo(
             event: $this->makeEventInfo($event),
             oldEvent: $this->makeEventInfo($oldEvent),
@@ -422,6 +426,10 @@ trait InteractsWithEvents
      */
     public function handleEventResize(array $event, array $oldEvent, array $relatedEvents, array $startDelta, array $endDelta): bool
     {
+        if (! $this->isEditable()) {
+            return true;
+        }
+
         $info = new EventResizeInfo(
             event: $this->makeEventInfo($event),
             oldEvent: $this->makeEventInfo($oldEvent),
@@ -443,6 +451,10 @@ trait InteractsWithEvents
      */
     public function handleDateSelect(string $start, ?string $end, bool $allDay, ?array $view = null, ?array $resource = null): void
     {
+        if (! $this->isSelectable()) {
+            return;
+        }
+
         $this->onDateSelect(DateSelectInfo::make($start, $end, $allDay, $view, $resource, $this->getTimezone()));
     }
 
@@ -454,6 +466,10 @@ trait InteractsWithEvents
      */
     public function handleDateClick(string $date, bool $allDay, ?array $view = null, ?array $resource = null, ?string $selectionEnd = null): void
     {
+        if (! $this->isSelectable()) {
+            return;
+        }
+
         $this->onDateClick(DateClickInfo::make($date, $allDay, $view, $resource, $selectionEnd, $this->getTimezone()));
     }
 

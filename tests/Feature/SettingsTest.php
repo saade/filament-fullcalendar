@@ -51,7 +51,7 @@ it('works on a panel that does not register the plugin', function () {
 
     $component = Livewire::test(EventCalendarWidget::class)
         ->assertOk()
-        ->call('handleDateSelect', '2026-10-06', '2026-10-07', true, null, null)
+        ->mountAction('create')
         ->assertActionMounted('create');
 
     expect($component->instance()->getTimezone())->toBe('UTC')

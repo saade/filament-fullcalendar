@@ -34,6 +34,7 @@ Upgrading from 4.x or 3.x? Read the [upgrade guide](UPGRADING.md).
 - [Configuration](#configuration)
   - [Plugin methods](#plugin-methods)
   - [Configuring a single widget](#configuring-a-single-widget)
+  - [Read-only calendars](#read-only-calendars)
   - [A different view on phones](#a-different-view-on-phones)
   - [Premium plugins and licensing](#premium-plugins-and-licensing)
 - [Interacting with actions](#interacting-with-actions)
@@ -438,6 +439,27 @@ Options people ask about most often:
 | 24-hour times | [`eventTimeFormat`](https://fullcalendar.io/docs/eventTimeFormat), [`slotLabelFormat`](https://fullcalendar.io/docs/slotLabelFormat) |
 
 `config()` is sent to the browser as JSON, so it cannot hold JavaScript functions. Those go in [`jsCallbacks()`](#javascript-callbacks).
+
+## Read-only calendars
+
+To show events without letting anyone change them, make the calendar read-only:
+
+```php
+protected bool $isReadOnly = true;
+```
+
+Events can still be clicked to view them, and navigation, filters and tabs keep working. Dragging, resizing, selecting dates and dropping items are turned off, and the create, edit and delete actions are hidden. All of this is refused on the server too, so it holds against requests that do not come from the calendar.
+
+Override `isReadOnly()` to decide per user:
+
+```php
+public function isReadOnly(): bool
+{
+    return ! auth()->user()->can('manage', Event::class);
+}
+```
+
+Actions of your own that are not create, edit or delete actions are not affected; hide those yourself.
 
 ## A different view on phones
 

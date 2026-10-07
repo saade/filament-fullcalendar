@@ -8,6 +8,8 @@ All notable changes to `filament-fullcalendar` will be documented in this file.
 
 These change the behavior of existing calendars. See the [upgrade guide](UPGRADING.md#from-4x-to-5x).
 
+- Moving, resizing and selecting are refused on the server when the calendar is not `editable` or `selectable`. Before, those settings only stopped the calendar itself from asking.
+- `editable`, `selectable` and `droppable` set in the panel plugin's `config()` array are now respected.
 - The JavaScript is split into parts that are downloaded on demand. A calendar with the standard views loads 155 KB gzipped, down from 204 KB, or 93 KB without the `moment` plugins. The premium plugins, `rrule` and the locales are only downloaded by calendars that use them. Run `php artisan filament:assets` after updating.
 - The view, create, edit and delete actions follow the model's policy when it has one. In 4.x, any user who could see the widget could open, edit or delete any record of the model by id unless `authorize()` was called on each action.
 - Records are scoped to the current tenant in panels with tenancy.
@@ -35,6 +37,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` drive the calendar from PHP.
 - Models that implement `Eventable` describe their own event, and `fetchEvents()` can return them as an array, a collection or a query. One calendar can show several models: each event resolves to a record of its own model through a signed reference, with that model's label and policy.
 - When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.
+- `$isReadOnly` makes a calendar read-only: events can be viewed, and nothing can be created, changed, moved or deleted.
 - `php artisan make:filament-fullcalendar-widget` creates a working calendar widget, optionally for a model.
 - Testing helpers for Livewire tests, such as `clickCalendarEvent()`, `dropCalendarEvent()`, `selectCalendarDates()` and `assertCalendarHasEvent()`.
 - `$pollingInterval` makes the calendar fetch its events again at an interval.

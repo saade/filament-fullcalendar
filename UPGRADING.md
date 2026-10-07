@@ -16,7 +16,7 @@ Start with the changes your widgets need before they load at all, then review th
 1. Change the type hint of `fetchEvents()` from `array` to `FetchInfo`. The body can stay as it is. ([details](#fetchevents-and-the-event-handlers-take-info-objects))
 2. If you override `onEventClick()`, `onEventDrop()`, `onEventResize()` or `onDateSelect()`, update their signatures. ([details](#fetchevents-and-the-event-handlers-take-info-objects))
 3. Replace `$this->record`, `getRecord()` and `resolveRecord()` with their `eventRecord` names. ([details](#the-clicked-event-moved-from-record-to-eventrecord))
-4. Rename any method of your own called `getTimezone()`, `getLocale()`, `getPlugins()`, `getSchedulerLicenseKey()`, `goToDate()`, `changeView()`, `next()`, `previous()`, `today()`, `fetchResources()`, `refreshResources()`, `filtersSchema()`, `getTabs()`, `jsCallbacks()`, `toolbarActions()`, `onDatesSet()`, `isDroppable()`, `onExternalDrop()` or `eventSources()`, and any property called `$filters`, `$activeTab` or `$pollingInterval`, since the widget now defines them. ([details](#the-widget-has-filters-and-activetab-properties))
+4. Rename any method of your own called `getTimezone()`, `getLocale()`, `getPlugins()`, `getSchedulerLicenseKey()`, `goToDate()`, `changeView()`, `next()`, `previous()`, `today()`, `fetchResources()`, `refreshResources()`, `filtersSchema()`, `getTabs()`, `jsCallbacks()`, `toolbarActions()`, `onDatesSet()`, `isDroppable()`, `onExternalDrop()`, `eventSources()` or `isReadOnly()`, and any property called `$filters`, `$activeTab` or `$pollingInterval`, since the widget now defines them. ([details](#the-widget-has-filters-and-activetab-properties))
 5. In tests, call `handleFetchEvents()`, `handleEventClick()`, `handleEventDrop()`, `handleEventResize()` and `handleDateSelect()` in place of `fetchEvents()` and the `on*` methods, and pass the schema name to form assertions made after an action has finished. ([details](#tests-need-the-schema-name-after-an-action-has-finished))
 
 A widget written for 4.x that overrides none of the handlers and does not read `$this->record` needs only the first item to run on 5.x.
@@ -63,6 +63,8 @@ The `start` and `end` passed to the create action after a date selection are now
 ### `selectable` and `editable` in a widget's `config()` take effect
 
 In 4.x, a widget that set `'selectable' => true` in `config()` let users select dates but did not open the create action. It now does, and `'selectable' => false` on a widget turns selection off even when the panel plugin enables it. The same applies to `editable`.
+
+They are also enforced on the server now. A drop or resize on a calendar that is not `editable`, and a date click or selection on one that is not `selectable`, is refused even when the request is made by hand. If your tests call `handleEventDrop()`, `handleEventResize()`, `handleDateClick()` or `handleDateSelect()` on a widget, make sure the widget or the panel enables the matching setting.
 
 ### The clicked event moved from `$record` to `$eventRecord`
 

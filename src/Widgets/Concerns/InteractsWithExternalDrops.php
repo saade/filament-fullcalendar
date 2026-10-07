@@ -15,7 +15,7 @@ trait InteractsWithExternalDrops
 {
     public function isDroppable(): bool
     {
-        return (bool) data_get($this->config(), 'droppable', false);
+        return (! $this->isReadOnly()) && data_get($this->getConfig(), 'droppable', false);
     }
 
     /**

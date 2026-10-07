@@ -202,6 +202,12 @@ trait InteractsWithCalendarActions
         $model = $action->getModel();
         $record = $action->getRecord();
 
+        $changesRecords = ($action instanceof CreateAction) || ($action instanceof EditAction) || ($action instanceof DeleteAction);
+
+        if ($changesRecords && $this->isReadOnly()) {
+            return Response::deny();
+        }
+
         return match (true) {
             $action instanceof CreateAction && filled($model) => $this->getAuthorizationResponse('create', $model),
             $action instanceof DeleteAction && $record => $this->getAuthorizationResponse('delete', $record),
