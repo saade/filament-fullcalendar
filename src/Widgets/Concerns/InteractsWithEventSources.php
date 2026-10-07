@@ -24,7 +24,7 @@ trait InteractsWithEventSources
     public function getEventSources(): array
     {
         return array_map(
-            fn (mixed $source): array => $source instanceof Arrayable ? $source->toArray() : $source,
+            fn (mixed $source): array => $this->applyFilamentColor($source instanceof Arrayable ? $source->toArray() : $source, classKey: 'className'),
             array_values($this->eventSources()),
         );
     }

@@ -391,14 +391,14 @@ trait InteractsWithEvents
     protected function normalizeEvent(mixed $event): array
     {
         if ($event instanceof Eventable) {
-            return $this->getEventFromRecord($event);
+            return $this->applyFilamentColor($this->getEventFromRecord($event));
         }
 
         if ($event instanceof Arrayable) {
-            return $event->toArray();
+            return $this->applyFilamentColor($event->toArray());
         }
 
-        return $event;
+        return $this->applyFilamentColor($event);
     }
 
     /**

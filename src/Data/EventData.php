@@ -31,6 +31,8 @@ class EventData implements Arrayable, JsonSerializable
 
     protected bool $shouldOpenUrlInNewTab = false;
 
+    protected ?string $color = null;
+
     protected ?string $backgroundColor = null;
 
     protected ?string $borderColor = null;
@@ -152,6 +154,17 @@ class EventData implements Arrayable, JsonSerializable
     }
 
     /**
+     * The name of a Filament color, such as `success`, which makes the event
+     * look like a badge of that color.
+     */
+    public function color(string $color): static
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
      * The eventBackgroundColor override for this specific event.
      */
     public function backgroundColor(string $backgroundColor): static
@@ -228,6 +241,7 @@ class EventData implements Arrayable, JsonSerializable
             ...$this->url ? ['url' => $this->url, 'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab] : [],
             ...$this->groupId ? ['groupId' => $this->groupId] : [],
             ...$this->allDay !== null ? ['allDay' => $this->allDay] : [],
+            ...$this->color ? ['color' => $this->color] : [],
             ...$this->backgroundColor ? ['backgroundColor' => $this->backgroundColor] : [],
             ...$this->borderColor ? ['borderColor' => $this->borderColor] : [],
             ...$this->textColor ? ['textColor' => $this->textColor] : [],

@@ -21,8 +21,8 @@ it('describes a Google Calendar as a source that cannot be edited', function () 
     expect(calendarEventSources()[0])->toBe([
         'googleCalendarId' => 'holidays@group.v.calendar.google.com',
         'id' => 'holidays',
-        'color' => 'gray',
         'editable' => false,
+        'className' => ['fc-event-gray'],
     ]);
 });
 
@@ -37,7 +37,7 @@ it('keeps the address of an iCalendar feed out of the page', function () {
 });
 
 it('passes plain arrays through', function () {
-    expect(calendarEventSources()[2])->toBe(['url' => '/feeds/custom.json', 'color' => 'red']);
+    expect(calendarEventSources()[2])->toBe(['url' => '/feeds/custom.json', 'backgroundColor' => 'red', 'textColor' => '#fff']);
 });
 
 it('serves the feed from this application and reads it once while it is cached', function () {

@@ -26,6 +26,10 @@ class EventSourceData implements Arrayable, JsonSerializable
 
     protected ?string $color = null;
 
+    protected ?string $backgroundColor = null;
+
+    protected ?string $borderColor = null;
+
     protected ?string $textColor = null;
 
     protected ?string $className = null;
@@ -64,9 +68,27 @@ class EventSourceData implements Arrayable, JsonSerializable
         return $this;
     }
 
+    /**
+     * The name of a Filament color, such as `success`, which makes the events
+     * look like badges of that color.
+     */
     public function color(string $color): static
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    public function backgroundColor(string $color): static
+    {
+        $this->backgroundColor = $color;
+
+        return $this;
+    }
+
+    public function borderColor(string $color): static
+    {
+        $this->borderColor = $color;
 
         return $this;
     }
@@ -115,6 +137,8 @@ class EventSourceData implements Arrayable, JsonSerializable
             ...$this->iCalendarUrl ? ['url' => $this->getICalendarUrl(), 'format' => 'ics'] : [],
             ...filled($this->id) ? ['id' => $this->id] : [],
             ...$this->color ? ['color' => $this->color] : [],
+            ...$this->backgroundColor ? ['backgroundColor' => $this->backgroundColor] : [],
+            ...$this->borderColor ? ['borderColor' => $this->borderColor] : [],
             ...$this->textColor ? ['textColor' => $this->textColor] : [],
             ...$this->className ? ['className' => $this->className] : [],
             'editable' => false,

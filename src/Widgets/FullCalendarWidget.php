@@ -18,6 +18,7 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
 {
     use InteractsWithSchemas;
     use Concerns\CanPoll;
+    use Concerns\HasEventColors;
     use Concerns\InteractsWithCalendarActions;
     use Concerns\InteractsWithEvents;
     use Concerns\InteractsWithEventSources;

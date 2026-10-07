@@ -52,6 +52,21 @@ trait InteractsWithResources
     }
 
     /**
+     * @param  array<string, mixed>  $resource
+     * @return array<string, mixed>
+     */
+    protected function applyResourceColors(array $resource): array
+    {
+        $resource = $this->applyFilamentColor($resource, 'eventColor', 'eventClassNames');
+
+        if (is_array($resource['children'] ?? null)) {
+            $resource['children'] = array_map($this->applyResourceColors(...), $resource['children']);
+        }
+
+        return $resource;
+    }
+
+    /**
      * @return array<array<string, mixed>> | null
      */
     protected function getResources(?FetchInfo $info = null): ?array
@@ -63,7 +78,7 @@ trait InteractsWithResources
         }
 
         return collect($resources)
-            ->map(fn (mixed $resource): array => $resource instanceof Arrayable ? $resource->toArray() : $resource)
+            ->map(fn (mixed $resource): array => $this->applyResourceColors($resource instanceof Arrayable ? $resource->toArray() : $resource))
             ->values()
             ->all();
     }

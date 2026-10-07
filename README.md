@@ -239,7 +239,8 @@ public function fetchEvents(FetchInfo $info): array
 | `end(DateTimeInterface \| string \| null $end)` | When the event ends (exclusive). |
 | `allDay(bool $allDay = true)` | Shows the event in the all-day section, without a time. |
 | `url(string $url, bool $shouldOpenUrlInNewTab = false)` | Visits a URL when the event is clicked, instead of opening the view action. |
-| `backgroundColor(string $color)`, `borderColor(string $color)`, `textColor(string $color)` | Colors for this event. Any CSS color works. |
+| `color(string $color)` | The name of a Filament color, such as `success`. The event is colored like a badge of that color. See [Coloring events](#coloring-events). |
+| `backgroundColor(string $color)`, `borderColor(string $color)`, `textColor(string $color)` | CSS colors for this event. |
 | `groupId(int \| string $groupId)` | Events sharing a group are dragged and resized together. |
 | `resourceId(int \| string $resourceId)`, `resourceIds(array $resourceIds)` | Associates the event with [resources](https://legacy.fullcalendar.io/v6/resource-data). |
 | `tooltip(string \| array $tooltip, bool $html = false)` | Text shown when the event is hovered. An array gives one line per item. With `html: true` it is rendered as HTML and not escaped. |
@@ -865,7 +866,7 @@ public function eventSources(): array
             ->color('gray'),
 
         EventSourceData::googleCalendar('en.usa#holiday@group.v.calendar.google.com')
-            ->color('#0f9d58'),
+            ->backgroundColor('#0f9d58'),
     ];
 }
 ```
@@ -875,7 +876,8 @@ These events are read-only: they cannot be dragged or resized, and clicking one 
 | Method | Description |
 | ------ | ----------- |
 | `id(int \| string $id)` | Identifies the source, for use in [JavaScript callbacks](#javascript-callbacks) as `event.source.id`. |
-| `color(string $color)`, `textColor(string $color)` | Colors for the events of this source. |
+| `color(string $color)` | The name of a Filament color for the events of this source, as [on an event](#coloring-events). |
+| `backgroundColor(string $color)`, `borderColor(string $color)`, `textColor(string $color)` | CSS colors for the events of this source. |
 | `className(string $className)` | A CSS class for the events of this source. |
 | `cacheFor(int $minutes)` | How long an iCalendar feed is kept before it is read again. 15 minutes by default. |
 | `extraProperties(array $properties)` | Any other [event source option](https://legacy.fullcalendar.io/v6/event-source-object). |
@@ -1048,7 +1050,7 @@ The resources are sent with the page, so they cost no extra request. `fetchResou
 | `title(string $title)` | The text shown for the resource. |
 | `parentId(int \| string \| null $parentId)` | Nests the resource under another one. |
 | `children(array $children)` | Nested resources, as `ResourceData` objects or arrays. |
-| `eventColor(string $color)`, `eventBackgroundColor(string $color)`, `eventBorderColor(string $color)`, `eventTextColor(string $color)` | Colors for the events of this resource. |
+| `eventColor(string $color)`, `eventBackgroundColor(string $color)`, `eventBorderColor(string $color)`, `eventTextColor(string $color)` | Colors for the events of this resource. `eventColor()` takes the name of a Filament color, as `color()` does [on an event](#coloring-events), and the other three take CSS colors. |
 | `extendedProps(array $props)` | Your own data, such as the values of extra [resource columns](https://legacy.fullcalendar.io/v6/resourceAreaColumns). |
 | `extraProperties(array $properties)` | Any other [resource property](https://legacy.fullcalendar.io/v6/resource-object), such as `eventOverlap` or `eventConstraint`. |
 
@@ -1282,7 +1284,7 @@ An event with `display` set to `background` shades its dates instead of showing 
 EventData::make()
     ->start('2026-12-24')
     ->end('2026-12-27')
-    ->extraProperties(['display' => 'background', 'color' => 'red'])
+    ->extraProperties(['display' => 'background', 'backgroundColor' => 'red'])
 ```
 
 ## When the view changes
@@ -1624,15 +1626,31 @@ protected function headerActions(): array
 
 ## Coloring events
 
+Events look like Filament badges. Without a color they use the panel's primary color. Give `color()` the name of any color registered in Filament, and the event gets the background, border and text of a badge of that color, in light and dark mode:
+
 ```php
 EventData::make()
     ->id($event->id)
     ->title($event->name)
     ->start($event->starts_at)
     ->end($event->ends_at)
-    ->backgroundColor($event->status->isConfirmed() ? '#16a34a' : '#f59e0b')
-    ->borderColor('transparent')
+    ->color($event->status->isConfirmed() ? 'success' : 'warning')
 ```
+
+An enum that implements Filament's `HasColor` fits directly: `->color($event->status->getColor())`. In a plain array, set `color`.
+
+`color()` on an [event source](#showing-other-calendars) and `eventColor()` on a [resource](#resource-views) work the same way.
+
+`color()` only takes Filament colors. For any other color, [register it in Filament](https://filamentphp.com/docs/5.x/styling/colors) or set CSS colors with `backgroundColor()`, `borderColor()` and `textColor()`:
+
+```php
+EventData::make()
+    ->backgroundColor('#fde047')
+    ->borderColor('transparent')
+    ->textColor('#000')
+```
+
+CSS colors are used exactly as given, in light and dark mode. With a background color and no text color, the text is white, as in FullCalendar.
 
 ## HTML in the event title
 

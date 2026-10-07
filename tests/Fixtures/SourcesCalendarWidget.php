@@ -11,7 +11,7 @@ class SourcesCalendarWidget extends EventCalendarWidget
         return [
             EventSourceData::googleCalendar('holidays@group.v.calendar.google.com')->id('holidays')->color('gray'),
             EventSourceData::iCalendar('https://example.com/private/token-123/team.ics')->cacheFor(5),
-            ['url' => '/feeds/custom.json', 'color' => 'red'],
+            ['url' => '/feeds/custom.json', 'backgroundColor' => 'red'],
         ];
     }
 }

@@ -44,7 +44,7 @@
             })" @class([
                 'filament-fullcalendar',
                 ...\Filament\Support\Facades\FilamentColor::getComponentClasses(\Filament\Support\View\Components\ButtonComponent::make(), 'primary'),
-            ])></div>
+            ]) style="{{ $this->getDefaultEventColorStyles() }}"></div>
     </x-filament::section>
 
     <x-filament-actions::modals />

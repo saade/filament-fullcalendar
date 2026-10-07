@@ -34,9 +34,9 @@
     --fc-button-active-border-color: transparent;
 
     /* Events */
-    --fc-event-bg-color: var(--primary-400);
-    --fc-event-border-color: var(--primary-400);
-    --fc-event-text-color: var(--primary-900);
+    --fc-event-bg-color: var(--primary-50);
+    --fc-event-border-color: color-mix(in oklab, var(--primary-600) 10%, transparent);
+    --fc-event-text-color: var(--fc-default-event-text, var(--primary-700));
 }
 
 html.dark .filament-fullcalendar {
@@ -56,9 +56,10 @@ html.dark .filament-fullcalendar {
     --fc-button-active-border-color: transparent;
 
     /* Events */
-    --fc-event-bg-color: var(--primary-600);
-    --fc-event-border-color: var(--primary-600);
-    --fc-event-text-color: var(--primary-950);
+    /* Mixed with the card's background, so grid lines do not show through. */
+    --fc-event-bg-color: color-mix(in oklab, var(--primary-400) 10%, var(--color-gray-900));
+    --fc-event-border-color: color-mix(in oklab, var(--primary-400) 30%, transparent);
+    --fc-event-text-color: var(--fc-default-event-dark-text, var(--primary-300));
 }
 
 .filament-fullcalendar .fc-button {
@@ -216,4 +217,73 @@ html.dark .filament-fullcalendar .fc-button:not([disabled]) {
 
 .filament-fullcalendar.fc .fc-popover {
     z-index: 10;
+}
+
+.filament-fullcalendar .fc-daygrid-block-event,
+.filament-fullcalendar .fc-timegrid-event,
+.filament-fullcalendar .fc-timeline-event {
+    @apply rounded-md text-xs font-medium;
+}
+
+.filament-fullcalendar .fc-daygrid-block-event .fc-event-main,
+.filament-fullcalendar .fc-timeline-event .fc-event-main {
+    @apply px-1.5 py-0.5;
+}
+
+.filament-fullcalendar .fc-daygrid-block-event:not(.fc-event-start),
+.filament-fullcalendar .fc-timeline-event:not(.fc-event-start) {
+    @apply rounded-s-none;
+}
+
+.filament-fullcalendar .fc-daygrid-block-event:not(.fc-event-end),
+.filament-fullcalendar .fc-timeline-event:not(.fc-event-end) {
+    @apply rounded-e-none;
+}
+
+.filament-fullcalendar .fc-event.fi-color {
+    --fc-event-bg-color: var(--color-50);
+    --fc-event-border-color: color-mix(in oklab, var(--color-600) 10%, transparent);
+    --fc-event-text-color: var(--text);
+}
+
+html.dark .filament-fullcalendar .fc-event.fi-color {
+    --fc-event-bg-color: color-mix(in oklab, var(--color-400) 10%, var(--color-gray-900));
+    --fc-event-border-color: color-mix(in oklab, var(--color-400) 30%, transparent);
+    --fc-event-text-color: var(--dark-text);
+}
+
+.filament-fullcalendar .fc-event.fc-event-gray {
+    --fc-event-bg-color: var(--color-gray-50);
+    --fc-event-border-color: color-mix(in oklab, var(--color-gray-600) 10%, transparent);
+    --fc-event-text-color: var(--color-gray-600);
+}
+
+html.dark .filament-fullcalendar .fc-event.fc-event-gray {
+    --fc-event-bg-color: color-mix(in oklab, var(--color-gray-400) 10%, var(--color-gray-900));
+    --fc-event-border-color: color-mix(in oklab, var(--color-gray-400) 20%, transparent);
+    --fc-event-text-color: var(--color-gray-200);
+}
+
+.filament-fullcalendar .fc-bg-event.fi-color {
+    --fc-bg-event-color: var(--color-500);
+}
+
+.filament-fullcalendar .fc-bg-event.fc-event-gray {
+    --fc-bg-event-color: var(--color-gray-500);
+}
+
+/* The dot of an event is drawn with its border color, which is too faint here. */
+.filament-fullcalendar .fc-daygrid-event-dot,
+.filament-fullcalendar .fc-list-event-dot {
+    border-color: var(--primary-500);
+}
+
+.filament-fullcalendar .fc-event.fi-color .fc-daygrid-event-dot,
+.filament-fullcalendar .fc-event.fi-color .fc-list-event-dot {
+    border-color: var(--color-500);
+}
+
+.filament-fullcalendar .fc-event.fc-event-gray .fc-daygrid-event-dot,
+.filament-fullcalendar .fc-event.fc-event-gray .fc-list-event-dot {
+    border-color: var(--color-gray-400);
 }
