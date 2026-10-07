@@ -140,7 +140,7 @@
             <div
                 wire:ignore
                 x-ref="calendar"
-                class="filament-fullcalendar"
+                class="fi-fc filament-fullcalendar"
                 style="{{ $this->getDefaultEventColorStyles() }}"
             ></div>
 

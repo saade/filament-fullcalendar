@@ -20,7 +20,7 @@ beforeEach(function () {
 it('renders without any panel', function () {
     $component = Livewire::test(EventCalendarWidget::class)
         ->assertOk()
-        ->assertSeeHtml('filament-fullcalendar');
+        ->assertSeeHtml('class="fi-fc filament-fullcalendar"');
 
     expect($component->instance()->getTimezone())->toBe('UTC');
 });

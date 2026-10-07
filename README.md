@@ -1715,7 +1715,7 @@ The browser only reports this when the method exists, since it costs a request o
 
 ## Styling
 
-The widget's own elements have classes to style from your theme. FullCalendar's elements keep their `fc-` classes, inside `.filament-fullcalendar`.
+The widget's own elements have classes to style from your theme. FullCalendar's elements keep their `fc-` classes, inside `.fi-fc`.
 
 | Class | Element |
 | --- | --- |
@@ -1728,11 +1728,11 @@ The widget's own elements have classes to style from your theme. FullCalendar's 
 | `.fi-fc-tool-group` | A dropdown of tools. |
 | `.fi-fc-filters`, `.fi-fc-filters-heading`, `.fi-fc-filters-actions` | The filter form, its heading and its buttons. |
 | `.fi-fc-filters-dropdown`, `.fi-fc-filters-modal`, `.fi-fc-filters-above-content`, `.fi-fc-filters-below-content` | The filter form in each layout. |
-| `.filament-fullcalendar` | The calendar itself. |
+| `.fi-fc` | The calendar itself. It also has the `.filament-fullcalendar` class it had in 4.x. |
 
 ## Loading state
 
-While events are being fetched, the calendar has `aria-busy="true"` and its stylesheet dims the view. Style `.filament-fullcalendar[aria-busy='true']` to change that, or add a `loading` entry to `jsCallbacks()`.
+While events are being fetched, the calendar has `aria-busy="true"` and its stylesheet dims the view. Style `.fi-fc[aria-busy='true']` to change that, or add a `loading` entry to `jsCallbacks()`.
 
 # Testing
 
