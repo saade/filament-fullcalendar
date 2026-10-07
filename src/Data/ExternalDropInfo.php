@@ -25,5 +25,6 @@ final readonly class ExternalDropInfo
         public ?Model $record = null,
         public ?CarbonInterval $duration = null,
         public ?array $resource = null,
-    ) {}
+    ) {
+    }
 }

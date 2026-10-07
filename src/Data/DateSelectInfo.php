@@ -18,7 +18,8 @@ final readonly class DateSelectInfo
         public bool $allDay,
         public ?array $view = null,
         public ?array $resource = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @param  array<string, mixed> | null  $view

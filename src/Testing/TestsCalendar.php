@@ -8,9 +8,10 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Assert;
 use Livewire\Features\SupportTesting\Testable;
-use Saade\FilamentFullCalendar\Contracts\Eventable;
 
 use function Livewire\invade;
+
+use Saade\FilamentFullCalendar\Contracts\Eventable;
 
 /**
  * @mixin Testable

@@ -18,7 +18,8 @@ final readonly class DateClickInfo
         public DateSelectInfo $selection,
         public ?array $view = null,
         public ?array $resource = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @param  string | null  $selectionEnd  The end FullCalendar reported for the clicked cell, when it reported one.

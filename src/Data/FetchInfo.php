@@ -25,7 +25,8 @@ final readonly class FetchInfo implements ArrayAccess
         public CarbonImmutable $end,
         public string $timezone,
         public array $raw,
-    ) {}
+    ) {
+    }
 
     /**
      * @param  array{start: string, end: string, timezone?: string}  $info

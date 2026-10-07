@@ -21,5 +21,6 @@ final readonly class EventDropInfo
         public CarbonInterval $delta,
         public ?array $oldResource = null,
         public ?array $newResource = null,
-    ) {}
+    ) {
+    }
 }

@@ -22,7 +22,9 @@ class ToolbarButtonGroup
     /**
      * @param  array<string>  $buttons
      */
-    public function __construct(protected string $label, protected array $buttons = []) {}
+    public function __construct(protected string $label, protected array $buttons = [])
+    {
+    }
 
     /**
      * @param  array<string>  $buttons
