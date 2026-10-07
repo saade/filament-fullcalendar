@@ -41,7 +41,10 @@
                         {{ $name }}: ({!! htmlspecialchars($callback, ENT_COMPAT) !!}),
                     @endforeach
                 },
-            })" class="filament-fullcalendar"></div>
+            })" @class([
+                'filament-fullcalendar',
+                ...\Filament\Support\Facades\FilamentColor::getComponentClasses(\Filament\Support\View\Components\ButtonComponent::make(), 'primary'),
+            ])></div>
     </x-filament::section>
 
     <x-filament-actions::modals />

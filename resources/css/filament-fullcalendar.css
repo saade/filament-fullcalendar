@@ -20,13 +20,17 @@
         transparent
     );
 
-    /* Buttons */
-    --fc-button-text-color: var(--primary-900);
-    --fc-button-bg-color: var(--primary-400);
+    /*
+     * Buttons take the colors of a primary Filament button. The calendar's
+     * element carries the classes Filament gives one, which set these
+     * variables to the shades it picked for the panel's primary color.
+     */
+    --fc-button-text-color: var(--text);
+    --fc-button-bg-color: var(--bg);
     --fc-button-border-color: transparent;
-    --fc-button-hover-bg-color: var(--primary-300);
+    --fc-button-hover-bg-color: var(--hover-bg);
     --fc-button-hover-border-color: transparent;
-    --fc-button-active-bg-color: var(--primary-300);
+    --fc-button-active-bg-color: var(--hover-bg);
     --fc-button-active-border-color: transparent;
 
     /* Events */
@@ -51,12 +55,12 @@ html.dark .filament-fullcalendar {
     );
 
     /* Buttons */
-    --fc-button-text-color: var(--primary-950);
-    --fc-button-bg-color: var(--primary-600);
+    --fc-button-text-color: var(--dark-text);
+    --fc-button-bg-color: var(--dark-bg);
     --fc-button-border-color: transparent;
-    --fc-button-hover-bg-color: var(--primary-500);
+    --fc-button-hover-bg-color: var(--dark-hover-bg);
     --fc-button-hover-border-color: transparent;
-    --fc-button-active-bg-color: var(--primary-500);
+    --fc-button-active-bg-color: var(--dark-hover-bg);
     --fc-button-active-border-color: transparent;
 
     /* Events */
@@ -66,14 +70,26 @@ html.dark .filament-fullcalendar {
 }
 
 .filament-fullcalendar .fc-button {
-    @apply rounded-lg px-3 py-2 text-sm font-medium !outline-none !shadow-none;
+    @apply rounded-lg px-3 py-2 text-sm font-medium transition duration-75 !outline-none !shadow-none;
 
     &:not([disabled]) {
         @apply focus-visible:ring-2 focus-visible:ring-primary-500/50 dark:focus-visible:ring-primary-400/50;
+
+        &:hover,
+        &.fc-button-active {
+            color: var(--hover-text);
+        }
     }
 
     &[disabled] {
         @apply cursor-default opacity-70;
+    }
+}
+
+html.dark .filament-fullcalendar .fc-button:not([disabled]) {
+    &:hover,
+    &.fc-button-active {
+        color: var(--dark-hover-text);
     }
 }
 

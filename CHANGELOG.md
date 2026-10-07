@@ -14,6 +14,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - The view, create, edit and delete actions follow the model's policy when it has one. In 4.x, any user who could see the widget could open, edit or delete any record of the model by id unless `authorize()` was called on each action.
 - Records are scoped to the current tenant in panels with tenancy.
 - The toolbar shows the month, week and day view buttons by default, as it did in 3.x.
+- The toolbar buttons look like Filament's primary buttons: the same background, text and hover colors that Filament picks for the panel's primary color, in light and dark mode.
 - Date selection uses the timezone configured on the panel plugin.
 - `selectable` and `editable` set in a widget's `config()` are respected by the date click and selection handlers.
 - The calendar refetches its events after any action other than viewing has run, not only after the package's own actions.
