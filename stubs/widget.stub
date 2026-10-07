@@ -1,0 +1,16 @@
+<?php
+
+namespace {{ namespace }};
+
+use Saade\FilamentFullCalendar\Data\FetchInfo;
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+
+class {{ class }} extends FullCalendarWidget
+{
+    public function fetchEvents(FetchInfo $info): array
+    {
+        return [
+            // ['id' => 1, 'title' => 'Meeting', 'start' => now(), 'end' => now()->addHour()],
+        ];
+    }
+}

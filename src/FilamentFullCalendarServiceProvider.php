@@ -6,6 +6,7 @@ use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
+use Saade\FilamentFullCalendar\Commands\MakeFullCalendarWidgetCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -20,7 +21,8 @@ class FilamentFullCalendarServiceProvider extends PackageServiceProvider
         $package
             ->name(static::$name)
             ->hasViews()
-            ->hasRoute('web');
+            ->hasRoute('web')
+            ->hasCommand(MakeFullCalendarWidgetCommand::class);
     }
 
     public function packageBooted(): void

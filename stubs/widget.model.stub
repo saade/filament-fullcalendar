@@ -1,0 +1,46 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ modelClass }};
+{{ componentImports }}
+use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
+use Saade\FilamentFullCalendar\Data\EventData;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+
+class {{ class }} extends FullCalendarWidget
+{
+    public Model | string | null $model = {{ model }}::class;
+
+    protected ?string $startAttribute = '{{ start }}';
+
+    protected ?string $endAttribute = '{{ end }}';
+
+    public function fetchEvents(FetchInfo $info): array
+    {
+        return $info->overlapping({{ model }}::query(), '{{ start }}', '{{ end }}')
+            ->get()
+            ->map(fn ({{ model }} $record): EventData => EventData::make()
+                ->id($record->getKey())
+                ->title({{ titleValue }})
+{{ dates }})
+            ->all();
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->components([
+            TextInput::make('{{ title }}')
+                ->required(),
+
+            {{ startComponent }}::make('{{ start }}')
+                ->required(),
+
+            {{ endComponent }}::make('{{ end }}')
+                ->required()
+                ->afterOrEqual('{{ start }}'),
+        ]);
+    }
+}

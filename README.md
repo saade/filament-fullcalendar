@@ -109,13 +109,30 @@ public function panel(Panel $panel): Panel
 
 # Usage
 
-1. Create a widget and choose the **Custom** type when asked:
+Create a calendar widget:
 
 ```bash
-php artisan make:filament-widget CalendarWidget
+php artisan make:filament-fullcalendar-widget CalendarWidget
 ```
 
-2. Make it extend `Saade\FilamentFullCalendar\Widgets\FullCalendarWidget`, and remove the `$view` property and the Blade view that the command generated:
+It works like Filament's own `make:filament-widget`: it asks which panel the widget is for and whether it belongs to a resource, and puts the file where Filament would. It then asks which model holds the events and which attributes are the title, start and end, suggesting the model's columns, and writes a widget that shows, creates, edits, drags and resizes them. Leave the model empty for a calendar that is not backed by one.
+
+Every answer can also be given as an option:
+
+```bash
+php artisan make:filament-fullcalendar-widget CalendarWidget --panel=admin --model=Event --title=name --start=starts_at --end=ends_at
+```
+
+| Option | Description |
+| ------ | ----------- |
+| `--panel` | The panel to create the widget in. |
+| `--resource`, `-R` | The resource to create the widget in. The widget then uses the resource's model. |
+| `--resource-namespace`, `--cluster` | Where to look for the resource, as in Filament's command. |
+| `--model`, `-M` | The model whose records are the events. |
+| `--title`, `--start`, `--end` | The attributes of the model to use. Date-only columns give whole-day events. |
+| `--force`, `-F` | Overwrite the widget if it exists. |
+
+Without a model, this is the whole widget. It extends `FullCalendarWidget`, not Filament's `Widget`, and has no Blade view of its own:
 
 ```php
 <?php
