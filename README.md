@@ -1528,7 +1528,7 @@ These tools come with the calendar:
 | `filters` | Opens the [filters](#filter-layout), with a count of the ones that are set. |
 | Any view name, such as `dayGridMonth`, `timeGridWeek`, `listWeek`, or a view defined in `views` | Switches to that view. The button of the current view is highlighted. |
 
-The labels of `today` and of the view buttons are FullCalendar's, so they follow the calendar's locale and its `buttonText` option.
+The labels of `today` and of the view buttons are FullCalendar's, so they follow the calendar's locale and its `buttonText` option. So are the tooltips, such as "Previous month" and "week view", which come from its `buttonHints` and `viewHint` options.
 
 A name that matches no tool throws `Toolbar button [name] cannot be found.`, and a tool that is not named in `toolbarButtons()` is not shown.
 
@@ -1606,6 +1606,7 @@ The JavaScript runs in the calendar's Alpine component, so `calendar` (the FullC
 | `activeJsExpression(string $expression)`, `toggle()` | When the tool is highlighted, and whether it is announced as a toggle. |
 | `disabledJsExpression(string $expression)` | When the tool is disabled. |
 | `labelJsExpression(string $expression)` | A label computed in the browser. |
+| `tooltipJsExpression(string $expression)` | A tooltip computed in the browser. Without it, a tool with a hidden label shows the label as its tooltip. |
 | `badgeJsExpression(string $expression)` | A number shown on the corner of the tool while it is not zero. |
 | `heading()` | Shows the label as the toolbar's heading and not as a button. |
 | `visible(bool $condition = true)`, `hidden(bool $condition = true)` | Whether the tool is shown where it is named. |

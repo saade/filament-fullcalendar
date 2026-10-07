@@ -131,3 +131,15 @@ it('lets a tool with the name of an action replace the button of that action', f
     expect($tool->getJsHandler())->toBe("\$wire.mountAction('goToDate', { source: 'toolbar' })")
         ->and(Livewire::test(ToolbarCalendarWidget::class)->instance()->getTools())->toHaveKeys(['goToDate', 'pickDate', 'prev']);
 });
+
+it('takes the tooltips of its own tools from the button hints of FullCalendar', function () {
+    $widget = Livewire::test(EventCalendarWidget::class)->instance();
+
+    expect($widget->getTool('prev')->getLabelJsExpression())->toBe("getToolHint('prev')")
+        ->and($widget->getTool('today')->getTooltipJsExpression())->toBe("getToolHint('today')")
+        ->and($widget->getTool('dayGridMonth')->getTooltipJsExpression())->toBe("getToolHint('dayGridMonth')");
+
+    Livewire::test(EventCalendarWidget::class)
+        ->assertSeeHtml('x-tooltip="{ content: getToolHint(\'prev\'), theme: $store.theme }"')
+        ->assertSeeHtml('x-tooltip="{ content: getToolHint(\'dayGridMonth\'), theme: $store.theme }"');
+});

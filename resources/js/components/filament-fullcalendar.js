@@ -636,6 +636,50 @@ export default function fullcalendar({
             )
         },
 
+        // FullCalendar's `buttonHints` and `viewHint`, worked out the way its
+        // own toolbar does.
+        getToolHint(name) {
+            if (!this.viewType) return ''
+
+            const { viewSpecs, options } = this.calendar.getCurrentData()
+            const text = options.buttonText ?? {}
+
+            const format = (hint, args, fallback) => {
+                if (typeof hint === 'function') return hint(...args)
+
+                if (typeof hint !== 'string') return fallback ?? ''
+
+                return args.reduce(
+                    (result, argument, index) =>
+                        result.replace(`$${index}`, argument || ''),
+                    hint,
+                )
+            }
+
+            const spec = viewSpecs[name]
+
+            if (spec) {
+                const label = spec.buttonTextOverride ?? spec.buttonTextDefault
+
+                return format(
+                    spec.buttonTitleOverride ??
+                        spec.buttonTitleDefault ??
+                        options.viewHint,
+                    [label, name],
+                    label,
+                )
+            }
+
+            const isYear = name.endsWith('Year')
+            const unit = isYear ? 'year' : viewSpecs[this.viewType]?.singleUnit
+
+            return format(
+                options.buttonHints?.[name.replace('Year', '')],
+                [text[unit] || unit, unit],
+                text[name],
+            )
+        },
+
         clickCustomButton(name, event, element) {
             this.calendar?.getOption('customButtons')?.[name]?.click?.(
                 event,

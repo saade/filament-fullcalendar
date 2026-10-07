@@ -7,6 +7,7 @@
     $activeJsExpression = $tool->getActiveJsExpression();
     $badgeJsExpression = $tool->getBadgeJsExpression();
     $isLabelHidden = $tool->isLabelHidden();
+    $tooltip = $tool->getTooltipJsExpression() ?? ($isLabelHidden ? ($labelJsExpression ?? Js::from($label)) : null);
 @endphp
 
 @if ($tool->isHeading())
@@ -28,7 +29,7 @@
                 'x-bind:aria-pressed' => ($tool->isToggle() && $activeJsExpression) ? ('(' . $activeJsExpression . ') ? \'true\' : \'false\'') : null,
                 'x-bind:disabled' => $tool->getDisabledJsExpression(),
                 'x-bind:aria-label' => ($isLabelHidden && $labelJsExpression) ? $labelJsExpression : null,
-                'x-tooltip' => ($isLabelHidden && (! $labelJsExpression)) ? ('{ content: ' . Js::from($label) . ', theme: $store.theme }') : null,
+                'x-tooltip' => $tooltip ? ('{ content: ' . $tooltip . ', theme: $store.theme }') : null,
             ]))
         "
     >

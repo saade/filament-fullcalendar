@@ -1679,6 +1679,16 @@ function an({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 			let { viewSpecs: t, options: n } = this.calendar.getCurrentData(), r = t[e];
 			return r?.buttonTextOverride ?? r?.buttonTextDefault ?? n.buttonText?.[e] ?? e;
 		},
+		getToolHint(e) {
+			if (!this.viewType) return "";
+			let { viewSpecs: t, options: n } = this.calendar.getCurrentData(), r = n.buttonText ?? {}, i = (e, t, n) => typeof e == "function" ? e(...t) : typeof e == "string" ? t.reduce((e, t, n) => e.replace(`$${n}`, t || ""), e) : n ?? "", a = t[e];
+			if (a) {
+				let t = a.buttonTextOverride ?? a.buttonTextDefault;
+				return i(a.buttonTitleOverride ?? a.buttonTitleDefault ?? n.viewHint, [t, e], t);
+			}
+			let o = e.endsWith("Year") ? "year" : t[this.viewType]?.singleUnit;
+			return i(n.buttonHints?.[e.replace("Year", "")], [r[o] || o, o], r[e]);
+		},
 		clickCustomButton(e, t, n) {
 			this.calendar?.getOption("customButtons")?.[e]?.click?.(t, n);
 		},

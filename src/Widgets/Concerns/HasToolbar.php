@@ -120,23 +120,26 @@ trait HasToolbar
         return [
             CalendarTool::make('prev')
                 ->label(__('filament::components/pagination.actions.previous.label'))
+                ->labelJsExpression("getToolHint('prev')")
                 ->icon(Heroicon::ChevronLeft)
                 ->jsHandler('calendar?.prev()'),
             CalendarTool::make('next')
                 ->label(__('filament::components/pagination.actions.next.label'))
+                ->labelJsExpression("getToolHint('next')")
                 ->icon(Heroicon::ChevronRight)
                 ->jsHandler('calendar?.next()'),
             CalendarTool::make('prevYear')
                 ->icon(Heroicon::ChevronDoubleLeft)
-                ->labelJsExpression("getToolLabel('prevYear')")
+                ->labelJsExpression("getToolHint('prevYear')")
                 ->jsHandler('calendar?.prevYear()'),
             CalendarTool::make('nextYear')
                 ->icon(Heroicon::ChevronDoubleRight)
-                ->labelJsExpression("getToolLabel('nextYear')")
+                ->labelJsExpression("getToolHint('nextYear')")
                 ->jsHandler('calendar?.nextYear()'),
             CalendarTool::make('today')
                 ->hiddenLabel(false)
                 ->labelJsExpression("getToolLabel('today')")
+                ->tooltipJsExpression("getToolHint('today')")
                 ->jsHandler('calendar?.today()')
                 ->disabledJsExpression('isTodayInRange'),
             CalendarTool::make('title')
@@ -179,6 +182,7 @@ trait HasToolbar
         return CalendarTool::make($name)
             ->hiddenLabel(false)
             ->labelJsExpression("getToolLabel({$view})")
+            ->tooltipJsExpression("getToolHint({$view})")
             ->jsHandler("calendar?.changeView({$view})")
             ->activeJsExpression("viewType === {$view}")
             ->toggle();

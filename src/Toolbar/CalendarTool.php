@@ -30,6 +30,8 @@ class CalendarTool
 
     protected ?string $labelJsExpression = null;
 
+    protected ?string $tooltipJsExpression = null;
+
     protected ?string $badgeJsExpression = null;
 
     protected bool $isToggle = false;
@@ -161,6 +163,22 @@ class CalendarTool
     public function getLabelJsExpression(): ?string
     {
         return $this->labelJsExpression;
+    }
+
+    /**
+     * JavaScript that gives the tooltip in the browser. A tool with a hidden
+     * label shows that label as its tooltip without it.
+     */
+    public function tooltipJsExpression(?string $expression): static
+    {
+        $this->tooltipJsExpression = $expression;
+
+        return $this;
+    }
+
+    public function getTooltipJsExpression(): ?string
+    {
+        return $this->tooltipJsExpression;
     }
 
     public function badgeJsExpression(?string $expression): static
