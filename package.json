@@ -28,7 +28,7 @@
         "ical.js": "^1.5.0",
         "moment": "^2.29.4",
         "moment-timezone": "^0.5.48",
-        "prettier": "^3.9.5",
+        "prettier": "^3.9.9",
         "rrule": "^2.7.2",
         "vite": "^8.1.5"
     }
