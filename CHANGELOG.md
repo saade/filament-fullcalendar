@@ -2,6 +2,265 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v5.0.0-beta1 - 2026-10-08
+
+> [!IMPORTANT]
+This is the first beta release of Filament FullCalendar v5.
+
+At this point, I’m not planning any more breaking changes unless something comes up that really requires one. In practice, that means the API and upgrade path should now be pretty close to what will ship in 5.0.0.
+
+You can start testing it now, including in production if you're comfortable running a beta. And please do test it.
+
+I’ve tried to keep breaking changes to the minimum necessary so upgrading from v4 is as painless as possible, while still giving the plugin room to move forward.
+
+To make upgrading even easier, v5 now ships with an **automated upgrade script** that rewrites most v4 calendar widgets and their tests to the v5 API using Rector, without needing the application to boot.
+
+```bash
+composer require saade/filament-fullcalendar:"^5.0"
+composer require rector/rector:^2.5 --dev --no-scripts
+vendor/bin/filament-fullcalendar-v5
+
+```
+The first Composer command may end with an error, and that's expected. The package is installed first, then Laravel's package discovery may try to load your existing v4 widgets before they've been upgraded. Installing Rector with `--no-scripts` prevents that discovery from running again, and the upgrade script can then do its work.
+
+The script handles the main mechanical changes required for v5, including handler signatures, record APIs, deprecated actions, `getFormSchema()`, test calls, and optionally preserving the create button behavior from v4. You can also run it with `--dry-run` first to see what would change.
+
+It is still an upgrade assistant, not a replacement for reading the upgrade guide. When it finishes, it prints a checklist of anything that may still need manual attention.
+
+As always, if you run into anything, please open an issue. PRs are also very welcome against the `5.x` branch.
+
+If the community doesn't uncover any major issues, I’m planning to release v5 stable in roughly a week.
+
+And finally, thank you to everyone who has kept using, contributing to, and believing in Filament FullCalendar despite the, let's call it, *less-than-ideal* maintenance cycle over the last while. 💛
+
+v5 is a big step forward, and I'm really happy to finally get it into your hands.
+
+### Filament FullCalendar v5 is here
+
+After a long time of incremental improvements, fixes, feature requests, and more than a few things I wanted to rethink, **Filament FullCalendar v5 is ready**.
+
+This is much more than a compatibility release.
+
+The goal with v5 was to make FullCalendar feel less like something embedded inside Filament and much more like something that actually **belongs there**.
+
+The calendar now follows Filament's design language, uses Filament's actions and schemas more deeply, understands your models better, and gives you considerably more control without having to reach for custom JavaScript or Livewire workarounds.
+
+In short: **the calendar is now a much better Filament citizen.**
+
+#### It finally feels like Filament
+
+One of the biggest changes in v5 is something you'll notice immediately.
+
+The calendar has been redesigned to better match the rest of a Filament application.
+
+Toolbars now use Filament buttons. Events look like Filament badges. Colors work with Filament's color system. Headers, dropdowns, dark mode, list views and the `+more` popover all received the same treatment.
+
+The result is a calendar that feels much less like a third-party component dropped into your panel.
+
+And the integration goes beyond styling.
+
+You can now give the widget a heading, description and header actions just like other Filament components, while the calendar toolbar itself can be composed from navigation buttons, views, filters, Filament actions and your own custom tools.
+
+#### Filters and tabs are now first-class features
+
+This has been one of the most requested areas of the plugin.
+
+In v5, calendars can finally use **Filament-style filters and tabs**.
+
+Filters are built using familiar Filament form fields and can appear in a dropdown, modal, slide-over, above the calendar or below it.
+
+Tabs work much like resource list tabs, including badges and query modification.
+
+Both can also remember their state between visits.
+
+So things like:
+
+- filtering appointments by employee
+- switching between confirmed and pending bookings
+- showing events for a specific department
+- filtering resources, categories or locations
+
+can now be part of the calendar itself instead of something you have to build around it.
+
+#### Your models can be calendar events
+
+Another major change in v5 is a much tighter relationship between your application models and the calendar.
+
+Models can now describe how they should appear on a calendar themselves.
+
+That means a calendar can work directly with your models instead of forcing every project to repeatedly transform them into event arrays.
+
+Even better, **one calendar can contain events backed by different models**.
+
+The plugin keeps track of which record each event represents and uses the appropriate model, policy, label and actions when the event is opened.
+
+Forms and infolists can also come directly from your Filament resources when you don't need something calendar-specific.
+
+The end result is considerably less duplication between your resources and your calendar.
+
+#### Actions are just Filament actions
+
+Creating, viewing, editing and deleting events now uses Filament's own action system.
+
+That means the same concepts you already use throughout a Filament application also apply to the calendar.
+
+Custom actions can live alongside the defaults, authorization works through model policies, and actions automatically receive the relevant record.
+
+After an action changes something, the calendar refreshes itself.
+
+It sounds simple, but it removes a surprising amount of special handling that used to exist around calendar interactions.
+
+#### Dragging events can actually update your records
+
+Drag-and-drop has also been significantly improved.
+
+Tell the calendar which model attributes represent the start and end of an event and it can automatically persist changes when an event is moved or resized.
+
+If you don't want changes to happen immediately, you can require confirmation and let the user review the updated dates in the edit action first.
+
+Users can also drag items **from outside the calendar** onto it.
+
+That opens up workflows like an unscheduled task list beside a calendar where users simply drag work onto the day or person responsible for it.
+
+Resource calendars can do the same thing when moving events between rooms, employees, machines or other resources.
+
+#### Resource calendars are much easier to build
+
+For applications using FullCalendar's resource views, v5 introduces a proper PHP API for providing resources.
+
+Rooms, employees, vehicles, machines or anything else represented by a resource can now be returned directly from the widget.
+
+The calendar understands when an event moves between resources and can persist that relationship automatically.
+
+Resource data can also be refreshed independently from events.
+
+#### Bring other calendars into yours
+
+v5 can display external calendars alongside your application's events.
+
+That includes **iCalendar feeds** and **Google Calendar**.
+
+So a booking calendar could, for example, display public holidays, a shared company calendar or another external schedule without having to import those events into your own database.
+
+External calendars remain separate and read-only.
+
+Private iCalendar addresses are fetched by your application rather than exposed directly to the browser.
+
+#### More control, less JavaScript
+
+There are now PHP methods for navigating and controlling the calendar directly.
+
+You can move to a date, change views, navigate forward or backward, scroll to a time, change options and refresh events or resources.
+
+For cases where JavaScript really is the right tool, v5 also provides a cleaner way to register FullCalendar callbacks.
+
+The idea isn't to hide FullCalendar.
+
+It's to make the common things feel natural in Filament while still giving you access to FullCalendar when you need it.
+
+#### Better defaults for real applications
+
+There are a lot of smaller additions in v5 that become very useful once a calendar is running in production.
+
+Calendars can now be made completely read-only.
+
+You can choose a different initial view on mobile devices.
+
+Events can refresh automatically on an interval.
+
+Calendars correctly resize when they are first rendered inside hidden tabs or modals.
+
+SPA navigation is handled properly.
+
+Multiple calendars on the same page can be controlled independently.
+
+And loading events now has a proper loading state.
+
+#### Security and tenancy are part of the calendar now
+
+v5 also tightens several areas that previously required developers to be more careful themselves.
+
+Filament model policies are respected by the calendar's view, create, edit and delete actions.
+
+Applications using Filament tenancy automatically scope calendar records to the current tenant.
+
+And operations such as moving, resizing or selecting dates are validated on the server as well as in the browser.
+
+These aren't particularly flashy features, but they're important ones.
+
+#### A better experience for package authors and tests too
+
+There's now a dedicated Artisan generator for creating FullCalendar widgets.
+
+It can ask for your panel, resource, model and date attributes and generate a working starting point for you.
+
+v5 also introduces dedicated Livewire testing helpers for common calendar interactions such as:
+
+- finding events
+- clicking events
+- dragging events
+- selecting dates
+- testing calendar actions
+
+The package itself now has a test suite running against both Filament 4 and Filament 5 as well.
+
+#### Smaller where it matters
+
+The JavaScript bundle has also been split so calendars only download features they actually use.
+
+Premium views, recurrence support, locales and external calendar integrations don't need to be included when your calendar doesn't use them.
+
+For a standard calendar, the measured gzipped bundle dropped from roughly **204 KB to 155 KB**.
+
+#### And a lot of things were fixed along the way
+
+v5 includes fixes for issues around SPA navigation, recurring events, timezones, hidden calendars, all-day events, date selection, external event sources, dark mode, event serialization and more.
+
+Some of these were long-standing edge cases.
+
+Others came directly from issues and discussions opened by people using the plugin in real applications.
+
+Thank you to everyone who reported them, tested fixes, opened pull requests, shared workarounds or simply explained where the plugin was getting in their way.
+
+#### This is the direction going forward
+
+Filament FullCalendar started as a relatively small integration between Filament and FullCalendar.
+
+Over time, people started building much more serious scheduling interfaces with it.
+
+v5 reflects that.
+
+Instead of treating FullCalendar as a JavaScript component with a Filament wrapper around it, the plugin now tries to connect the two ecosystems properly.
+
+Filament provides the actions, forms, infolists, policies, colors, filters, tabs and application structure.
+
+FullCalendar provides an extremely capable calendar engine.
+
+Filament FullCalendar should be the bridge between them.
+
+And v5 is a pretty big step in that direction.
+
+#### Compatibility
+
+Filament FullCalendar v5 supports:
+
+- **Filament 4 and 5**
+- **FullCalendar 6**
+- **PHP 8.2+**
+
+```bash
+composer require saade/filament-fullcalendar:"^5.0"
+php artisan filament:assets
+
+```
+If you're upgrading an existing application from v3 or v4, **please read the upgrade guide before updating**. v5 changes some existing behavior and APIs in addition to adding all of the features above.
+
+Full documentation, examples and the complete changelog are available in the repository.
+
+Thanks to everyone who has been using the plugin, reporting issues and suggesting improvements.
+
+I'm excited to finally get v5 into your hands.
+
 ## 5.x
 
 ### Changed
