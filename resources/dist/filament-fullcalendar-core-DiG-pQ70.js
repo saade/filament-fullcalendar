@@ -47,12 +47,13 @@ function y(e, t, n) {
 }
 function b(e, t, n, r, i) {
 	var a;
-	n: if (t === "style") if (typeof n == "string") e.style.cssText = n;
-	else {
-		if (typeof r == "string" && (e.style.cssText = r = ""), r) for (t in r) n && t in n || y(e.style, t, "");
-		if (n) for (t in n) r && n[t] === r[t] || y(e.style, t, n[t]);
-	}
-	else if (t[0] === "o" && t[1] === "n") a = t !== (t = t.replace(/Capture$/, "")), t = t.toLowerCase() in e ? t.toLowerCase().slice(2) : t.slice(2), e.l ||= {}, e.l[t + a] = n, n ? r || e.addEventListener(t, a ? S : x, a) : e.removeEventListener(t, a ? S : x, a);
+	n: if (t === "style") {
+		if (typeof n == "string") e.style.cssText = n;
+		else {
+			if (typeof r == "string" && (e.style.cssText = r = ""), r) for (t in r) n && t in n || y(e.style, t, "");
+			if (n) for (t in n) r && n[t] === r[t] || y(e.style, t, n[t]);
+		}
+	} else if (t[0] === "o" && t[1] === "n") a = t !== (t = t.replace(/Capture$/, "")), t = t.toLowerCase() in e ? t.toLowerCase().slice(2) : t.slice(2), e.l ||= {}, e.l[t + a] = n, n ? r || e.addEventListener(t, a ? S : x, a) : e.removeEventListener(t, a ? S : x, a);
 	else if (t !== "dangerouslySetInnerHTML") {
 		if (i) t = t.replace(/xlink(H|:h)/, "h").replace(/sName$/, "s");
 		else if (t !== "width" && t !== "height" && t !== "href" && t !== "list" && t !== "form" && t !== "tabIndex" && t !== "download" && t in e) try {
@@ -160,7 +161,7 @@ function se(e, n, r, i, a, o, s, c, l) {
 	r.__h != null && (l = r.__h, c = n.__e = r.__e, n.__h = null, o = [c]), (u = t.__b) && u(n);
 	try {
 		n: if (typeof E == "function") {
-			if (y = n.props, b = (u = E.contextType) && i[u.__c], x = u ? b ? b.props.value : u.__ : i, r.__c ? v = (d = n.__c = r.__c).__ = d.__E : ("prototype" in E && E.prototype.render ? n.__c = d = new E(y, x) : (n.__c = d = new C(y, x), d.constructor = E, d.render = fe), b && b.sub(d), d.props = y, d.state ||= {}, d.context = x, d.__n = i, p = d.__d = !0, d.__h = [], d._sb = []), d.__s ??= d.state, E.getDerivedStateFromProps != null && (d.__s == d.state && (d.__s = f({}, d.__s)), f(d.__s, E.getDerivedStateFromProps(y, d.__s))), m = d.props, h = d.state, d.__v = n, p) E.getDerivedStateFromProps == null && d.componentWillMount != null && d.componentWillMount(), d.componentDidMount != null && d.__h.push(d.componentDidMount);
+			if (y = n.props, b = (u = E.contextType) && i[u.__c], x = u ? b ? b.props.value : u.__ : i, r.__c ? v = (d = n.__c = r.__c).__ = d.__E : ("prototype" in E && E.prototype.render ? n.__c = d = new E(y, x) : (n.__c = d = new C(y, x), d.constructor = E, d.render = fe), b && b.sub(d), d.props = y, d.state || (d.state = {}), d.context = x, d.__n = i, p = d.__d = !0, d.__h = [], d._sb = []), d.__s ?? (d.__s = d.state), E.getDerivedStateFromProps != null && (d.__s == d.state && (d.__s = f({}, d.__s)), f(d.__s, E.getDerivedStateFromProps(y, d.__s))), m = d.props, h = d.state, d.__v = n, p) E.getDerivedStateFromProps == null && d.componentWillMount != null && d.componentWillMount(), d.componentDidMount != null && d.__h.push(d.componentDidMount);
 			else {
 				if (E.getDerivedStateFromProps == null && y !== m && d.componentWillReceiveProps != null && d.componentWillReceiveProps(y, x), !d.__e && d.shouldComponentUpdate != null && !1 === d.shouldComponentUpdate(y, d.__s, x) || n.__v === r.__v) {
 					for (n.__v !== r.__v && (d.props = y, d.state = d.__s, d.__d = !1), n.__e = r.__e, n.__k = r.__k, n.__k.forEach(function(e) {
@@ -872,13 +873,13 @@ function rn(e) {
 	return j(e) / 864e5;
 }
 function an(e) {
-	return j(e) / (1e3 * 60);
+	return j(e) / 6e4;
 }
 function on(e) {
 	return j(e) / 1e3;
 }
 function j(e) {
-	return e.years * (365 * 864e5) + e.months * (30 * 864e5) + e.days * 864e5 + e.milliseconds;
+	return e.years * 31536e6 + e.months * 2592e6 + e.days * 864e5 + e.milliseconds;
 }
 function sn(e, t) {
 	let n = null;
@@ -899,17 +900,17 @@ function cn(e) {
 			unit: "millisecond",
 			value: t
 		};
-		if (t % (1e3 * 60) != 0) return {
+		if (t % 6e4 != 0) return {
 			unit: "second",
 			value: t / 1e3
 		};
-		if (t % (1e3 * 60 * 60) != 0) return {
+		if (t % 36e5 != 0) return {
 			unit: "minute",
-			value: t / (1e3 * 60)
+			value: t / 6e4
 		};
 		if (t) return {
 			unit: "hour",
-			value: t / (1e3 * 60 * 60)
+			value: t / 36e5
 		};
 	}
 	return e.days ? e.specifiedWeeks && e.days % 7 == 0 ? {
@@ -966,13 +967,13 @@ function fn(e, t) {
 	return F(e, t) / 7;
 }
 function F(e, t) {
-	return (t.valueOf() - e.valueOf()) / (1e3 * 60 * 60 * 24);
+	return (t.valueOf() - e.valueOf()) / 864e5;
 }
 function pn(e, t) {
-	return (t.valueOf() - e.valueOf()) / (1e3 * 60 * 60);
+	return (t.valueOf() - e.valueOf()) / 36e5;
 }
 function mn(e, t) {
-	return (t.valueOf() - e.valueOf()) / (1e3 * 60);
+	return (t.valueOf() - e.valueOf()) / 6e4;
 }
 function hn(e, t) {
 	return (t.valueOf() - e.valueOf()) / 1e3;
@@ -1735,7 +1736,7 @@ function Dr(e) {
 var Or = class {
 	constructor(e) {
 		let t = this.timeZone = e.timeZone, n = t !== "local" && t !== "UTC";
-		e.namedTimeZoneImpl && n && (this.namedTimeZoneImpl = new e.namedTimeZoneImpl(t)), this.canComputeOffset = !!(!n || this.namedTimeZoneImpl), this.calendarSystem = Tr(e.calendarSystem), this.locale = e.locale, this.weekDow = e.locale.week.dow, this.weekDoy = e.locale.week.doy, e.weekNumberCalculation === "ISO" && (this.weekDow = 1, this.weekDoy = 4), typeof e.firstDay == "number" && (this.weekDow = e.firstDay), typeof e.weekNumberCalculation == "function" && (this.weekNumberFunc = e.weekNumberCalculation), this.weekText = e.weekText == null ? e.locale.options.weekText : e.weekText, this.weekTextLong = (e.weekTextLong == null ? e.locale.options.weekTextLong : e.weekTextLong) || this.weekText, this.cmdFormatter = e.cmdFormatter, this.defaultSeparator = e.defaultSeparator;
+		e.namedTimeZoneImpl && n && (this.namedTimeZoneImpl = new e.namedTimeZoneImpl(t)), this.canComputeOffset = !(n && !this.namedTimeZoneImpl), this.calendarSystem = Tr(e.calendarSystem), this.locale = e.locale, this.weekDow = e.locale.week.dow, this.weekDoy = e.locale.week.doy, e.weekNumberCalculation === "ISO" && (this.weekDow = 1, this.weekDoy = 4), typeof e.firstDay == "number" && (this.weekDow = e.firstDay), typeof e.weekNumberCalculation == "function" && (this.weekNumberFunc = e.weekNumberCalculation), this.weekText = e.weekText == null ? e.locale.options.weekText : e.weekText, this.weekTextLong = (e.weekTextLong == null ? e.locale.options.weekTextLong : e.weekTextLong) || this.weekText, this.cmdFormatter = e.cmdFormatter, this.defaultSeparator = e.defaultSeparator;
 	}
 	createMarker(e) {
 		let t = this.createMarkerMeta(e);
@@ -2089,7 +2090,8 @@ var Hr = Mr(0), Y = class extends C {
 		if (e.children) {
 			let n = Br(e, t, this.handleEl), r = e.children(this.InnerContent, e.renderProps, n);
 			return e.elTag ? m(e.elTag, n, r) : r;
-		} else return m(Rr, Object.assign(Object.assign({}, e), {
+		}
+		return m(Rr, Object.assign(Object.assign({}, e), {
 			elRef: this.handleEl,
 			elTag: e.elTag || "div",
 			elClasses: (e.elClasses || []).concat(t),
@@ -2874,10 +2876,12 @@ var oa = class {
 	}
 	setEnd(e, t = {}) {
 		let { dateEnv: n } = this._context, r;
-		if (!(e != null && (r = n.createMarker(e), !r)) && this._instance) if (r) {
-			let e = ii(this._instance.range.end, r, n, t.granularity);
-			this.mutate({ endDelta: e });
-		} else this.mutate({ standardProps: { hasEnd: !1 } });
+		if (!(e != null && (r = n.createMarker(e), !r)) && this._instance) {
+			if (r) {
+				let e = ii(this._instance.range.end, r, n, t.granularity);
+				this.mutate({ endDelta: e });
+			} else this.mutate({ standardProps: { hasEnd: !1 } });
+		}
 	}
 	setDates(e, t, n = {}) {
 		let { dateEnv: r } = this._context, i = { allDay: n.allDay }, a = r.createMarker(e), o;
@@ -3357,7 +3361,7 @@ var Wa = {}, Ga = class extends C {
 		let { props: e, context: t } = this, n = t.nowManager.getDateMarker(), { nowIndicatorSnap: r } = t.options;
 		r === "auto" && (r = /year|month|week|day/.test(e.unit) || (e.unitValue || 1) === 1);
 		let i, a;
-		return r ? (i = t.dateEnv.startOf(n, e.unit), a = t.dateEnv.add(i, A(1, e.unit)).valueOf() - n.valueOf()) : (i = n, a = 1e3 * 60), a = Math.min(1e3 * 60 * 60 * 24, a), {
+		return r ? (i = t.dateEnv.startOf(n, e.unit), a = t.dateEnv.add(i, A(1, e.unit)).valueOf() - n.valueOf()) : (i = n, a = 6e4), a = Math.min(864e5, a), {
 			state: {
 				nowDate: i,
 				todayRange: Ka(i)
@@ -3426,23 +3430,24 @@ var qa = class {
 	}
 	changeView(e, t) {
 		this.batchRendering(() => {
-			if (this.unselect(), t) if (t.start && t.end) this.dispatch({
-				type: "CHANGE_VIEW_TYPE",
-				viewType: e
-			}), this.dispatch({
-				type: "SET_OPTION",
-				optionName: "visibleRange",
-				rawOptionValue: t
-			});
-			else {
-				let { dateEnv: n } = this.getCurrentData();
-				this.dispatch({
+			if (this.unselect(), t) {
+				if (t.start && t.end) this.dispatch({
 					type: "CHANGE_VIEW_TYPE",
-					viewType: e,
-					dateMarker: n.createMarker(t)
+					viewType: e
+				}), this.dispatch({
+					type: "SET_OPTION",
+					optionName: "visibleRange",
+					rawOptionValue: t
 				});
-			}
-			else this.dispatch({
+				else {
+					let { dateEnv: n } = this.getCurrentData();
+					this.dispatch({
+						type: "CHANGE_VIEW_TYPE",
+						viewType: e,
+						dateMarker: n.createMarker(t)
+					});
+				}
+			} else this.dispatch({
 				type: "CHANGE_VIEW_TYPE",
 				viewType: e
 			});
@@ -3751,8 +3756,8 @@ function no(e, t, n) {
 function ro(e, t, n, r) {
 	return {
 		dow: e.getUTCDay(),
-		isDisabled: !!(r && (!r.activeRange || !X(r.activeRange, e))),
-		isOther: !!(r && !X(r.currentRange, e)),
+		isDisabled: !(!r || r.activeRange && X(r.activeRange, e)),
+		isOther: !(!r || X(r.currentRange, e)),
 		isToday: !!(t && X(t, e)),
 		isPast: !!(n ? e < n : t && e < t.start),
 		isFuture: !!(n ? e > n : t && e >= t.end)
@@ -3890,12 +3895,12 @@ var So = class {
 		this.tops = t, this.bottoms = n;
 	}
 	leftToIndex(e) {
-		let { lefts: t, rights: n } = this, r = t.length, i;
-		for (i = 0; i < r; i += 1) if (e >= t[i] && e < n[i]) return i;
+		let { lefts: t, rights: n } = this, r = t.length, i = 0;
+		for (; i < r; i += 1) if (e >= t[i] && e < n[i]) return i;
 	}
 	topToIndex(e) {
-		let { tops: t, bottoms: n } = this, r = t.length, i;
-		for (i = 0; i < r; i += 1) if (e >= t[i] && e < n[i]) return i;
+		let { tops: t, bottoms: n } = this, r = t.length, i = 0;
+		for (; i < r; i += 1) if (e >= t[i] && e < n[i]) return i;
 	}
 	getWidth(e) {
 		return this.rights[e] - this.lefts[e];
@@ -4641,7 +4646,7 @@ var Ts = class extends q {
 			role: "grid",
 			className: o.join(" "),
 			style: { height: e.height }
-		}, !!(!p && u.length) && m("thead", h, ...u), !!(!p && d.length) && m("tbody", h, ...d), !!(!p && f.length) && m("tfoot", h, ...f), p && m("tbody", h, ...u, ...d, ...f));
+		}, !(p || !u.length) && m("thead", h, ...u), !(p || !d.length) && m("tbody", h, ...d), !(p || !f.length) && m("tfoot", h, ...f), p && m("tbody", h, ...u, ...d, ...f));
 	}
 	renderSection(e, t, n) {
 		return "outerContent" in e ? m(_, { key: e.key }, e.outerContent) : m("tr", {
@@ -5430,10 +5435,7 @@ function vc(e) {
 	return n === void 0 && (n = A(e), _c[t] = n), n;
 }
 function yc(e, t) {
-	switch (t.type) {
-		case "CHANGE_VIEW_TYPE": e = t.viewType;
-	}
-	return e;
+	return t.type === "CHANGE_VIEW_TYPE" && (e = t.viewType), e;
 }
 function bc(e, t) {
 	switch (t.type) {
@@ -5459,9 +5461,7 @@ function Cc(e, t, n, r) {
 		case "PREV":
 			if (i = r.buildPrev(e, n), i.isValid) return i;
 			break;
-		case "NEXT":
-			if (i = r.buildNext(e, n), i.isValid) return i;
-			break;
+		case "NEXT": if (i = r.buildNext(e, n), i.isValid) return i;
 	}
 	return e;
 }
@@ -5511,7 +5511,7 @@ function Mc(e, t, n, r, i) {
 	let a = {};
 	for (let o in e) {
 		let s = e[o];
-		t[o] ? a[o] = Nc(s, n, r, i) : a[o] = s;
+		a[o] = t[o] ? Nc(s, n, r, i) : s;
 	}
 	return a;
 }
@@ -5638,12 +5638,14 @@ function Wc(e, t, n, r, i, a) {
 				}, (_ = f.buttonTextOverride) || (g = r.getIconClass(e, o)) || (_ = f.buttonTextDefault);
 				let n = f.buttonTextOverride || f.buttonTextDefault;
 				v = Ht(f.buttonTitleOverride || f.buttonTitleDefault || t.viewHint, [n, e], n);
-			} else if (a[e]) if (h = () => {
-				a[e]();
-			}, (_ = c[e]) || (g = r.getIconClass(e, o)) || (_ = l[e]), e === "prevYear" || e === "nextYear") {
-				let t = e === "prevYear" ? "prev" : "next";
-				v = Ht(u[t] || d[t], [l.year || "year", "year"], l[e]);
-			} else v = (t) => Ht(u[e] || d[e], [l[t] || t, t], l[e]);
+			} else if (a[e]) {
+				if (h = () => {
+					a[e]();
+				}, (_ = c[e]) || (g = r.getIconClass(e, o)) || (_ = l[e]), e === "prevYear" || e === "nextYear") {
+					let t = e === "prevYear" ? "prev" : "next";
+					v = Ht(u[t] || d[t], [l.year || "year", "year"], l[e]);
+				} else v = (t) => Ht(u[e] || d[e], [l[t] || t, t], l[e]);
+			}
 			return {
 				buttonName: e,
 				buttonClick: h,
@@ -5779,7 +5781,7 @@ var Xc = ic({
 });
 function Zc(e, t, n, r, i) {
 	let a = e ? hr(e) : null, o = I(i.start), s = i.end, c = [];
-	for (t && (t.milliseconds < 0 ? s = N(s, 1) : t.milliseconds >= 1e3 * 60 * 60 * 24 && (o = N(o, -1))); o < s;) {
+	for (t && (t.milliseconds < 0 ? s = N(s, 1) : t.milliseconds >= 864e5 && (o = N(o, -1))); o < s;) {
 		let e;
 		(!a || a[o.getUTCDay()]) && (e = t ? r.add(o, t) : o, c.push(r.createMarker(n.toDate(e)))), o = N(o, 1);
 	}

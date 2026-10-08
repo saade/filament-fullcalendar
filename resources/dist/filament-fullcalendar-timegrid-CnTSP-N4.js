@@ -1,4 +1,4 @@
-import { $ as e, A as t, Bn as n, Bt as r, Cn as i, D as a, E as o, Et as s, Fn as c, H as l, Ht as u, L as d, M as f, N as p, Ot as m, P as h, R as g, S as _, Sr as v, T as y, U as ee, V as b, Vt as te, W as x, Xt as ne, Z as S, Zn as re, a as ie, an as ae, at as oe, br as C, bt as w, c as T, cn as se, cr as E, d as ce, dr as le, dt as ue, et as D, f as de, fn as fe, hn as pe, i as O, it as k, j as A, jn as j, l as me, ln as M, mn as he, mr as N, n as P, nt as F, on as I, or as L, p as R, pr as z, rt as ge, s as B, u as V, un as _e, v as ve, vn as H, w as U, wt as W, xn as ye, xr as G, yr as K, z as be } from "./filament-fullcalendar-core-MrkNOn94.js";
+import { $ as e, A as t, Bn as n, Bt as r, Cn as i, D as a, E as o, Et as s, Fn as c, H as l, Ht as u, L as d, M as f, N as p, Ot as m, P as h, R as g, S as _, Sr as v, T as y, U as ee, V as b, Vt as te, W as x, Xt as ne, Z as S, Zn as re, a as ie, an as ae, at as oe, br as C, bt as w, c as T, cn as se, cr as E, d as ce, dr as le, dt as ue, et as D, f as de, fn as fe, hn as pe, i as O, it as k, j as A, jn as j, l as me, ln as M, mn as he, mr as N, n as P, nt as F, on as I, or as L, p as R, pr as z, rt as ge, s as B, u as V, un as _e, v as ve, vn as H, w as U, wt as W, xn as ye, xr as G, yr as K, z as be } from "./filament-fullcalendar-core-DiG-pQ70.js";
 //#region node_modules/@fullcalendar/daygrid/internal.js
 var xe = class extends T {
 	constructor() {
@@ -125,13 +125,13 @@ var Te = class extends O {
 	}
 }, Ee = class extends O {
 	render() {
-		let { props: e, context: t } = this, { options: n } = t, { seg: r } = e, i = oe(r, n.eventTimeFormat || Ce, t, !0, e.defaultDisplayEventEnd);
+		let { props: e, context: t } = this, { options: n } = t, { seg: r } = e, i = n.eventTimeFormat || Ce, a = oe(r, i, t, !0, e.defaultDisplayEventEnd);
 		return v(ve, Object.assign({}, e, {
 			elTag: "a",
 			elClasses: ["fc-daygrid-event", "fc-daygrid-dot-event"],
 			elAttrs: ae(e.seg, t),
 			defaultGenerator: De,
-			timeText: i,
+			timeText: a,
 			isResizing: !1,
 			isDateSelecting: !1
 		}));
@@ -257,7 +257,7 @@ function Me(e) {
 }
 function Ne(e, t, n) {
 	let { start: r, end: i } = t, a = ee(i, -1), o = n.getYear(r), s = n.getMonth(r), c = n.getYear(a), l = n.getMonth(a);
-	return !(o === c && s === l) && (e.valueOf() === r.valueOf() || n.getDay(e) === 1 && e.valueOf() < i.valueOf());
+	return (o !== c || s !== l) && (e.valueOf() === r.valueOf() || n.getDay(e) === 1 && e.valueOf() < i.valueOf());
 }
 function Pe(e) {
 	return e.eventRange.instance.instanceId + ":" + e.firstCol;
@@ -400,10 +400,12 @@ var ze = class extends t {
 		let { entriesByLevel: r, forceHidden: a } = this, { touchingEntry: o, touchingLevel: s, touchingLateral: c } = e;
 		if (this.hiddenConsumes && o) {
 			let e = D(o);
-			if (!a[e]) if (this.allowReslicing) {
-				let e = Object.assign(Object.assign({}, o), { span: i(o.span, t.span) }), l = D(e);
-				a[l] = !0, r[s][c] = e, n.push(e), this.splitEntry(o, t, n);
-			} else a[e] = !0, n.push(o);
+			if (!a[e]) {
+				if (this.allowReslicing) {
+					let e = Object.assign(Object.assign({}, o), { span: i(o.span, t.span) }), l = D(e);
+					a[l] = !0, r[s][c] = e, n.push(e), this.splitEntry(o, t, n);
+				} else a[e] = !0, n.push(o);
+			}
 		}
 		super.handleInvalidInsertion(e, t, n);
 	}
@@ -796,7 +798,8 @@ var Je = class extends f {
 	}
 };
 function Ze(e, t) {
-	return new R(new de(e.renderRange, t), /year|month|week/.test(e.currentRangeUnit));
+	let n = new de(e.renderRange, t);
+	return new R(n, /year|month|week/.test(e.currentRangeUnit));
 }
 var Qe = class extends me {
 	buildRenderRange(e, t, n) {
@@ -946,15 +949,15 @@ var at = class extends O {
 				style: { height: t }
 			}));
 		}, this.renderTableRowAxis = (e) => {
-			let { options: t, viewApi: n } = this.context;
+			let { options: t, viewApi: n } = this.context, r = {
+				text: t.allDayText,
+				view: n
+			};
 			return v(B, {
 				elTag: "td",
 				elClasses: ["fc-timegrid-axis", "fc-scrollgrid-shrink"],
 				elAttrs: { "aria-hidden": !0 },
-				renderProps: {
-					text: t.allDayText,
-					view: n
-				},
+				renderProps: r,
 				generatorName: "allDayContent",
 				customGenerator: t.allDayContent,
 				defaultGenerator: lt,
@@ -1216,8 +1219,8 @@ function pt(e, t) {
 	return t.map((t) => e[t.key]);
 }
 function X(e, t) {
-	let n = [], r;
-	for (r = 0; r < t; r += 1) n.push([]);
+	let n = [], r = 0;
+	for (; r < t; r += 1) n.push([]);
 	if (e) for (r = 0; r < e.length; r += 1) n[e[r].col].push(e[r]);
 	return n;
 }
@@ -1264,10 +1267,10 @@ function gt(e) {
 function _t(e, n, r) {
 	let i = new t();
 	n != null && (i.strictOrder = n), r != null && (i.maxStackCnt = r);
-	let a = fe(i.addSegs(e)), o = vt(i);
-	return o = Ct(o, 1), {
-		segRects: wt(o),
-		hiddenGroups: a
+	let a = i.addSegs(e), o = fe(a), s = vt(i);
+	return s = Ct(s, 1), {
+		segRects: wt(s),
+		hiddenGroups: o
 	};
 }
 function vt(e) {
@@ -1426,7 +1429,7 @@ var Dt = W({
 	renderPositionedFgSegs(e, t, n, r, i, a) {
 		let { eventMaxStack: o, eventShortHeight: s, eventOrderStrict: c, eventMinHeight: l } = this.context.options, { date: u, slatCoords: d, eventSelection: f, todayRange: p, nowDate: m } = this.props, h = n || r || i, { segPlacements: g, hiddenGroups: _ } = Et(e, Tt(e, u, d, l), c, o);
 		return v(C, null, this.renderHiddenGroups(_, e), g.map((e) => {
-			let { seg: o, rect: c } = e, l = o.eventRange.instance.instanceId, u = h || !!(!t[l] && c), d = Q(c && c.span), g = !h && c ? this.computeSegHStyle(c) : {
+			let { seg: o, rect: c } = e, l = o.eventRange.instance.instanceId, u = h || !(t[l] || !c), d = Q(c && c.span), g = !h && c ? this.computeSegHStyle(c) : {
 				left: 0,
 				right: 0
 			}, _ = !!c && c.stackForward > 0, y = !!c && c.span.end - c.span.start < s;
@@ -1464,15 +1467,15 @@ var Dt = W({
 		}));
 	}
 	renderFillSegs(e, t) {
-		let { props: n, context: r } = this;
-		return v(C, null, Tt(e, n.date, n.slatCoords, r.options.eventMinHeight).map((r, i) => {
+		let { props: n, context: r } = this, i = Tt(e, n.date, n.slatCoords, r.options.eventMinHeight).map((r, i) => {
 			let a = e[i];
 			return v("div", {
 				key: F(a.eventRange),
 				className: "fc-timegrid-bg-harness",
 				style: Q(r)
 			}, t === "bg-event" ? v(ie, Object.assign({ seg: a }, I(a, n.todayRange, n.nowDate))) : L(t));
-		}));
+		});
+		return v(C, null, i);
 	}
 	renderNowIndicator(e) {
 		let { slatCoords: t, date: n } = this.props;
@@ -1806,7 +1809,8 @@ var Vt = class extends ct {
 	}
 };
 function Ht(e, t) {
-	return new R(new de(e.renderRange, t), !1);
+	let n = new de(e.renderRange, t);
+	return new R(n, !1);
 }
 H(".fc-v-event{background-color:var(--fc-event-bg-color);border:1px solid var(--fc-event-border-color);display:block}.fc-v-event .fc-event-main{color:var(--fc-event-text-color);height:100%}.fc-v-event .fc-event-main-frame{display:flex;flex-direction:column;height:100%}.fc-v-event .fc-event-time{flex-grow:0;flex-shrink:0;max-height:100%;overflow:hidden}.fc-v-event .fc-event-title-container{flex-grow:1;flex-shrink:1;min-height:0}.fc-v-event .fc-event-title{bottom:0;max-height:100%;overflow:hidden;top:0}.fc-v-event:not(.fc-event-start){border-top-left-radius:0;border-top-right-radius:0;border-top-width:0}.fc-v-event:not(.fc-event-end){border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-width:0}.fc-v-event.fc-event-selected:before{left:-10px;right:-10px}.fc-v-event .fc-event-resizer-start{cursor:n-resize}.fc-v-event .fc-event-resizer-end{cursor:s-resize}.fc-v-event:not(.fc-event-selected) .fc-event-resizer{height:var(--fc-event-resizer-thickness);left:0;right:0}.fc-v-event:not(.fc-event-selected) .fc-event-resizer-start{top:calc(var(--fc-event-resizer-thickness)/-2)}.fc-v-event:not(.fc-event-selected) .fc-event-resizer-end{bottom:calc(var(--fc-event-resizer-thickness)/-2)}.fc-v-event.fc-event-selected .fc-event-resizer{left:50%;margin-left:calc(var(--fc-event-resizer-dot-total-width)/-2)}.fc-v-event.fc-event-selected .fc-event-resizer-start{top:calc(var(--fc-event-resizer-dot-total-width)/-2)}.fc-v-event.fc-event-selected .fc-event-resizer-end{bottom:calc(var(--fc-event-resizer-dot-total-width)/-2)}.fc .fc-timegrid .fc-daygrid-body{z-index:2}.fc .fc-timegrid-divider{padding:0 0 2px}.fc .fc-timegrid-body{min-height:100%;position:relative;z-index:1}.fc .fc-timegrid-axis-chunk{position:relative}.fc .fc-timegrid-axis-chunk>table,.fc .fc-timegrid-slots{position:relative;z-index:1}.fc .fc-timegrid-slot{border-bottom:0;height:1.5em}.fc .fc-timegrid-slot:empty:before{content:\"\\00a0\"}.fc .fc-timegrid-slot-minor{border-top-style:dotted}.fc .fc-timegrid-slot-label-cushion{display:inline-block;white-space:nowrap}.fc .fc-timegrid-slot-label{vertical-align:middle}.fc .fc-timegrid-axis-cushion,.fc .fc-timegrid-slot-label-cushion{padding:0 4px}.fc .fc-timegrid-axis-frame-liquid{height:100%}.fc .fc-timegrid-axis-frame{align-items:center;display:flex;justify-content:flex-end;overflow:hidden}.fc .fc-timegrid-axis-cushion{flex-shrink:0;max-width:60px}.fc-direction-ltr .fc-timegrid-slot-label-frame{text-align:right}.fc-direction-rtl .fc-timegrid-slot-label-frame{text-align:left}.fc-liquid-hack .fc-timegrid-axis-frame-liquid{bottom:0;height:auto;left:0;position:absolute;right:0;top:0}.fc .fc-timegrid-col.fc-day-today{background-color:var(--fc-today-bg-color)}.fc .fc-timegrid-col-frame{min-height:100%;position:relative}.fc-media-screen.fc-liquid-hack .fc-timegrid-col-frame{bottom:0;height:auto;left:0;position:absolute;right:0;top:0}.fc-media-screen .fc-timegrid-cols{bottom:0;left:0;position:absolute;right:0;top:0}.fc-media-screen .fc-timegrid-cols>table{height:100%}.fc-media-screen .fc-timegrid-col-bg,.fc-media-screen .fc-timegrid-col-events,.fc-media-screen .fc-timegrid-now-indicator-container{left:0;position:absolute;right:0;top:0}.fc .fc-timegrid-col-bg{z-index:2}.fc .fc-timegrid-col-bg .fc-non-business{z-index:1}.fc .fc-timegrid-col-bg .fc-bg-event{z-index:2}.fc .fc-timegrid-col-bg .fc-highlight{z-index:3}.fc .fc-timegrid-bg-harness{left:0;position:absolute;right:0}.fc .fc-timegrid-col-events{z-index:3}.fc .fc-timegrid-now-indicator-container{bottom:0;overflow:hidden}.fc-direction-ltr .fc-timegrid-col-events{margin:0 2.5% 0 2px}.fc-direction-rtl .fc-timegrid-col-events{margin:0 2px 0 2.5%}.fc-timegrid-event-harness{position:absolute}.fc-timegrid-event-harness>.fc-timegrid-event{bottom:0;left:0;position:absolute;right:0;top:0}.fc-timegrid-event-harness-inset .fc-timegrid-event,.fc-timegrid-event.fc-event-mirror,.fc-timegrid-more-link{box-shadow:0 0 0 1px var(--fc-page-bg-color)}.fc-timegrid-event,.fc-timegrid-more-link{border-radius:3px;font-size:var(--fc-small-font-size)}.fc-timegrid-event{margin-bottom:1px}.fc-timegrid-event .fc-event-main{padding:1px 1px 0}.fc-timegrid-event .fc-event-time{font-size:var(--fc-small-font-size);margin-bottom:1px;white-space:nowrap}.fc-timegrid-event-short .fc-event-main-frame{flex-direction:row;overflow:hidden}.fc-timegrid-event-short .fc-event-time:after{content:\"\\00a0-\\00a0\"}.fc-timegrid-event-short .fc-event-title{font-size:var(--fc-small-font-size)}.fc-timegrid-more-link{background:var(--fc-more-link-bg-color);color:var(--fc-more-link-text-color);cursor:pointer;margin-bottom:1px;position:absolute;z-index:9999}.fc-timegrid-more-link-inner{padding:3px 2px;top:0}.fc-direction-ltr .fc-timegrid-more-link{right:0}.fc-direction-rtl .fc-timegrid-more-link{left:0}.fc .fc-timegrid-now-indicator-arrow,.fc .fc-timegrid-now-indicator-line{pointer-events:none}.fc .fc-timegrid-now-indicator-line{border-color:var(--fc-now-indicator-color);border-style:solid;border-width:1px 0 0;left:0;position:absolute;right:0;z-index:4}.fc .fc-timegrid-now-indicator-arrow{border-color:var(--fc-now-indicator-color);border-style:solid;margin-top:-5px;position:absolute;z-index:4}.fc-direction-ltr .fc-timegrid-now-indicator-arrow{border-bottom-color:transparent;border-top-color:transparent;border-width:5px 0 5px 6px;left:0}.fc-direction-rtl .fc-timegrid-now-indicator-arrow{border-bottom-color:transparent;border-top-color:transparent;border-width:5px 6px 5px 0;right:0}");
 //#endregion

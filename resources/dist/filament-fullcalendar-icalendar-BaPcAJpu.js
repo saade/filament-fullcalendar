@@ -1,5 +1,5 @@
-import { o as e, t } from "./filament-fullcalendar-rolldown-runtime-DY7j01NX.js";
-import { V as n, n as r } from "./filament-fullcalendar-core-MrkNOn94.js";
+import { o as e, t } from "./filament-fullcalendar-rolldown-runtime-CEFd7nDs.js";
+import { V as n, n as r } from "./filament-fullcalendar-core-DiG-pQ70.js";
 //#endregion
 //#region node_modules/@fullcalendar/icalendar/index.js
 var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
@@ -40,7 +40,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 			else break;
 			return o < 0 ? a : o > 0 ? a + 1 : a;
 		},
-		dumpn: function() {
+		dumpn: /* istanbul ignore next */ function() {
 			n.debug && (typeof console < "u" && "log" in console ? n.helpers.dumpn = function(e) {
 				console.log(e);
 			} : n.helpers.dumpn = function(e) {
@@ -54,18 +54,17 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 			if (Array.isArray(e)) {
 				for (var r = [], i = 0; i < e.length; i++) r.push(t ? n.helpers.clone(e[i], !0) : e[i]);
 				return r;
-			} else {
-				var a = {};
-				for (var o in e)
- /* istanbul ignore else */
-				Object.prototype.hasOwnProperty.call(e, o) && (t ? a[o] = n.helpers.clone(e[o], !0) : a[o] = e[o]);
-				return a;
 			}
+			var a = {};
+			for (var o in e)
+ /* istanbul ignore else */
+			Object.prototype.hasOwnProperty.call(e, o) && (a[o] = t ? n.helpers.clone(e[o], !0) : e[o]);
+			return a;
 		},
 		foldline: function(e) {
 			for (var t = "", r = e || "", i = 0, a = 0; r.length;) {
 				var o = r.codePointAt(i);
-				o < 128 ? ++a : o < 2048 ? a += 2 : o < 65536 ? a += 3 : a += 4, a < n.foldLength + 1 ? i += o > 65535 ? 2 : 1 : (t += n.newLineChar + " " + r.substring(0, i), r = r.substring(i), i = a = 0);
+				o < 128 ? ++a : a += o < 2048 ? 2 : o < 65536 ? 3 : 4, a < n.foldLength + 1 ? i += o > 65535 ? 2 : 1 : (t += n.newLineChar + " " + r.substring(0, i), r = r.substring(i), i = a = 0);
 			}
 			return t.substr(n.newLineChar.length + 1);
 		},
@@ -330,7 +329,8 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 					if (t >= 19) {
 						var n = e.substr(0, 4) + e.substr(5, 2) + e.substr(8, 5) + e.substr(14, 2) + e.substr(17, 2);
 						return e[19] && e[19] === "Z" && (n += "Z"), n;
-					} else return e;
+					}
+					return e;
 				},
 				decorate: function(e, t) {
 					return M.strict ? n.Time.fromDateTimeString(e, t) : n.Time.fromString(e, t);
@@ -353,7 +353,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 					return t[0] = x["date-time"].fromICAL(t[0]), n.Duration.isValueString(t[1]) || (t[1] = x["date-time"].fromICAL(t[1])), t;
 				},
 				toICAL: function(e) {
-					return !M.strict && e[0].length == 10 ? e[0] = x.date.toICAL(e[0]) : e[0] = x["date-time"].toICAL(e[0]), n.Duration.isValueString(e[1]) || (!M.strict && e[1].length == 10 ? e[1] = x.date.toICAL(e[1]) : e[1] = x["date-time"].toICAL(e[1])), e.join("/");
+					return e[0] = !M.strict && e[0].length == 10 ? x.date.toICAL(e[0]) : x["date-time"].toICAL(e[0]), n.Duration.isValueString(e[1]) || (e[1] = !M.strict && e[1].length == 10 ? x.date.toICAL(e[1]) : x["date-time"].toICAL(e[1])), e.join("/");
 				},
 				decorate: function(e, t) {
 					return n.Period.fromJSON(e, t, !M.strict);
@@ -368,7 +368,9 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				},
 				toICAL: function(e) {
 					var t = "";
-					for (var r in e) if (Object.prototype.hasOwnProperty.call(e, r)) {
+					for (var r in e)
+ /* istanbul ignore if */
+					if (Object.prototype.hasOwnProperty.call(e, r)) {
 						var i = e[r];
 						r == "until" ? i = i.length > 10 ? x["date-time"].toICAL(i) : x.date.toICAL(i) : r == "wkst" ? typeof i == "number" && (i = n.Recur.numericDayToIcalDay(i)) : Array.isArray(i) && (i = i.join(",")), t += r.toUpperCase() + "=" + i + ";";
 					}
@@ -766,7 +768,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 		}
 		i.component = function(e, n) {
 			var r = e[0].toUpperCase(), a = "BEGIN:" + r + "\r\n", o = e[1], s = 0, c = o.length, l = e[0];
-			for (l === "vcard" && e[1].length > 0 && !(e[1][0][0] === "version" && e[1][0][3] === "4.0") && (l = "vcard3"), n ||= t.getDesignSet(l); s < c; s++) a += i.property(o[s], n) + "\r\n";
+			for (l === "vcard" && e[1].length > 0 && (e[1][0][0] !== "version" || e[1][0][3] !== "4.0") && (l = "vcard3"), n ||= t.getDesignSet(l); s < c; s++) a += i.property(o[s], n) + "\r\n";
 			for (var u = e[2] || [], d = 0, f = u.length; d < f; d++) a += i.component(u[d], n) + "\r\n";
 			return a += "END:" + r, a;
 		}, i.property = function(r, a, o) {
@@ -783,7 +785,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 			var m = r[2];
 			a ||= t.defaultSet;
 			var h, p = !1, g = !1, _ = !1;
-			return c in a.property ? (h = a.property[c], "multiValue" in h && (p = h.multiValue), "structuredValue" in h && Array.isArray(r[3]) && (g = h.structuredValue), "defaultType" in h ? m === h.defaultType && (_ = !0) : m === e && (_ = !0)) : m === e && (_ = !0), _ || (u += ";VALUE=" + m.toUpperCase()), u += ":", p && g ? u += i.multiValue(r[3], g, m, p, a, g) : p ? u += i.multiValue(r.slice(3), p, m, null, a, !1) : g ? u += i.multiValue(r[3], g, m, null, a, g) : u += i.value(r[3], m, a, !1), o ? u : n.helpers.foldline(u);
+			return c in a.property ? (h = a.property[c], "multiValue" in h && (p = h.multiValue), "structuredValue" in h && Array.isArray(r[3]) && (g = h.structuredValue), "defaultType" in h ? m === h.defaultType && (_ = !0) : m === e && (_ = !0)) : m === e && (_ = !0), _ || (u += ";VALUE=" + m.toUpperCase()), u += ":", u += p && g ? i.multiValue(r[3], g, m, p, a, g) : p ? i.multiValue(r.slice(3), p, m, null, a, !1) : g ? i.multiValue(r[3], g, m, null, a, g) : i.value(r[3], m, a, !1), o ? u : n.helpers.foldline(u);
 		}, i.propertyValue = function(e) {
 			return r.unescapedIndexOf(e, ",") === -1 && r.unescapedIndexOf(e, ":") === -1 && r.unescapedIndexOf(e, ";") === -1 ? e : "\"" + e + "\"";
 		}, i.multiValue = function(e, t, n, r, a, o) {
@@ -848,7 +850,8 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 					];
 					n.stack.length === 1 ? n.component.push(p) : n.component[2].push(p), n.stack.push(n.component), n.component = p, n.designSet ||= t.getDesignSet(n.component[0]);
 					return;
-				} else if (l === "end") {
+				}
+				if (l === "end") {
 					n.component = n.stack.pop();
 					return;
 				}
@@ -875,7 +878,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				d,
 				m,
 				u
-			]), n.component[0] === "vcard" && n.component[1].length === 0 && !(l === "version" && u === "4.0") && (n.designSet = t.getDesignSet("vcard3")), n.component[1].push(v);
+			]), n.component[0] === "vcard" && n.component[1].length === 0 && (l !== "version" || u !== "4.0") && (n.designSet = t.getDesignSet("vcard3")), n.component[1].push(v);
 		}, a._parseValue = function(e, t, n, r) {
 			return t in n.value && "fromICAL" in n.value[t] ? n.value[t].fromICAL(e, r) : e;
 		}, a._parseParameters = function(e, t, n) {
@@ -961,10 +964,9 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				if (e) {
 					for (var r = this.jCal[2], i = []; n < t; n++) e === r[n][0] && i.push(this._hydrateComponent(n));
 					return i;
-				} else {
-					if (!this._components || this._hydratedComponentCount !== t) for (; n < t; n++) this._hydrateComponent(n);
-					return this._components || [];
 				}
+				if (!this._components || this._hydratedComponentCount !== t) for (; n < t; n++) this._hydrateComponent(n);
+				return this._components || [];
 			},
 			hasProperty: function(e) {
 				for (var t = this.jCal[1], n = t.length, r = 0; r < n; r++) if (t[r][0] === e) return !0;
@@ -985,10 +987,9 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				if (e) {
 					for (var r = this.jCal[1], i = []; n < t; n++) e === r[n][0] && i.push(this._hydrateProperty(n));
 					return i;
-				} else {
-					if (!this._properties || this._hydratedPropertyCount !== t) for (; n < t; n++) this._hydrateProperty(n);
-					return this._properties || [];
 				}
+				if (!this._properties || this._hydratedPropertyCount !== t) for (; n < t; n++) this._hydrateProperty(n);
+				return this._properties || [];
 			},
 			_removeObjectByIndex: function(e, t, n) {
 				if (t ||= [], t[n]) {
@@ -1081,7 +1082,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 			},
 			_updateType: function() {
 				var e = this._designSet;
-				this.type in e.value && (e.value[this.type], "decorate" in e.value[this.type] ? this.isDecorated = !0 : this.isDecorated = !1, this.name in e.property && (this.isMultiValue = "multiValue" in e.property[this.name], this.isStructuredValue = "structuredValue" in e.property[this.name]));
+				this.type in e.value && (e.value[this.type], this.isDecorated = "decorate" in e.value[this.type], this.name in e.property && (this.isMultiValue = "multiValue" in e.property[this.name], this.isStructuredValue = "structuredValue" in e.property[this.name]));
 			},
 			_hydrateValue: function(e) {
 				return this._values && this._values[e] ? this._values[e] : this.jCal.length <= 3 + e ? null : this.isDecorated ? (this._values ||= [], this._values[e] = this._decorate(this.jCal[3 + e])) : this.jCal[3 + e];
@@ -1315,7 +1316,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				return n.Duration.fromData(this);
 			},
 			toSeconds: function() {
-				var e = this.seconds + 60 * this.minutes + 3600 * this.hours + 86400 * this.days + 7 * 86400 * this.weeks;
+				var e = this.seconds + 60 * this.minutes + 3600 * this.hours + 86400 * this.days + 604800 * this.weeks;
 				return this.isNegative ? -e : e;
 			},
 			fromSeconds: function(e) {
@@ -1331,9 +1332,11 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 					"seconds",
 					"isNegative"
 				];
-				for (var n in t) if (t.hasOwnProperty(n)) {
+				for (var n in t)
+ /* istanbul ignore if */
+				if (t.hasOwnProperty(n)) {
 					var r = t[n];
-					e && r in e ? this[r] = e[r] : this[r] = 0;
+					this[r] = e && r in e ? e[r] : 0;
 				}
 			},
 			reset: function() {
@@ -1361,7 +1364,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 			var i;
 			switch (e) {
 				case "P":
-					t && t === "-" ? r.isNegative = !0 : r.isNegative = !1;
+					r.isNegative = !!(t && t === "-");
 					break;
 				case "D":
 					i = "days";
@@ -1422,10 +1425,12 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 			fromData: function(t) {
 				if (this.expandedUntilYear = 0, this.changes = [], t instanceof n.Component) this.component = t;
 				else {
-					if (t && "component" in t) if (typeof t.component == "string") {
-						var r = n.parse(t.component);
-						this.component = new n.Component(r);
-					} else t.component instanceof n.Component ? this.component = t.component : this.component = null;
+					if (t && "component" in t) {
+						if (typeof t.component == "string") {
+							var r = n.parse(t.component);
+							this.component = new n.Component(r);
+						} else this.component = t.component instanceof n.Component ? t.component : null;
+					}
 					for (var i in e)
  /* istanbul ignore else */
 					if (e.hasOwnProperty(i)) {
@@ -1488,7 +1493,9 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				if (!e.hasProperty("rrule") && !e.hasProperty("rdate")) a = s(), a.year = i.year, a.month = i.month, a.day = i.day, a.hour = i.hour, a.minute = i.minute, a.second = i.second, n.Timezone.adjust_change(a, 0, 0, 0, -a.prevUtcOffset), r.push(a);
 				else {
 					var c = e.getAllProperties("rdate");
-					for (var l in c) if (c.hasOwnProperty(l)) {
+					for (var l in c)
+ /* istanbul ignore if */
+					if (c.hasOwnProperty(l)) {
 						var u = c[l].getFirstValue();
 						a = s(), a.year = u.year, a.month = u.month, a.day = u.day, u.isDate ? (a.hour = i.hour, a.minute = i.minute, a.second = i.second, i.zone != n.Timezone.utcTimezone && n.Timezone.adjust_change(a, 0, 0, 0, -a.prevUtcOffset)) : (a.hour = u.hour, a.minute = u.minute, a.second = u.second, u.zone != n.Timezone.utcTimezone && n.Timezone.adjust_change(a, 0, 0, 0, -a.prevUtcOffset)), r.push(a);
 					}
@@ -1940,7 +1947,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				return !!(this.count || this.until);
 			},
 			isByCount: function() {
-				return !!(this.count && !this.until);
+				return !(!this.count || this.until);
 			},
 			addComponent: function(e, t) {
 				var n = e.toUpperCase();
@@ -1969,7 +1976,9 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 			},
 			toJSON: function() {
 				var e = Object.create(null);
-				for (var t in e.freq = this.freq, this.count && (e.count = this.count), this.interval > 1 && (e.interval = this.interval), this.parts) if (this.parts.hasOwnProperty(t)) {
+				for (var t in e.freq = this.freq, this.count && (e.count = this.count), this.interval > 1 && (e.interval = this.interval), this.parts)
+ /* istanbul ignore if */
+				if (this.parts.hasOwnProperty(t)) {
 					var r = this.parts[t];
 					Array.isArray(r) && r.length == 1 ? e[t.toLowerCase()] = r[0] : e[t.toLowerCase()] = n.helpers.clone(this.parts[t]);
 				}
@@ -2016,7 +2025,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				t.interval = n.helpers.strictParseInt(e), t.interval < 1 && (t.interval = 1);
 			},
 			UNTIL: function(e, t, r) {
-				e.length > 10 ? t.until = n.design.icalendar.value["date-time"].fromICAL(e) : t.until = n.design.icalendar.value.date.fromICAL(e), r || (t.until = n.Time.fromString(t.until));
+				t.until = e.length > 10 ? n.design.icalendar.value["date-time"].fromICAL(e) : n.design.icalendar.value.date.fromICAL(e), r || (t.until = n.Time.fromString(t.until));
 			},
 			WKST: function(e, t, r) {
 				if (a.test(e)) t.wkst = n.Recur.icalDayToNumericDay(e);
@@ -2069,7 +2078,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 			fromData: function(e) {
 				if (this.rule = n.helpers.formatClassType(e.rule, n.Recur), !this.rule) throw Error("iterator requires a (ICAL.Recur) rule");
 				if (this.dtstart = n.helpers.formatClassType(e.dtstart, n.Time), !this.dtstart) throw Error("iterator requires a (ICAL.Time) dtstart");
-				e.by_data ? this.by_data = e.by_data : this.by_data = n.helpers.clone(this.rule.parts, !0), e.occurrence_number && (this.occurrence_number = e.occurrence_number), this.days = e.days || [], e.last && (this.last = n.helpers.formatClassType(e.last, n.Time)), this.by_indices = e.by_indices, this.by_indices ||= {
+				this.by_data = e.by_data ? e.by_data : n.helpers.clone(this.rule.parts, !0), e.occurrence_number && (this.occurrence_number = e.occurrence_number), this.days = e.days || [], e.last && (this.last = n.helpers.formatClassType(e.last, n.Time)), this.by_indices = e.by_indices, this.by_indices ||= {
 					BYSECOND: 0,
 					BYMINUTE: 0,
 					BYHOUR: 0,
@@ -2087,17 +2096,21 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				if (this.rule.freq == "MONTHLY" && ("BYYEARDAY" in e || "BYWEEKNO" in e)) throw Error("For MONTHLY recurrences neither BYYEARDAY nor BYWEEKNO may appear");
 				if (this.rule.freq == "WEEKLY" && ("BYYEARDAY" in e || "BYMONTHDAY" in e)) throw Error("For WEEKLY recurrences neither BYMONTHDAY nor BYYEARDAY may appear");
 				if (this.rule.freq != "YEARLY" && "BYYEARDAY" in e) throw Error("BYYEARDAY may only appear in YEARLY rules");
-				if (this.last.second = this.setup_defaults("BYSECOND", "SECONDLY", this.dtstart.second), this.last.minute = this.setup_defaults("BYMINUTE", "MINUTELY", this.dtstart.minute), this.last.hour = this.setup_defaults("BYHOUR", "HOURLY", this.dtstart.hour), this.last.day = this.setup_defaults("BYMONTHDAY", "DAILY", this.dtstart.day), this.last.month = this.setup_defaults("BYMONTH", "MONTHLY", this.dtstart.month), this.rule.freq == "WEEKLY") if ("BYDAY" in e) {
-					var t = this.ruleDayOfWeek(e.BYDAY[0], this.rule.wkst), r = t[0], i = t[1], a = i - this.last.dayOfWeek(this.rule.wkst);
-					(this.last.dayOfWeek(this.rule.wkst) < i && a >= 0 || a < 0) && (this.last.day += a);
-				} else e.BYDAY = [n.Recur.numericDayToIcalDay(this.dtstart.dayOfWeek())];
+				if (this.last.second = this.setup_defaults("BYSECOND", "SECONDLY", this.dtstart.second), this.last.minute = this.setup_defaults("BYMINUTE", "MINUTELY", this.dtstart.minute), this.last.hour = this.setup_defaults("BYHOUR", "HOURLY", this.dtstart.hour), this.last.day = this.setup_defaults("BYMONTHDAY", "DAILY", this.dtstart.day), this.last.month = this.setup_defaults("BYMONTH", "MONTHLY", this.dtstart.month), this.rule.freq == "WEEKLY") {
+					if ("BYDAY" in e) {
+						var t = this.ruleDayOfWeek(e.BYDAY[0], this.rule.wkst), r = t[0], i = t[1], a = i - this.last.dayOfWeek(this.rule.wkst);
+						(this.last.dayOfWeek(this.rule.wkst) < i && a >= 0 || a < 0) && (this.last.day += a);
+					} else e.BYDAY = [n.Recur.numericDayToIcalDay(this.dtstart.dayOfWeek())];
+				}
 				if (this.rule.freq == "YEARLY") {
 					for (; this.expand_year_days(this.last.year), !(this.days.length > 0);) this.increment_year(this.rule.interval);
 					this._nextByYearDay();
 				}
 				if (this.rule.freq == "MONTHLY" && this.has_by_data("BYDAY")) {
 					var o = null, s = this.last.clone(), c = n.Time.daysInMonth(this.last.month, this.last.year);
-					for (var l in this.by_data.BYDAY) if (this.by_data.BYDAY.hasOwnProperty(l)) {
+					for (var l in this.by_data.BYDAY)
+ /* istanbul ignore if */
+					if (this.by_data.BYDAY.hasOwnProperty(l)) {
 						this.last = s.clone();
 						var t = this.ruleDayOfWeek(this.by_data.BYDAY[l]), r = t[0], i = t[1], u = this.last.nthWeekDay(i, r);
 						if (r >= 6 || r <= -6) throw Error("Malformed values in BYDAY part");
@@ -2290,7 +2303,8 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				if (r) {
 					var i = parseInt(r[1] || 0, 10);
 					return e = n.Recur.icalDayToNumericDay(r[2], t), [i, e];
-				} else return [0, 0];
+				}
+				return [0, 0];
 			},
 			next_generic: function(e, t, n, r, i) {
 				var a = e in this.by_data, o = this.rule.freq == t, s = 0;
@@ -2365,12 +2379,16 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 					var g = this.dtstart.clone();
 					g.year = this.last.year, this.days.push(g.dayOfYear());
 				} else if (h == 1 && "BYMONTH" in r) {
-					for (var _ in this.by_data.BYMONTH) if (this.by_data.BYMONTH.hasOwnProperty(_)) {
+					for (var _ in this.by_data.BYMONTH)
+ /* istanbul ignore if */
+					if (this.by_data.BYMONTH.hasOwnProperty(_)) {
 						var v = this.dtstart.clone();
 						v.year = e, v.month = this.by_data.BYMONTH[_], v.isDate = !0, this.days.push(v.dayOfYear());
 					}
 				} else if (h == 1 && "BYMONTHDAY" in r) {
-					for (var y in this.by_data.BYMONTHDAY) if (this.by_data.BYMONTHDAY.hasOwnProperty(y)) {
+					for (var y in this.by_data.BYMONTHDAY)
+ /* istanbul ignore if */
+					if (this.by_data.BYMONTHDAY.hasOwnProperty(y)) {
 						var b = this.dtstart.clone(), x = this.by_data.BYMONTHDAY[y];
 						if (x < 0) {
 							var S = n.Time.daysInMonth(b.month, e);
@@ -2379,52 +2397,68 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 						b.day = x, b.year = e, b.isDate = !0, this.days.push(b.dayOfYear());
 					}
 				} else if (h == 2 && "BYMONTHDAY" in r && "BYMONTH" in r) {
-					for (var _ in this.by_data.BYMONTH) if (this.by_data.BYMONTH.hasOwnProperty(_)) {
+					for (var _ in this.by_data.BYMONTH)
+ /* istanbul ignore if */
+					if (this.by_data.BYMONTH.hasOwnProperty(_)) {
 						var C = this.by_data.BYMONTH[_], S = n.Time.daysInMonth(C, e);
-						for (var y in this.by_data.BYMONTHDAY) if (this.by_data.BYMONTHDAY.hasOwnProperty(y)) {
+						for (var y in this.by_data.BYMONTHDAY)
+ /* istanbul ignore if */
+						if (this.by_data.BYMONTHDAY.hasOwnProperty(y)) {
 							var x = this.by_data.BYMONTHDAY[y];
 							x < 0 && (x = x + S + 1), t.day = x, t.month = C, t.year = e, t.isDate = !0, this.days.push(t.dayOfYear());
 						}
 					}
-				} else if (!(h == 1 && "BYWEEKNO" in r) && !(h == 2 && "BYWEEKNO" in r && "BYMONTHDAY" in r)) if (h == 1 && "BYDAY" in r) this.days = this.days.concat(this.expand_by_day(e));
-				else if (h == 2 && "BYDAY" in r && "BYMONTH" in r) {
-					for (var _ in this.by_data.BYMONTH) if (this.by_data.BYMONTH.hasOwnProperty(_)) {
-						var u = this.by_data.BYMONTH[_], S = n.Time.daysInMonth(u, e);
-						t.year = e, t.month = this.by_data.BYMONTH[_], t.day = 1, t.isDate = !0;
-						var w = t.dayOfWeek(), T = t.dayOfYear() - 1;
-						t.day = S;
-						var E = t.dayOfWeek();
-						if (this.has_by_data("BYSETPOS")) {
-							for (var D = [], O = 1; O <= S; O++) t.day = O, this.is_day_in_byday(t) && D.push(O);
-							for (var k = 0; k < D.length; k++) (this.check_set_position(k + 1) || this.check_set_position(k - D.length)) && this.days.push(T + D[k]);
-						} else for (var A in this.by_data.BYDAY) if (this.by_data.BYDAY.hasOwnProperty(A)) {
-							var j = this.by_data.BYDAY[A], M = this.ruleDayOfWeek(j), N = M[0], P = M[1], F, I = (P + 7 - w) % 7 + 1, L = S - (E + 7 - P) % 7;
-							if (N == 0) for (var O = I; O <= S; O += 7) this.days.push(T + O);
-							else N > 0 ? (F = I + (N - 1) * 7, F <= S && this.days.push(T + F)) : (F = L + (N + 1) * 7, F > 0 && this.days.push(T + F));
+				} else if (!(h == 1 && "BYWEEKNO" in r) && !(h == 2 && "BYWEEKNO" in r && "BYMONTHDAY" in r)) {
+					if (h == 1 && "BYDAY" in r) this.days = this.days.concat(this.expand_by_day(e));
+					else if (h == 2 && "BYDAY" in r && "BYMONTH" in r) {
+						for (var _ in this.by_data.BYMONTH)
+ /* istanbul ignore if */
+						if (this.by_data.BYMONTH.hasOwnProperty(_)) {
+							var u = this.by_data.BYMONTH[_], S = n.Time.daysInMonth(u, e);
+							t.year = e, t.month = this.by_data.BYMONTH[_], t.day = 1, t.isDate = !0;
+							var w = t.dayOfWeek(), T = t.dayOfYear() - 1;
+							t.day = S;
+							var E = t.dayOfWeek();
+							if (this.has_by_data("BYSETPOS")) {
+								for (var D = [], O = 1; O <= S; O++) t.day = O, this.is_day_in_byday(t) && D.push(O);
+								for (var k = 0; k < D.length; k++) (this.check_set_position(k + 1) || this.check_set_position(k - D.length)) && this.days.push(T + D[k]);
+							} else for (var A in this.by_data.BYDAY)
+ /* istanbul ignore if */
+							if (this.by_data.BYDAY.hasOwnProperty(A)) {
+								var j = this.by_data.BYDAY[A], M = this.ruleDayOfWeek(j), N = M[0], P = M[1], F, I = (P + 7 - w) % 7 + 1, L = S - (E + 7 - P) % 7;
+								if (N == 0) for (var O = I; O <= S; O += 7) this.days.push(T + O);
+								else N > 0 ? (F = I + (N - 1) * 7, F <= S && this.days.push(T + F)) : (F = L + (N + 1) * 7, F > 0 && this.days.push(T + F));
+							}
 						}
-					}
-					this.days.sort(function(e, t) {
-						return e - t;
-					});
-				} else if (h == 2 && "BYDAY" in r && "BYMONTHDAY" in r) {
-					var R = this.expand_by_day(e);
-					for (var z in R) if (R.hasOwnProperty(z)) {
-						var O = R[z], B = n.Time.fromDayOfYear(O, e);
-						this.by_data.BYMONTHDAY.indexOf(B.day) >= 0 && this.days.push(O);
-					}
-				} else if (h == 3 && "BYDAY" in r && "BYMONTHDAY" in r && "BYMONTH" in r) {
-					var R = this.expand_by_day(e);
-					for (var z in R) if (R.hasOwnProperty(z)) {
-						var O = R[z], B = n.Time.fromDayOfYear(O, e);
-						this.by_data.BYMONTH.indexOf(B.month) >= 0 && this.by_data.BYMONTHDAY.indexOf(B.day) >= 0 && this.days.push(O);
-					}
-				} else if (h == 2 && "BYDAY" in r && "BYWEEKNO" in r) {
-					var R = this.expand_by_day(e);
-					for (var z in R) if (R.hasOwnProperty(z)) {
-						var O = R[z], B = n.Time.fromDayOfYear(O, e), m = B.weekNumber(this.rule.wkst);
-						this.by_data.BYWEEKNO.indexOf(m) && this.days.push(O);
-					}
-				} else h == 3 && "BYDAY" in r && "BYWEEKNO" in r && "BYMONTHDAY" in r || (h == 1 && "BYYEARDAY" in r ? this.days = this.days.concat(this.by_data.BYYEARDAY) : this.days = []);
+						this.days.sort(function(e, t) {
+							return e - t;
+						});
+					} else if (h == 2 && "BYDAY" in r && "BYMONTHDAY" in r) {
+						var R = this.expand_by_day(e);
+						for (var z in R)
+ /* istanbul ignore if */
+						if (R.hasOwnProperty(z)) {
+							var O = R[z], B = n.Time.fromDayOfYear(O, e);
+							this.by_data.BYMONTHDAY.indexOf(B.day) >= 0 && this.days.push(O);
+						}
+					} else if (h == 3 && "BYDAY" in r && "BYMONTHDAY" in r && "BYMONTH" in r) {
+						var R = this.expand_by_day(e);
+						for (var z in R)
+ /* istanbul ignore if */
+						if (R.hasOwnProperty(z)) {
+							var O = R[z], B = n.Time.fromDayOfYear(O, e);
+							this.by_data.BYMONTH.indexOf(B.month) >= 0 && this.by_data.BYMONTHDAY.indexOf(B.day) >= 0 && this.days.push(O);
+						}
+					} else if (h == 2 && "BYDAY" in r && "BYWEEKNO" in r) {
+						var R = this.expand_by_day(e);
+						for (var z in R)
+ /* istanbul ignore if */
+						if (R.hasOwnProperty(z)) {
+							var O = R[z], B = n.Time.fromDayOfYear(O, e), m = B.weekNumber(this.rule.wkst);
+							this.by_data.BYWEEKNO.indexOf(m) && this.days.push(O);
+						}
+					} else h == 3 && "BYDAY" in r && "BYWEEKNO" in r && "BYMONTHDAY" in r || (this.days = h == 1 && "BYYEARDAY" in r ? this.days.concat(this.by_data.BYYEARDAY) : []);
+				}
 				return 0;
 			},
 			expand_by_day: function(e) {
@@ -2433,7 +2467,9 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				var r = n.dayOfWeek();
 				n.month = 12, n.day = 31, n.isDate = !0;
 				var i = n.dayOfWeek(), a = n.dayOfYear();
-				for (var o in this.by_data.BYDAY) if (this.by_data.BYDAY.hasOwnProperty(o)) {
+				for (var o in this.by_data.BYDAY)
+ /* istanbul ignore if */
+				if (this.by_data.BYDAY.hasOwnProperty(o)) {
 					var s = this.by_data.BYDAY[o], c = this.ruleDayOfWeek(s), l = c[0], u = c[1];
 					if (l == 0) for (var d = (u + 7 - r) % 7 + 1; d <= a; d += 7) t.push(d);
 					else if (l > 0) {
@@ -2447,7 +2483,9 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 				return t;
 			},
 			is_day_in_byday: function(e) {
-				for (var t in this.by_data.BYDAY) if (this.by_data.BYDAY.hasOwnProperty(t)) {
+				for (var t in this.by_data.BYDAY)
+ /* istanbul ignore if */
+				if (this.by_data.BYDAY.hasOwnProperty(t)) {
 					var n = this.by_data.BYDAY[t], r = this.ruleDayOfWeek(n), i = r[0], a = r[1], o = e.dayOfWeek();
 					if (i == 0 && a == o || e.nthWeekDay(a, i) == e.day) return 1;
 				}
@@ -2662,7 +2700,7 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 		}, i;
 	}(), n.Event = function() {
 		function e(e, t) {
-			e instanceof n.Component || (t = e, e = null), e ? this.component = e : this.component = new n.Component("vevent"), this._rangeExceptionCache = Object.create(null), this.exceptions = Object.create(null), this.rangeExceptions = [], t && t.strictExceptions && (this.strictExceptions = t.strictExceptions), t && t.exceptions ? t.exceptions.forEach(this.relateException, this) : this.component.parent && !this.isRecurrenceException() && this.component.parent.getAllSubcomponents("vevent").forEach(function(e) {
+			e instanceof n.Component || (t = e, e = null), this.component = e || new n.Component("vevent"), this._rangeExceptionCache = Object.create(null), this.exceptions = Object.create(null), this.rangeExceptions = [], t && t.strictExceptions && (this.strictExceptions = t.strictExceptions), t && t.exceptions ? t.exceptions.forEach(this.relateException, this) : this.component.parent && !this.isRecurrenceException() && this.component.parent.getAllSubcomponents("vevent").forEach(function(e) {
 				e.hasProperty("recurrence-id") && this.relateException(e);
 			}, this);
 		}
@@ -2830,10 +2868,10 @@ var i = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 		return e.prototype = {
 			parseEvent: !0,
 			parseTimezone: !0,
-			oncomplete: function() {},
-			onerror: function(e) {},
-			ontimezone: function(e) {},
-			onevent: function(e) {},
+			oncomplete: /* istanbul ignore next */ function() {},
+			onerror: /* istanbul ignore next */ function(e) {},
+			ontimezone: /* istanbul ignore next */ function(e) {},
+			onevent: /* istanbul ignore next */ function(e) {},
 			process: function(e) {
 				typeof e == "string" && (e = n.parse(e)), e instanceof n.Component || (e = new n.Component(e));
 				for (var t = e.getAllSubcomponents(), r = 0, i = t.length, a; r < i; r++) switch (a = t[r], a.name) {
