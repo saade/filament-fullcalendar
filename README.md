@@ -1748,6 +1748,7 @@ The widget's own elements have classes to style from your theme. FullCalendar's 
 | `.fi-fc-tool-group`                                                                                               | A dropdown of tools.                                                                 |
 | `.fi-fc-filters`, `.fi-fc-filters-heading`, `.fi-fc-filters-actions`                                              | The filter form, its heading and its buttons.                                        |
 | `.fi-fc-filters-dropdown`, `.fi-fc-filters-modal`, `.fi-fc-filters-above-content`, `.fi-fc-filters-below-content` | The filter form in each layout.                                                      |
+| `.fi-fc-filters-above-content-ctn`                                                                                | The band that holds the filter form above the calendar.                              |
 | `.fi-fc`                                                                                                          | The calendar itself. It also has the `.filament-fullcalendar` class it had in 4.x.   |
 
 ## Loading state

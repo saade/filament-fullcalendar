@@ -145,6 +145,21 @@ it('lays the filters out where it is told to', function (FiltersLayout $layout, 
     [FiltersLayout::Hidden, [], ['fi-fc-filters']],
 ]);
 
+it('divides the filters from the calendar when they sit above or below it', function (FiltersLayout $layout, bool $isDivided) {
+    LaidOutFiltersCalendarWidget::$layout = $layout;
+
+    $component = Livewire::test(LaidOutFiltersCalendarWidget::class);
+
+    $isDivided ? $component->assertSeeHtml('fi-divided') : $component->assertDontSeeHtml('fi-divided');
+})->with([
+    [FiltersLayout::AboveContent, true],
+    [FiltersLayout::AboveContentCollapsible, true],
+    [FiltersLayout::BelowContent, true],
+    [FiltersLayout::Dropdown, false],
+    [FiltersLayout::Modal, false],
+    [FiltersLayout::Hidden, false],
+]);
+
 it('uses one column in a dropdown and several above or below the calendar', function () {
     expect(Livewire::test(LaidOutFiltersCalendarWidget::class)->instance()->getFiltersFormColumns())->toBe(1);
 

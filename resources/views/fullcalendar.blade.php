@@ -32,6 +32,7 @@
     <x-filament::section
         :heading="$this->getHeadingHtml()"
         :description="$this->getDescriptionHtml()"
+        :divided="$hasFiltersAboveContent || $hasFiltersBelowContent"
     >
         @if (filled($headerActions))
             <x-slot name="afterHeader">
@@ -87,6 +88,7 @@
 
         @if ($hasFiltersAboveContent)
             <div
+                class="fi-fc-filters-above-content-ctn"
                 @if ($hasCollapsibleFilters)
                     x-data="{ areFiltersOpen: false }"
                     x-on:filament-fullcalendar--toggle-filters.window="if ($event.detail.calendar === @js($this->getId())) areFiltersOpen = ! areFiltersOpen"
