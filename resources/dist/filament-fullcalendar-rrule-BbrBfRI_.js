@@ -1,4 +1,4 @@
-import { Hn as e, V as t, _n as n, bt as r, n as i } from "./filament-fullcalendar-core-MrkNOn94.js";
+import { Hn as e, V as t, _n as n, bt as r, n as i } from "./filament-fullcalendar-core-DiG-pQ70.js";
 //#region node_modules/rrule/dist/esm/weekday.js
 var a = [
 	"MO",
@@ -80,7 +80,7 @@ var h = function(e, t, n) {
 	31,
 	30,
 	31
-], C = 1e3 * 60 * 60 * 24, w = x(1970, 1, 1), T = [
+], C = 864e5, w = x(1970, 1, 1), T = [
 	6,
 	0,
 	1,
@@ -449,8 +449,7 @@ var fe = function(e) {
 function _e(e, t) {
 	t === void 0 && (t = I);
 	var n = {}, r = new ge(t.tokens);
-	if (!r.start(e)) return null;
-	return i(), n;
+	return r.start(e) ? (i(), n) : null;
 	function i() {
 		r.expect("every");
 		var e = r.acceptNumber();
@@ -750,9 +749,7 @@ function Ce(e) {
 		case Q.MONTHLY:
 			t.bymonthday = t.dtstart.getUTCDate();
 			break;
-		case Q.WEEKLY:
-			t.byweekday = [O(t.dtstart)];
-			break;
+		case Q.WEEKLY: t.byweekday = [O(t.dtstart)];
 	}
 	if (s(t.bymonth) && !u(t.bymonth) && (t.bymonth = [t.bymonth]), s(t.byyearday) && !u(t.byyearday) && c(t.byyearday) && (t.byyearday = [t.byyearday]), !s(t.bymonthday)) t.bymonthday = [], t.bynmonthday = [];
 	else if (u(t.bymonthday)) {
@@ -772,7 +769,8 @@ function Ce(e) {
 			if (c(p)) {
 				d.push(p);
 				continue;
-			} else if (l(p)) {
+			}
+			if (l(p)) {
 				d.push(o.fromStr(p).weekday);
 				continue;
 			}
@@ -1069,9 +1067,10 @@ function Je(e, t, n, r, i, a) {
 		lastmonth: t,
 		nwdaymask: []
 	}, s = [];
-	if (a.freq === Q.YEARLY) if (v(a.bymonth)) s = [[0, n]];
-	else for (var c = 0; c < a.bymonth.length; c++) t = a.bymonth[c], s.push(r.slice(t - 1, t + 1));
-	else a.freq === Q.MONTHLY && (s = [r.slice(t - 1, t + 1)]);
+	if (a.freq === Q.YEARLY) {
+		if (v(a.bymonth)) s = [[0, n]];
+		else for (var c = 0; c < a.bymonth.length; c++) t = a.bymonth[c], s.push(r.slice(t - 1, t + 1));
+	} else a.freq === Q.MONTHLY && (s = [r.slice(t - 1, t + 1)]);
 	if (v(s)) return o;
 	o.nwdaymask = f(0, n);
 	for (var c = 0; c < s.length; c++) for (var l = s[c], u = l[0], d = l[1] - 1, p = 0; p < a.bynweekday.length; p++) {
@@ -1085,7 +1084,7 @@ function Je(e, t, n, r, i, a) {
 function Ye(e, t) {
 	t === void 0 && (t = 0);
 	var n = e % 19, r = Math.floor(e / 100), i = e % 100, a = Math.floor(r / 4), o = r % 4, s = Math.floor((r + 8) / 25), c = Math.floor((r - s + 1) / 3), l = Math.floor(19 * n + r - a - c + 15) % 30, u = Math.floor(i / 4), d = i % 4, f = Math.floor(32 + 2 * o + 2 * u - l - d) % 7, p = Math.floor((n + 11 * l + 22 * f) / 451), m = Math.floor((l + f - 7 * p + 114) / 31), h = (l + f - 7 * p + 114) % 31 + 1, g = Date.UTC(e, m - 1, h + t);
-	return [Math.ceil((g - Date.UTC(e, 0, 1)) / (1e3 * 60 * 60 * 24))];
+	return [Math.ceil((g - Date.UTC(e, 0, 1)) / 864e5)];
 }
 //#endregion
 //#region node_modules/rrule/dist/esm/iterinfo/index.js
