@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\Locked;
 use Saade\FilamentFullCalendar\Contracts\Eventable;
+use Saade\FilamentFullCalendar\Contracts\Eventables;
 
 use function Filament\Support\get_model_label;
 
@@ -142,7 +143,7 @@ trait InteractsWithRecords
         /** @var class-string<Model> $modelClass */
         $modelClass = Relation::getMorphedModel($model) ?? $model;
 
-        abort_unless(is_subclass_of($modelClass, Eventable::class), 403);
+        abort_unless(is_subclass_of($modelClass, Eventable::class) || is_subclass_of($modelClass, Eventables::class), 403);
 
         $record = app($modelClass)
             ->resolveRouteBindingQuery($this->getEventRecordQuery($modelClass), $key, app($modelClass)->getKeyName())

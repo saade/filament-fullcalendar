@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Assert;
 use Livewire\Features\SupportTesting\Testable;
 use Saade\FilamentFullCalendar\Contracts\Eventable;
+use Saade\FilamentFullCalendar\Contracts\Eventables;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
 
 use function Livewire\invade;
 
@@ -19,11 +21,24 @@ class TestsCalendar
 {
     /**
      * An array is used as it is, an `Eventable` record becomes the event the
-     * widget makes for it, and anything else is taken as the event's id.
+     * widget makes for it, an `Eventables` record the first of its
+     * events, and anything else is taken as the event's id.
      */
     public function makeCalendarEvent(): Closure
     {
         return function (Model | array | int | string $event, array $overrides = []): array {
+            if ($event instanceof Eventables) {
+                $timezone = $this->instance()->getTimezone();
+
+                $info = FetchInfo::fromArray([
+                    'start' => CarbonImmutable::now()->subYear()->toIso8601String(),
+                    'end' => CarbonImmutable::now()->addYear()->toIso8601String(),
+                    'timezone' => $timezone,
+                ], $timezone);
+
+                $event = json_decode(json_encode(invade($this->instance())->getEventsFromRecord($event, $info)[0] ?? []), associative: true);
+            }
+
             if ($event instanceof Model) {
                 $event = $event instanceof Eventable
                     ? json_decode(json_encode(invade($this->instance())->getEventFromRecord($event)), associative: true)

@@ -7,6 +7,7 @@ use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use LogicException;
+use Saade\FilamentFullCalendar\Contracts\Eventables;
 use Saade\FilamentFullCalendar\Data\DateSelectInfo;
 use Saade\FilamentFullCalendar\Data\ExternalDropInfo;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
@@ -32,6 +33,10 @@ trait InteractsWithExternalDrops
 
         if ($record && blank($calendar)) {
             throw new LogicException('A draggable item with a record has to be made by the widget it can be dropped on, as in [CalendarWidget::getDraggableAttributes(record: $record)].');
+        }
+
+        if ($record instanceof Eventables) {
+            throw new LogicException('[' . $record::class . '] is several events, so the calendar cannot tell which of its dates a drop would set. Only a model that implements Eventable can be a draggable record.');
         }
 
         $item = json_encode([
@@ -117,6 +122,10 @@ trait InteractsWithExternalDrops
         $this->eventRecord = is_array($item['record'] ?? null)
             ? $this->resolveEventRecordFromIdentity($item['record'])
             : null;
+
+        // The reference of an event of such a record is signed the same way,
+        // so one could be sent back as a dropped item.
+        abort_if($this->eventRecord instanceof Eventables, 403);
 
         $this->onExternalDrop(new ExternalDropInfo(
             date: $droppedAt,

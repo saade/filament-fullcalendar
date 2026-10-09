@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Saade\FilamentFullCalendar\Contracts\Eventable;
+use Saade\FilamentFullCalendar\Contracts\Eventables;
 use Saade\FilamentFullCalendar\Data\DateClickInfo;
 use Saade\FilamentFullCalendar\Data\DateSelectInfo;
 use Saade\FilamentFullCalendar\Data\DatesSetInfo;
@@ -100,8 +101,9 @@ trait InteractsWithEvents
         }
 
         // The dates of an occurrence say nothing about where its series
-        // starts, so they are never written to the record.
-        if ($event->isRecurring && filled($this->getStartAttribute())) {
+        // starts, so they are never written to the record. Neither are those
+        // of one of several events of a record.
+        if (($event->isRecurring || ($record instanceof Eventables)) && filled($this->getStartAttribute())) {
             return true;
         }
 
@@ -350,7 +352,9 @@ trait InteractsWithEvents
      */
     public function handleFetchEvents(array $info): array
     {
-        $events = $this->fetchEvents(FetchInfo::fromArray($info, $this->getTimezone()));
+        $info = FetchInfo::fromArray($info, $this->getTimezone());
+
+        $events = $this->fetchEvents($info);
 
         if ($events instanceof Relation) {
             $this->modifyQueryWithActiveTab($events->getQuery());
@@ -365,7 +369,9 @@ trait InteractsWithEvents
         }
 
         return collect($events)
-            ->map($this->normalizeEvent(...))
+            ->flatMap(fn (mixed $event): array => $event instanceof Eventables
+                ? $this->getEventsFromRecord($event, $info)
+                : [$this->normalizeEvent($event)])
             ->values()
             ->all();
     }
@@ -425,6 +431,42 @@ trait InteractsWithEvents
                 'calendarRecord' => $identity,
             ],
         ];
+    }
+
+    /**
+     * @return array<array<string, mixed>>
+     */
+    protected function getEventsFromRecord(Eventables $record, FetchInfo $info): array
+    {
+        if (! $record instanceof Model) {
+            throw new LogicException('[' . $record::class . '] implements Eventables but is not an Eloquent model.');
+        }
+
+        if ($record instanceof Eventable) {
+            throw new LogicException('[' . $record::class . '] implements both Eventable and Eventables. A model is either one event or several, so implement only one of them.');
+        }
+
+        $identity = $this->getEventRecordIdentity($record);
+
+        $events = [];
+
+        foreach (array_values($record->toCalendarEvents($info)) as $index => $event) {
+            if ($event instanceof EventData) {
+                $event = $event->toArray();
+            }
+
+            $events[] = $this->applyFilamentColor([
+                ...$event,
+                'id' => $event['id'] ?? "{$identity['model']}-{$identity['key']}-{$index}",
+                'editable' => $event['editable'] ?? false,
+                'extendedProps' => [
+                    ...($event['extendedProps'] ?? []),
+                    'calendarRecord' => $identity,
+                ],
+            ]);
+        }
+
+        return $events;
     }
 
     /**

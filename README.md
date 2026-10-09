@@ -31,6 +31,7 @@ Upgrading from 4.x? Read the [upgrade guide](UPGRADING.md). Coming from 3.x, fol
   - [Returning events](#returning-events)
   - [The EventData class](#the-eventdata-class)
   - [Returning models](#returning-models)
+  - [Several events from one record](#several-events-from-one-record)
   - [Showing the calendar on its own page](#showing-the-calendar-on-its-own-page)
   - [Showing the calendar on a resource page](#showing-the-calendar-on-a-resource-page)
   - [Using the calendar outside a panel](#using-the-calendar-outside-a-panel)
@@ -302,6 +303,40 @@ public function fetchEvents(FetchInfo $info): Builder
 ```
 
 There is no `id` to set: the calendar gives each event one and remembers which record it stands for, so the view, edit and delete actions work without `$model`. Creating still needs `$model`, or a create action with its own `model()`. That reference is signed, so a user cannot swap it in the browser to reach a record the calendar never showed them. Models, `EventData` objects and plain arrays can be mixed in the same result.
+
+## Several events from one record
+
+A record can also show up as more than one event, such as a rental with a pickup and a return, or a course whose sessions are stored on the course itself. Implement `Eventables` on the model and return a list:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Saade\FilamentFullCalendar\Contracts\Eventables;
+use Saade\FilamentFullCalendar\Data\EventData;
+use Saade\FilamentFullCalendar\Data\FetchInfo;
+
+class Rental extends Model implements Eventables
+{
+    public function toCalendarEvents(FetchInfo $info): array
+    {
+        return [
+            EventData::make()
+                ->title("Pickup: {$this->car}")
+                ->start($this->pickup_at)
+                ->color('success'),
+            EventData::make()
+                ->title("Return: {$this->car}")
+                ->start($this->return_at)
+                ->color('warning'),
+        ];
+    }
+}
+```
+
+Return the models from `fetchEvents()` as you would [`Eventable`](#returning-models) ones. Every event stands for the same record, so clicking any of them opens it with the view, edit and delete actions. `$info` is the range being fetched, for a record that works out its events, such as one that repeats: return only the ones between `$info->start` and `$info->end`. An event may also be a plain array.
+
+These events cannot be dragged or resized, because the calendar cannot tell which of the record's dates one of them stands for. To move them yourself, set `editable` on the event with `extraProperties(['editable' => true])` and save the change in [`onEventDrop()` or `onEventResize()`](#intercepting-events); with [`$startAttribute`](#dragging-and-resizing-events) set and no handler of your own, the event moves back.
+
+A model is either one event or several: implementing both `Eventable` and `Eventables` on the same model throws an exception.
 
 ## Showing the calendar on its own page
 

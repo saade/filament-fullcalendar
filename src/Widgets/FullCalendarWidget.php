@@ -50,7 +50,7 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
      * navigates or switches views.
      *
      * Return event arrays or `EventData` objects, or models that implement
-     * `Eventable`, as an array, a collection or a query.
+     * `Eventable` or `Eventables`, as an array, a collection or a query.
      *
      * @return iterable<mixed> | Builder<Model> | Relation<Model, Model, mixed>
      */
