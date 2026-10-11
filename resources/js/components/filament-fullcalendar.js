@@ -124,6 +124,22 @@ function renderHtmlTitle({ event, el }) {
     if (title) title.innerHTML = event.title
 }
 
+// Zero where scrollbars float over the page, as they do on macOS.
+function measureScrollbarWidth() {
+    const probe = document.createElement('div')
+
+    probe.style.cssText =
+        'position: absolute; visibility: hidden; width: 100px; height: 100px; overflow: scroll'
+
+    document.body.appendChild(probe)
+
+    const width = probe.offsetWidth - probe.clientWidth
+
+    probe.remove()
+
+    return width
+}
+
 const isEnglish = (locale) => !locale || /^en([-_]us)?$/i.test(locale)
 
 async function loadLocales(locale) {
@@ -185,6 +201,8 @@ export default function fullcalendar({
         resizeObserver: null,
 
         lastWidth: null,
+
+        scrollbarWidth: measureScrollbarWidth(),
 
         initialResources: Array.isArray(resources) ? resources : null,
 
@@ -521,7 +539,15 @@ export default function fullcalendar({
             this.resizeObserver = new ResizeObserver(([entry]) => {
                 const width = entry.contentRect.width
 
-                if (width === this.lastWidth) return
+                const scrollbarWidth = Math.max(
+                    this.scrollbarWidth,
+                    window.innerWidth - document.documentElement.clientWidth,
+                )
+
+                // A scrollbar that appears or disappears changes the width by
+                // its own size, and resizing the calendar for it can bring the
+                // scrollbar back, which would never end.
+                if (Math.abs(width - this.lastWidth) <= scrollbarWidth) return
 
                 this.lastWidth = width
 

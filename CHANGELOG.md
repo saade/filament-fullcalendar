@@ -300,6 +300,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - Dragging or resizing one occurrence of a recurring event wrote that occurrence's dates to the record, moving the start of the whole series. A recurring event now moves back unless the widget handles it, and `$info->event->isRecurring` tells the handlers which is which.
 - An all-day event dragged to a time slot was saved with its new start and its old end. It is now saved with the default duration the calendar shows, an hour unless `defaultTimedEventDuration` says otherwise.
 - A calendar created while hidden, in a closed modal or an inactive tab, rendered collapsed. It now sizes itself when it becomes visible.
+- In 5.0.0-beta1, a calendar on a page that was just tall enough to need a scrollbar resized itself over and over, which made it shake ([#316](https://github.com/saade/filament-fullcalendar/issues/316)).
 - Clicking an event with no record behind it, such as a holiday, opened a broken modal ([#238](https://github.com/saade/filament-fullcalendar/discussions/238)). It now does nothing.
 - An event with a `url` caused a full page load in panels with SPA mode. It now navigates like any other link.
 - Filling the create form from a date selection discarded the fields' `default()` values ([#207](https://github.com/saade/filament-fullcalendar/issues/207)).

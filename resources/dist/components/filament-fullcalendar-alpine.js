@@ -1472,11 +1472,17 @@ function nn({ event: e, el: t }) {
 	let n = t.querySelector(".fc-event-title") ?? t.querySelector(".fc-list-event-title a") ?? t.querySelector(".fc-list-event-title");
 	n && (n.innerHTML = e.title);
 }
-var rn = (e) => !e || /^en([-_]us)?$/i.test(e);
-async function an(e) {
-	return rn(e) ? [] : (await import("../filament-fullcalendar-locales-D70-mQ5L.js")).default;
+function rn() {
+	let e = document.createElement("div");
+	e.style.cssText = "position: absolute; visibility: hidden; width: 100px; height: 100px; overflow: scroll", document.body.appendChild(e);
+	let t = e.offsetWidth - e.clientWidth;
+	return e.remove(), t;
 }
-function on({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, resources: o, eventSources: s, googleCalendarApiKey: c, editable: l, selectable: u, filtersCount: d, pollingInterval: f, droppable: p, widget: m, hasSpaMode: ee, shouldReportDates: h, callbacks: g }) {
+var an = (e) => !e || /^en([-_]us)?$/i.test(e);
+async function on(e) {
+	return an(e) ? [] : (await import("../filament-fullcalendar-locales-D70-mQ5L.js")).default;
+}
+function sn({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i, config: a, resources: o, eventSources: s, googleCalendarApiKey: c, editable: l, selectable: u, filtersCount: d, pollingInterval: f, droppable: p, widget: m, hasSpaMode: ee, shouldReportDates: h, callbacks: g }) {
 	let _ = (e, ...t) => typeof g[e] == "function" && g[e](...t) === !1;
 	return {
 		calendar: null,
@@ -1492,13 +1498,14 @@ function on({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 		isTodayInRange: !1,
 		resizeObserver: null,
 		lastWidth: null,
+		scrollbarWidth: rn(),
 		initialResources: Array.isArray(o) ? o : null,
 		async init() {
 			let { mobileInitialView: d, mobileBreakpoint: v = 768, plugins: y = [], locales: te = [], ...ne } = a, b = window.matchMedia(`(max-width: ${v - 1}px)`).matches, x = [...a.eventSources ?? [], ...s], re = [x.some((e) => e.googleCalendarId) && "googleCalendar", x.some((e) => e.format === "ics") && "iCalendar"].filter(Boolean), [S, ie] = await Promise.all([Zt([.../* @__PURE__ */ new Set([
 				...n,
 				...y,
 				...re
-			])]), an(a.locale ?? t)]);
+			])]), on(a.locale ?? t)]);
 			if (this.isDestroyed) return;
 			this.calendar = new Ne(this.$refs.calendar, {
 				plugins: S,
@@ -1634,8 +1641,8 @@ function on({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 			}), this.calendar.render(), this.syncToolbar(), p && Qt(), f && (this.pollingTimer = setInterval(() => {
 				document.hidden || this.isDragging || this.$wire.mountedActions?.length || this.calendar.refetchEvents();
 			}, f)), this.resizeObserver = new ResizeObserver(([e]) => {
-				let t = e.contentRect.width;
-				t !== this.lastWidth && (this.lastWidth = t, requestAnimationFrame(() => this.calendar?.updateSize()));
+				let t = e.contentRect.width, n = Math.max(this.scrollbarWidth, window.innerWidth - document.documentElement.clientWidth);
+				Math.abs(t - this.lastWidth) <= n || (this.lastWidth = t, requestAnimationFrame(() => this.calendar?.updateSize()));
 			}), this.resizeObserver.observe(this.$refs.calendar);
 			let ae = {
 				refresh: () => this.calendar.refetchEvents(),
@@ -1711,4 +1718,4 @@ function on({ id: e, locale: t, plugins: n, schedulerLicenseKey: r, timeZone: i,
 	};
 }
 //#endregion
-export { on as default };
+export { sn as default };
