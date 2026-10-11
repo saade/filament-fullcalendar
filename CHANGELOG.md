@@ -2,6 +2,16 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v5.0.0-beta2 - 2026-10-11
+
+### Release Notes
+
+* fix: stop the calendar resizing in a loop when a scrollbar comes and goes in [`d10008c`](https://github.com/saade/filament-fullcalendar/commit/d10008c045ed8ea9e7ecfa498f3817b39d326e6e)
+* feat: let a model show up as several events with the Eventables contract in [`3a65c84`](https://github.com/saade/filament-fullcalendar/commit/3a65c8474473a2749cd0ef56a95f0cdad3ad6ed3)
+* fix: separate filters above or below the calendar in [`5e01ff0`](https://github.com/saade/filament-fullcalendar/commit/5e01ff04fcddf24f842b0bd9f25d9e0fe06922d9)
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v5.0.0-beta1...v5.0.0-beta2
+
 ## v5.0.0-beta1 - 2026-10-08
 
 > [!IMPORTANT]
@@ -19,6 +29,7 @@ To make upgrading even easier, v5 now ships with an **automated upgrade script**
 composer require saade/filament-fullcalendar:"^5.0"
 composer require rector/rector:^2.5 --dev --no-scripts
 vendor/bin/filament-fullcalendar-v5
+
 
 ```
 The first Composer command may end with an error, and that's expected. The package is installed first, then Laravel's package discovery may try to load your existing v4 widgets before they've been upgraded. Installing Rector with `--no-scripts` prevents that discovery from running again, and the upgrade script can then do its work.
@@ -251,6 +262,7 @@ Filament FullCalendar v5 supports:
 ```bash
 composer require saade/filament-fullcalendar:"^5.0"
 php artisan filament:assets
+
 
 ```
 If you're upgrading an existing application from v3 or v4, **please read the upgrade guide before updating**. v5 changes some existing behavior and APIs in addition to adding all of the features above.
