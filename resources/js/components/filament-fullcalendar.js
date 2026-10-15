@@ -48,7 +48,7 @@ const serializeEvent = (event) => ({
     extendedProps: event.extendedProps,
     isRecurring: Boolean(event._def?.recurringDef),
     source: event.source?.id || null,
-    resourceIds: event.getResources?.().map((resource) => resource.id) ?? [],
+    resourceIds: [...(event._def?.resourceIds ?? [])],
 })
 
 const escapeHtml = (text) => {

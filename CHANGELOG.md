@@ -317,6 +317,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - An event with a `url` caused a full page load in panels with SPA mode. It now navigates like any other link.
 - Filling the create form from a date selection discarded the fields' `default()` values ([#207](https://github.com/saade/filament-fullcalendar/issues/207)).
 - In 5.0.0-beta2, a tool with a hidden label, such as `filters`, showed no badge.
+- In 5.0.0-beta3, dragging, resizing or clicking an event on a calendar without resource views threw an error in the browser.
 - A tool's active state that read an option with `calendar.getOption()`, such as the Weekends tool in the README, did not change when the option did.
 
 ### Added

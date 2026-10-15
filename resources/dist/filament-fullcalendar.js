@@ -26415,7 +26415,7 @@ var fP = "filament-fullcalendar", pP = (e) => ({
 	extendedProps: e.extendedProps,
 	isRecurring: !!e._def?.recurringDef,
 	source: e.source?.id || null,
-	resourceIds: e.getResources?.().map((e) => e.id) ?? []
+	resourceIds: [...e._def?.resourceIds ?? []]
 }), mP = (e) => {
 	let t = document.createElement("div");
 	return t.textContent = e, t.innerHTML;
