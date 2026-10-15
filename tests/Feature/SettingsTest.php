@@ -50,16 +50,42 @@ it('accepts closures for the panel plugin settings', function () {
 it('draws the calendar with the Filament theme unless another is chosen', function () {
     Livewire::test(EventCalendarWidget::class)
         ->assertSeeHtml("theme: 'filament'")
-        ->assertSeeHtml('paletteClass: null');
+        ->assertSeeHtml('palette: null');
 
     FilamentFullCalendarPlugin::current()->theme('monarch');
 
     Livewire::test(EventCalendarWidget::class)->assertSeeHtml("theme: 'monarch'");
 });
 
-it('refuses a theme that does not exist', function () {
-    FilamentFullCalendarPlugin::make()->theme('bootstrap5')->getTheme();
-})->throws(InvalidArgumentException::class, '[bootstrap5] is not a calendar theme');
+it('takes the name of a theme of your own and leaves its palette to the browser', function () {
+    FilamentFullCalendarPlugin::current()->theme('brutalist')->palette('purple');
+
+    Livewire::test(EventCalendarWidget::class)
+        ->assertSeeHtml("theme: 'brutalist'")
+        ->assertSeeHtml("palette: 'purple'")
+        ->assertDontSeeHtml('fi-fc-palette-');
+});
+
+it('hands the address of each registered theme to the calendar', function () {
+    FilamentFullCalendarPlugin::current()
+        ->registerTheme('brutalist', '/js/brutalist.js')
+        ->registerTheme('soft', fn (): string => '/js/soft.js')
+        ->theme('brutalist');
+
+    $widget = Livewire::test(EventCalendarWidget::class)
+        ->assertSeeHtml("theme: 'brutalist'")
+        ->assertSeeHtml('registeredThemes:');
+
+    expect($widget->instance()->getRegisteredThemes())->toBe(['brutalist' => '/js/brutalist.js', 'soft' => '/js/soft.js']);
+});
+
+it('refuses to register a theme under the name of a built-in one', function () {
+    FilamentFullCalendarPlugin::make()->registerTheme('monarch', '/js/monarch.js');
+})->throws(InvalidArgumentException::class, '[monarch] is the name of a built-in theme');
+
+it('refuses a blank theme', function () {
+    FilamentFullCalendarPlugin::make()->theme('')->getTheme();
+})->throws(InvalidArgumentException::class, 'The calendar theme cannot be blank');
 
 it('gives a FullCalendar theme its first palette unless another is chosen', function () {
     FilamentFullCalendarPlugin::current()->theme('monarch');

@@ -432,6 +432,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.
 - `EventData::title()` takes `html: true` to render the title as HTML.
 - `theme()` on the panel plugin chooses how the calendar looks: `filament`, the default, or one of FullCalendar's themes, `breezy`, `classic`, `forma`, `monarch` and `pulse`, with `palette()` for their color palettes. `nativeToolbar()` lets FullCalendar draw the toolbar, with the icon, tooltip, badge and active state of each tool. A widget can override each with `getTheme()`, `getPalette()` and `hasNativeToolbar()`.
+- A theme of your own: `registerTheme()` on the panel plugin takes a name and the address of a JavaScript module that exports a FullCalendar 7 theme, which the calendar loads before it is drawn, and `theme()` takes that name. A theme may extend a built-in theme or another registered one with `extends`, replacing only the options it sets.
 - The widget's `eventClass()` render hook, FullCalendar 7's name for `eventClassNames()`.
 - `scrollToTime()` and `setOption()` join the methods that drive the calendar from PHP.
 - `changeView()` takes an optional date to go to at the same time.

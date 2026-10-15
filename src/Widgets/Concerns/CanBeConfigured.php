@@ -59,9 +59,22 @@ trait CanBeConfigured
         return FilamentFullCalendarPlugin::current()->getPalette();
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public function getRegisteredThemes(): array
+    {
+        return FilamentFullCalendarPlugin::current()->getRegisteredThemes();
+    }
+
     public function getPaletteClass(): ?string
     {
         $theme = $this->getTheme();
+
+        if (! array_key_exists($theme, FilamentFullCalendarPlugin::THEMES)) {
+            return null;
+        }
+
         $palettes = FilamentFullCalendarPlugin::THEMES[$theme];
         $palette = $this->getPalette();
 

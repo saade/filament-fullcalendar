@@ -56,6 +56,7 @@ Upgrading from 4.x? Read the [upgrade guide](UPGRADING.md). Coming from 3.x, fol
   - [A different view on phones](#a-different-view-on-phones)
   - [Styling the calendar](#styling-the-calendar)
     - [Using FullCalendar's themes](#using-fullcalendars-themes)
+    - [Using a theme of your own](#using-a-theme-of-your-own)
     - [Styling an element](#styling-an-element)
   - [Premium plugins and licensing](#premium-plugins-and-licensing)
     - [Do I need a license?](#do-i-need-a-license)
@@ -460,6 +461,7 @@ $panel->plugin(
 | `schedulerLicenseKey(string \| Closure \| null $key)` | `null`                                       | Your FullCalendar Premium license key. See [Premium plugins and licensing](#premium-plugins-and-licensing).        |
 | `theme(string \| Closure $theme)`                     | `filament`                                   | How the calendar looks. See [Styling the calendar](#styling-the-calendar).                                         |
 | `palette(string \| Closure \| null $palette)`         | The theme's first                            | The colors of one of FullCalendar's themes. See [Using FullCalendar's themes](#using-fullcalendars-themes).        |
+| `registerTheme(string $name, string \| Closure $url)` |                                              | A theme of your own, and the address of its file. See [Using a theme of your own](#using-a-theme-of-your-own).     |
 | `nativeToolbar(bool \| Closure $condition = true)`    | `false`                                      | Lets FullCalendar draw the toolbar. See [Using FullCalendar's toolbar](#using-fullcalendars-toolbar).              |
 | `config(array \| Closure $config)`                    | `[]`                                         | Any other [FullCalendar option](https://fullcalendar.io/docs#toc).                                                 |
 
@@ -602,9 +604,69 @@ FilamentFullCalendarPlugin::make()
     </tr>
 </table>
 
-FullCalendar's themes are shown here with [FullCalendar's toolbar](#using-fullcalendars-toolbar), and on its [demos page](https://fullcalendar.io/demos). They follow the panel into dark mode, but take their colors from the palette, not from the panel. The `filament` theme has no palettes, so giving it one throws an exception, as does a theme or palette that is not in the table.
+FullCalendar's themes are shown here with [FullCalendar's toolbar](#using-fullcalendars-toolbar), and on its [demos page](https://fullcalendar.io/demos). They follow the panel into dark mode, but take their colors from the palette, not from the panel. The `filament` theme has no palettes, so giving it one throws an exception, as does a palette that is not in the table.
 
 The toolbar is still drawn with Filament buttons. To have it match the theme, let [FullCalendar draw the toolbar](#using-fullcalendars-toolbar).
+
+### Using a theme of your own
+
+A FullCalendar 7 theme is an object of class-name options, such as `buttonClass` or `dayCellClass`, each a string of classes or a function that picks them from the element's state. You may write one of your own as a JavaScript module that exports it:
+
+```js
+// resources/js/calendar/brutalist.js
+export default {
+    extends: 'classic',
+    optionDefaults: {
+        buttonClass: (info) => info.isSelected
+            ? 'border-2 border-black bg-black px-3 py-1.5 font-bold uppercase text-yellow-300'
+            : 'border-2 border-black bg-yellow-300 px-3 py-1.5 font-bold uppercase shadow-[3px_3px_0_#000]',
+        dayHeaderClass: 'border-2 border-black bg-black',
+        dayHeaderInnerClass: 'px-2 py-1.5 text-xs font-bold uppercase text-white',
+        dayCellClass: (info) => info.isToday ? 'border-2 border-black bg-yellow-300' : 'border-2 border-black',
+    },
+    views: {
+        dayGrid: {
+            rowEventClass: 'mx-1 mb-1 border-2 border-black shadow-[3px_3px_0_#000]',
+        },
+    },
+}
+```
+
+Then register it on the panel plugin with a name and the address of the file, using the `registerTheme()` method, and use that name with `theme()`:
+
+```php
+use Illuminate\Support\Facades\Vite;
+
+FilamentFullCalendarPlugin::make()
+    ->registerTheme('brutalist', fn (): string => Vite::asset('resources/js/calendar/brutalist.js'))
+    ->theme('brutalist')
+```
+
+The calendar loads the file before it is drawn. With Vite, add the file to the `input` of `vite.config.js`, so it is built, and tell Vite to keep what an input exports, which it otherwise removes from an application's build:
+
+```js
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                'resources/css/filament/admin/theme.css',
+                'resources/js/calendar/brutalist.js',
+            ],
+        }),
+    ],
+    build: {
+        rollupOptions: {
+            preserveEntrySignatures: 'exports-only',
+        },
+    },
+})
+```
+
+A file in `public/` works too, without a build, using `asset('js/calendar/brutalist.js')`. Either way, Tailwind only generates the classes it finds in the files your panel's theme scans, so add the theme's file with `@source`.
+
+`extends` names the theme yours starts from: one of the themes above or another one you registered. Each option you set replaces the one of that theme, and the options under `views` replace the ones of that view; the rest are kept. Without `extends`, a theme starts from nothing but FullCalendar's own layout. The options are listed in FullCalendar's [render hook index](https://fullcalendar.io/docs/render-hook-index), and every theme of this package is a full example: the `filament` theme is in `vendor/saade/filament-fullcalendar/resources/js/themes/filament.js`.
+
+A theme that extends one of FullCalendar's takes `palette()` like the theme it extends. An event's color is in the `--fc-event-color` CSS variable, for classes such as `bg-(--fc-event-color)`, with the 500 shade of the event's color, as in the `filament` theme. When your theme fills an event with its color, set a [`contrastColor()`](#coloring-events) for its text.
 
 ### Styling an element
 

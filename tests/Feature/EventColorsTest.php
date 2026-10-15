@@ -103,6 +103,7 @@ it('takes a palette as the color, with the shade the theme needs', function (str
 })->with([
     ['filament', 500, null],
     ['monarch', 600, 'white'],
+    'a theme of your own' => ['brutalist', 500, null],
 ]);
 
 it('keeps the contrast color given with a color', function () {

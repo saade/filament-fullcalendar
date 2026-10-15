@@ -32,6 +32,11 @@ class FilamentFullCalendarPlugin implements Plugin
 
     protected string | Closure | null $palette = null;
 
+    /**
+     * @var array<string, string | Closure>
+     */
+    protected array $registeredThemes = [];
+
     protected bool | Closure $hasNativeToolbar = false;
 
     protected string | Closure | null $schedulerLicenseKey = null;
@@ -124,11 +129,30 @@ class FilamentFullCalendarPlugin implements Plugin
     {
         $theme = $this->evaluate($this->theme);
 
-        if (! array_key_exists($theme, static::THEMES)) {
-            throw new InvalidArgumentException("[{$theme}] is not a calendar theme. Use one of [" . implode('], [', array_keys(static::THEMES)) . '].');
+        if (blank($theme)) {
+            throw new InvalidArgumentException('The calendar theme cannot be blank. Use one of [' . implode('], [', array_keys(static::THEMES)) . '], or the name of a theme of your own.');
         }
 
         return $theme;
+    }
+
+    public function registerTheme(string $name, string | Closure $url): static
+    {
+        if (array_key_exists($name, static::THEMES)) {
+            throw new InvalidArgumentException("[{$name}] is the name of a built-in theme. Register your theme under another name.");
+        }
+
+        $this->registeredThemes[$name] = $url;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getRegisteredThemes(): array
+    {
+        return array_map(fn (string | Closure $url): string => $this->evaluate($url), $this->registeredThemes);
     }
 
     public function palette(string | Closure | null $palette): static

@@ -208,7 +208,7 @@ The `$record` injected into action callbacks, as in `->mountUsing(function (Even
 
 The widget defines more methods and properties than it did in 4.x. If your widget already has one with the same name, rename yours, or, where it is meant to be the same thing, give it the same signature, type and default.
 
-- **Methods that drive the calendar:** `getTimezone()`, `getLocale()`, `getPlugins()`, `getTheme()`, `getPalette()`, `getPaletteClass()`, `hasNativeToolbar()`, `getNativeToolbar()`, `getSchedulerLicenseKey()`, `goToDate()`, `changeView()`, `next()`, `previous()`, `today()`, `scrollToTime()`, `setOption()`, `refreshResources()`, `applyFilters()`, `resetFilters()`
+- **Methods that drive the calendar:** `getTimezone()`, `getLocale()`, `getPlugins()`, `getTheme()`, `getPalette()`, `getPaletteClass()`, `getRegisteredThemes()`, `hasNativeToolbar()`, `getNativeToolbar()`, `getSchedulerLicenseKey()`, `goToDate()`, `changeView()`, `next()`, `previous()`, `today()`, `scrollToTime()`, `setOption()`, `refreshResources()`, `applyFilters()`, `resetFilters()`
 - **Methods you override to configure it:** `fetchResources()`, `filtersSchema()`, `getTabs()`, `jsCallbacks()`, `eventClass()`, `eventSources()`, `toolbarActions()`, `toolbarButtons()`, `footerToolbarButtons()`, `tools()`, `createAction()`, `getHeading()`, `getDescription()`, `onDatesSet()`, `onExternalDrop()`, `isDroppable()`, `isReadOnly()`
 - **Properties:** `$filters`, `$deferredFilters`, `$activeTab`, `$heading`, `$description`, `$filtersLayout`, `$hasDeferredFilters`, `$pollingInterval`
 

@@ -2,7 +2,7 @@ import { Calendar } from 'fullcalendar'
 import { Draggable } from 'fullcalendar/interaction'
 import allLocales from 'fullcalendar/locales-all'
 import availablePlugins from '../plugins/index.js'
-import themes from '../plugins/themes.js'
+import { loadTheme, paletteClassOf, resolveTheme } from '../plugins/themes.js'
 import * as v6 from '../plugins/v6-compat.js'
 import { joinClasses } from '../support/classes.js'
 
@@ -95,7 +95,9 @@ export default function fullcalendar({
     locale,
     plugins,
     theme,
-    paletteClass,
+    palette,
+    palettes,
+    registeredThemes,
     nativeToolbar,
     schedulerLicenseKey,
     timeZone,
@@ -123,13 +125,6 @@ export default function fullcalendar({
 
     const activeNativeButtons = {}
 
-    const ownClasses = {
-        viewClass: 'fi-fc-view',
-        eventClass: paletteClass,
-        eventTitleClass: 'fi-fc-event-title',
-        popoverClass: paletteClass,
-    }
-
     return {
         /** @type Calendar */
         calendar: null,
@@ -143,6 +138,8 @@ export default function fullcalendar({
         colorSchemeObserver: null,
 
         isDragging: false,
+
+        isDestroyed: false,
 
         id,
 
@@ -158,7 +155,21 @@ export default function fullcalendar({
 
         initialResources: Array.isArray(resources) ? resources : null,
 
-        init() {
+        async init() {
+            await loadTheme(theme, registeredThemes)
+
+            if (this.isDestroyed) return
+
+            const { theme: themePlugin, base } = resolveTheme(theme)
+            const paletteClass = paletteClassOf(theme, base, palette, palettes)
+
+            const ownClasses = {
+                viewClass: 'fi-fc-view',
+                eventClass: paletteClass,
+                eventTitleClass: 'fi-fc-event-title',
+                popoverClass: paletteClass,
+            }
+
             const {
                 mobileInitialView,
                 mobileBreakpoint = 768,
@@ -178,12 +189,16 @@ export default function fullcalendar({
                     'iCalendar',
             ].filter(Boolean)
 
+            if (paletteClass) {
+                this.$refs.calendar.classList.add(paletteClass)
+            }
+
             this.calendar = new Calendar(this.$refs.calendar, {
                 plugins: [
                     ...resolvePlugins([
                         ...new Set([...plugins, ...configPlugins, ...sourcePlugins]),
                     ]),
-                    themes[theme],
+                    themePlugin,
                 ],
                 locale,
                 ...(schedulerLicenseKey && { schedulerLicenseKey }),
@@ -670,6 +685,8 @@ export default function fullcalendar({
         },
 
         destroy() {
+            this.isDestroyed = true
+
             Object.entries(this.listeners).forEach(([name, listener]) =>
                 window.removeEventListener(name, listener),
             )

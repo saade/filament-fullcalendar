@@ -24,7 +24,7 @@ trait HasEventColors
             return $data;
         }
 
-        $isTinted = in_array($this->getTheme(), ['filament', 'breezy', 'forma'], true);
+        $isTinted = ! in_array($this->getTheme(), ['classic', 'monarch', 'pulse'], true);
         $shade = $isTinted ? 500 : 600;
 
         if (is_array($color)) {

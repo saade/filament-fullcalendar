@@ -26358,11 +26358,63 @@ var $ = (...e) => e.filter(Boolean).join(" "), tN = (e) => String(e).replaceAll(
 	forma: jj,
 	monarch: pM,
 	pulse: ZM
-}, tP = (e, t) => typeof e == "function" ? e(t) : e, nP = (...e) => e.some((e) => typeof e == "function") ? (t) => nP(...e.map((e) => tP(e, t))) : e.flat().filter(Boolean).join(" "), rP = [
+}, tP = (e, { extends: t, ...n }, r) => ({
+	...e,
+	...n,
+	name: `theme-${r}`,
+	optionDefaults: {
+		...e.optionDefaults,
+		...n.optionDefaults
+	},
+	views: Object.fromEntries([.../* @__PURE__ */ new Set([...Object.keys(e.views ?? {}), ...Object.keys(n.views ?? {})])].map((t) => [t, {
+		...e.views?.[t],
+		...n.views?.[t]
+	}]))
+}), nP = {};
+async function rP(e, t) {
+	if (eP[e] || nP[e]) return;
+	if (!t[e]) throw Error(`[${e}] is not a calendar theme. Register it with [registerTheme()] on the panel plugin, or use one of [${Object.keys(eP).join("], [")}].`);
+	let n = (await import(t[e])).default;
+	if (!n) throw Error(`The calendar theme [${e}] at [${t[e]}] has no default export.`);
+	nP[e] = n, n.extends && await rP(n.extends, t);
+}
+function iP(e, t = []) {
+	if (eP[e]) return {
+		theme: eP[e],
+		base: e
+	};
+	let n = nP[e];
+	if (!n.extends) return {
+		theme: tP({}, n, e),
+		base: null
+	};
+	if (t.includes(n.extends)) throw Error(`The calendar themes extend each other in a loop: [${[
+		...t,
+		e,
+		n.extends
+	].join("] extends [")}].`);
+	let r = iP(n.extends, [...t, e]);
+	return {
+		theme: tP(r.theme, n, e),
+		base: r.base
+	};
+}
+function aP(e, t, n, r) {
+	let i = r[t] ?? [];
+	if (!i.length) {
+		if (n) throw Error(`The [${e}] theme has no palettes, so [${n}] cannot be used with it.`);
+		return null;
+	}
+	if (n && !i.includes(n)) throw Error(`[${n}] is not a palette of the [${e}] theme. Use one of [${i.join("], [")}].`);
+	return `fi-fc-palette-${t}-${n ?? i[0]}`;
+}
+//#endregion
+//#region resources/js/support/classes.js
+var oP = (e, t) => typeof e == "function" ? e(t) : e, sP = (...e) => e.some((e) => typeof e == "function") ? (t) => sP(...e.map((e) => oP(e, t))) : e.flat().filter(Boolean).join(" "), cP = [
 	"moment",
 	"momentTimezone",
 	"resource"
-], iP = {
+], lP = {
 	viewClass: (e) => `fc-view fc-${e.view?.type}-view`,
 	eventClass: "fc-event",
 	eventTitleClass: "fc-event-title",
@@ -26373,28 +26425,28 @@ var $ = (...e) => e.filter(Boolean).join(" "), tN = (e) => String(e).replaceAll(
 	moreLinkClass: "fc-more-link",
 	highlightClass: "fc-highlight",
 	nonBusinessHoursClass: "fc-non-business"
-}, aP = (e, t) => Object.fromEntries(Object.keys({
+}, uP = (e, t) => Object.fromEntries(Object.keys({
 	...e,
-	...iP
-}).filter((e) => e.endsWith("Class")).map((n) => [n, nP(iP[n], e[n] ?? t[n])])), oP = (e) => Object.fromEntries(Object.entries(e).map(([e, t]) => [e, t.click ? {
+	...lP
+}).filter((e) => e.endsWith("Class")).map((n) => [n, sP(lP[n], e[n] ?? t[n])])), dP = (e) => Object.fromEntries(Object.entries(e).map(([e, t]) => [e, t.click ? {
 	...t,
 	click: (e) => t.click(e, e.currentTarget)
-} : t])), sP = ({ plugins: e, callbacks: t, config: n }) => ({
-	plugins: e.filter((e) => !rP.includes(e)),
+} : t])), fP = ({ plugins: e, callbacks: t, config: n }) => ({
+	plugins: e.filter((e) => !cP.includes(e)),
 	callbacks: {
 		...t,
-		...aP(t, n),
-		...t.buttons && { buttons: oP(t.buttons) }
+		...uP(t, n),
+		...t.buttons && { buttons: dP(t.buttons) }
 	}
-}), cP = (e) => e.map((e) => {
+}), pP = (e) => e.map((e) => {
 	if (!Nk[e]) throw Error(`[${e}] is not a FullCalendar plugin this package knows.`);
 	return Nk[e];
-}), lP = "[data-filament-fullcalendar-draggable]", uP = (e) => JSON.parse(e.dataset.filamentFullcalendarDraggable);
-function dP() {
+}), mP = "[data-filament-fullcalendar-draggable]", hP = (e) => JSON.parse(e.dataset.filamentFullcalendarDraggable);
+function gP() {
 	window.filamentFullCalendarDraggable ??= new zm(document.body, {
-		itemSelector: lP,
+		itemSelector: mP,
 		eventData: (e) => {
-			let { title: t, duration: n } = uP(e);
+			let { title: t, duration: n } = hP(e);
 			return {
 				title: t ?? e.innerText,
 				...n && { duration: n },
@@ -26403,7 +26455,7 @@ function dP() {
 		}
 	});
 }
-var fP = "filament-fullcalendar", pP = (e) => ({
+var _P = "filament-fullcalendar", vP = (e) => ({
 	id: e.id,
 	groupId: e.groupId,
 	title: e.title,
@@ -26416,34 +26468,29 @@ var fP = "filament-fullcalendar", pP = (e) => ({
 	isRecurring: !!e._def?.recurringDef,
 	source: e.source?.id || null,
 	resourceIds: [...e._def?.resourceIds ?? []]
-}), mP = (e) => {
+}), yP = (e) => {
 	let t = document.createElement("div");
 	return t.textContent = e, t.innerHTML;
 };
-function hP({ event: e, el: t }) {
+function bP({ event: e, el: t }) {
 	let { tooltip: n, isTooltipHtml: r } = e.extendedProps;
 	if (!n || Array.isArray(n) && !n.length) return;
 	let i = window.Alpine.store("theme") ?? "light";
-	t.setAttribute(`x-tooltip.html.raw.theme.${i}`, [n].flat().map((e) => r ? e : mP(e)).join("<br>"));
+	t.setAttribute(`x-tooltip.html.raw.theme.${i}`, [n].flat().map((e) => r ? e : yP(e)).join("<br>"));
 }
-function gP({ event: e, el: t }) {
+function xP({ event: e, el: t }) {
 	if (!e.extendedProps.isTitleHtml) return;
 	let n = t.querySelector(".fi-fc-event-title");
 	n && (n.innerHTML = e.title);
 }
-var _P = () => document.documentElement.classList.contains("dark") ? "dark" : "light", vP = (e) => !e || /^en([-_]us)?$/i.test(e);
-function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToolbar: a, schedulerLicenseKey: o, timeZone: s, config: c, resources: l, eventSources: u, googleCalendarApiKey: d, editable: f, selectable: p, filtersCount: m, pollingInterval: h, droppable: g, widget: _, hasSpaMode: v, shouldReportDates: y, callbacks: b }) {
-	({plugins: n, callbacks: b} = sP({
+var SP = () => document.documentElement.classList.contains("dark") ? "dark" : "light", CP = (e) => !e || /^en([-_]us)?$/i.test(e);
+function wP({ id: e, locale: t, plugins: n, theme: r, palette: i, palettes: a, registeredThemes: o, nativeToolbar: s, schedulerLicenseKey: c, timeZone: l, config: u, resources: d, eventSources: f, googleCalendarApiKey: p, editable: m, selectable: h, filtersCount: g, pollingInterval: _, droppable: v, widget: y, hasSpaMode: b, shouldReportDates: x, callbacks: S }) {
+	({plugins: n, callbacks: S} = fP({
 		plugins: n,
-		callbacks: b,
-		config: c
+		callbacks: S,
+		config: u
 	}));
-	let x = (e, ...t) => typeof b[e] == "function" && b[e](...t) === !1, S = {}, C = {
-		viewClass: "fi-fc-view",
-		eventClass: i,
-		eventTitleClass: "fi-fc-event-title",
-		popoverClass: i
-	};
+	let C = (e, ...t) => typeof S[e] == "function" && S[e](...t) === !1, w = {};
 	return {
 		calendar: null,
 		listeners: {},
@@ -26451,26 +26498,33 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 		pollingTimer: null,
 		colorSchemeObserver: null,
 		isDragging: !1,
+		isDestroyed: !1,
 		id: e,
-		filtersCount: m,
+		filtersCount: g,
 		title: "",
 		viewType: null,
 		isTodayDisabled: !1,
 		optionChanges: 0,
-		initialResources: Array.isArray(l) ? l : null,
-		init() {
-			let { mobileInitialView: i, mobileBreakpoint: m = 768, plugins: S = [], locales: w = [], ...T } = c, ee = window.matchMedia(`(max-width: ${m - 1}px)`).matches, E = [u.some((e) => e.googleCalendarId) && "googleCalendar", u.some((e) => e.format === "ics") && "iCalendar"].filter(Boolean);
-			this.calendar = new Ep(this.$refs.calendar, {
-				plugins: [...cP([.../* @__PURE__ */ new Set([
+		initialResources: Array.isArray(d) ? d : null,
+		async init() {
+			if (await rP(r, o), this.isDestroyed) return;
+			let { theme: g, base: w } = iP(r), T = aP(r, w, i, a), ee = {
+				viewClass: "fi-fc-view",
+				eventClass: T,
+				eventTitleClass: "fi-fc-event-title",
+				popoverClass: T
+			}, { mobileInitialView: E, mobileBreakpoint: te = 768, plugins: ne = [], locales: re = [], ...ie } = u, ae = window.matchMedia(`(max-width: ${te - 1}px)`).matches, oe = [f.some((e) => e.googleCalendarId) && "googleCalendar", f.some((e) => e.format === "ics") && "iCalendar"].filter(Boolean);
+			T && this.$refs.calendar.classList.add(T), this.calendar = new Ep(this.$refs.calendar, {
+				plugins: [...pP([.../* @__PURE__ */ new Set([
 					...n,
-					...S,
-					...E
-				])]), eP[r]],
+					...ne,
+					...oe
+				])]), g],
 				locale: t,
-				...o && { schedulerLicenseKey: o },
-				editable: f,
-				selectable: p,
-				...l !== !1 && { resources: (e, t, n) => {
+				...c && { schedulerLicenseKey: c },
+				editable: m,
+				selectable: h,
+				...d !== !1 && { resources: (e, t, n) => {
 					if (this.initialResources) {
 						t(this.initialResources), this.initialResources = null;
 						return;
@@ -26481,21 +26535,21 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 						timezone: e.timeZone
 					} : null).then(t).catch(n);
 				} },
-				...T,
-				headerToolbar: a?.headerToolbar ?? !1,
-				footerToolbar: a?.footerToolbar ?? !1,
-				colorScheme: _P(),
-				timeZone: s,
-				...ee && i && { initialView: i },
-				locales: [...vP(c.locale ?? t) ? [] : ah, ...w],
-				...b,
-				...Object.fromEntries(Object.entries(C).map(([e, t]) => [e, nP(t, b[e] ?? T[e])])),
+				...ie,
+				headerToolbar: s?.headerToolbar ?? !1,
+				footerToolbar: s?.footerToolbar ?? !1,
+				colorScheme: SP(),
+				timeZone: l,
+				...ae && E && { initialView: E },
+				locales: [...CP(u.locale ?? t) ? [] : ah, ...re],
+				...S,
+				...Object.fromEntries(Object.entries(ee).map(([e, t]) => [e, sP(t, S[e] ?? ie[e])])),
 				eventDidMount: (e) => {
-					hP(e), gP(e), b.eventDidMount?.(e);
+					bP(e), xP(e), S.eventDidMount?.(e);
 				},
-				...d && { googleCalendarApiKey: d },
+				...p && { googleCalendarApiKey: p },
 				eventSources: [{
-					id: fP,
+					id: _P,
 					events: (e, t, n) => {
 						this.$wire.handleFetchEvents({
 							start: e.startStr,
@@ -26503,7 +26557,7 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 							timezone: e.timeZone
 						}).then(t).catch(n);
 					}
-				}, ...u.map((e) => e.googleCalendarId ? {
+				}, ...f.map((e) => e.googleCalendarId ? {
 					...e,
 					eventDataTransform: (e) => ({
 						...e,
@@ -26511,26 +26565,26 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 					})
 				} : e)],
 				buttons: this.getButtons(),
-				...g && {
+				...v && {
 					droppable: !0,
 					dropAccept: (e) => {
-						if (!e.matches(lP)) return !1;
-						let { calendar: t } = uP(e);
-						if (t && t !== _) return !1;
-						let n = b.dropAccept ?? c.dropAccept;
+						if (!e.matches(mP)) return !1;
+						let { calendar: t } = hP(e);
+						if (t && t !== y) return !1;
+						let n = S.dropAccept ?? u.dropAccept;
 						return typeof n == "function" ? n(e) : typeof n != "string" || e.matches(n);
 					},
 					drop: (e) => {
-						if (x("drop", e) || !e.draggedEl.matches(lP)) return;
-						let { calendar: t, ...n } = uP(e.draggedEl);
+						if (C("drop", e) || !e.draggedEl.matches(mP)) return;
+						let { calendar: t, ...n } = hP(e.draggedEl);
 						this.$wire.handleExternalDrop(n, e.dateStr, e.allDay, e.resource ?? null);
 					}
 				},
 				loading: (e) => {
-					this.$refs.calendar.setAttribute("aria-busy", e), x("loading", e);
+					this.$refs.calendar.setAttribute("aria-busy", e), C("loading", e);
 				},
 				datesSet: (e) => {
-					this.syncToolbar(), !x("datesSet", e) && y && this.$wire.handleDatesSet({
+					this.syncToolbar(), !C("datesSet", e) && x && this.$wire.handleDatesSet({
 						view: e.view.type,
 						title: e.view.title,
 						start: e.startStr,
@@ -26541,40 +26595,40 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 				},
 				eventClick: (e) => {
 					let { event: t, jsEvent: n } = e;
-					if (n.preventDefault(), !x("eventClick", e)) {
+					if (n.preventDefault(), !C("eventClick", e)) {
 						if (t.url) {
 							let e = t.extendedProps.shouldOpenUrlInNewTab || ((e) => e.which > 1 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey)(n), r = new URL(t.url, window.location.href).origin === window.location.origin;
-							return v && r && !e ? window.Livewire.navigate(t.url) : window.open(t.url, e ? "_blank" : "_self");
+							return b && r && !e ? window.Livewire.navigate(t.url) : window.open(t.url, e ? "_blank" : "_self");
 						}
-						this.$wire.handleEventClick(pP(t));
+						this.$wire.handleEventClick(vP(t));
 					}
 				},
 				eventDragStart: (e) => {
-					this.isDragging = !0, b.eventDragStart?.(e);
+					this.isDragging = !0, S.eventDragStart?.(e);
 				},
 				eventDragStop: (e) => {
-					this.isDragging = !1, b.eventDragStop?.(e);
+					this.isDragging = !1, S.eventDragStop?.(e);
 				},
 				eventResizeStart: (e) => {
-					this.isDragging = !0, b.eventResizeStart?.(e);
+					this.isDragging = !0, S.eventResizeStart?.(e);
 				},
 				eventResizeStop: (e) => {
-					this.isDragging = !1, b.eventResizeStop?.(e);
+					this.isDragging = !1, S.eventResizeStop?.(e);
 				},
 				eventDrop: async (e) => {
 					let { event: t, oldEvent: n, relatedEvents: r, delta: i, oldResource: a, newResource: o, revert: s } = e;
-					if (x("eventDrop", e)) return;
-					let c = await this.$wire.handleEventDrop(pP(t), pP(n), r.map(pP), i, a, o);
+					if (C("eventDrop", e)) return;
+					let c = await this.$wire.handleEventDrop(vP(t), vP(n), r.map(vP), i, a, o);
 					typeof c == "boolean" && c && s();
 				},
 				eventResize: async (e) => {
 					let { event: t, oldEvent: n, relatedEvents: r, startDelta: i, endDelta: a, revert: o } = e;
-					if (x("eventResize", e)) return;
-					let s = await this.$wire.handleEventResize(pP(t), pP(n), r.map(pP), i, a);
+					if (C("eventResize", e)) return;
+					let s = await this.$wire.handleEventResize(vP(t), vP(n), r.map(vP), i, a);
 					typeof s == "boolean" && s && o();
 				},
 				dateClick: (e) => {
-					if (x("dateClick", e)) return;
+					if (C("dateClick", e)) return;
 					let { dateStr: t, allDay: n, view: r, resource: i } = e;
 					this.queueDateInteraction({ click: {
 						dateStr: t,
@@ -26584,7 +26638,7 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 					} });
 				},
 				select: (e) => {
-					if (x("select", e)) return;
+					if (C("select", e)) return;
 					let { startStr: t, endStr: n, allDay: r, view: i, resource: a } = e;
 					this.queueDateInteraction({ selection: {
 						startStr: t,
@@ -26595,11 +26649,11 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 					} });
 				}
 			}), this.trackOptions(), this.watchActiveNativeButtons(), this.calendar.render(), this.syncToolbar(), this.colorSchemeObserver = new MutationObserver(() => {
-				this.calendar?.getOption("colorScheme") !== _P() && this.calendar?.setOption("colorScheme", _P());
-			}), this.colorSchemeObserver.observe(document.documentElement, { attributeFilter: ["class"] }), g && dP(), h && (this.pollingTimer = setInterval(() => {
+				this.calendar?.getOption("colorScheme") !== SP() && this.calendar?.setOption("colorScheme", SP());
+			}), this.colorSchemeObserver.observe(document.documentElement, { attributeFilter: ["class"] }), v && gP(), _ && (this.pollingTimer = setInterval(() => {
 				document.hidden || this.isDragging || this.$wire.mountedActions?.length || this.calendar.refetchEvents();
-			}, h));
-			let te = {
+			}, _));
+			let se = {
 				refresh: () => this.calendar.refetchEvents(),
 				"refresh-resources": () => this.calendar.refetchResources(),
 				prev: () => this.calendar.prev(),
@@ -26613,7 +26667,7 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 					this.filtersCount = e;
 				}
 			};
-			this.listeners = Object.fromEntries(Object.entries(te).map(([t, n]) => [`filament-fullcalendar--${t}`, ({ detail: t }) => {
+			this.listeners = Object.fromEntries(Object.entries(se).map(([t, n]) => [`filament-fullcalendar--${t}`, ({ detail: t }) => {
 				t?.calendar && t.calendar !== e || n(t ?? {});
 			}])), Object.entries(this.listeners).forEach(([e, t]) => window.addEventListener(e, t));
 		},
@@ -26632,9 +26686,9 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 		},
 		getButtons() {
 			return {
-				...c.buttons,
-				...b.buttons,
-				...Object.fromEntries(Object.entries(a?.buttons ?? {}).map(([e, t]) => [e, this.makeNativeButton(e, t)]))
+				...u.buttons,
+				...S.buttons,
+				...Object.fromEntries(Object.entries(s?.buttons ?? {}).map(([e, t]) => [e, this.makeNativeButton(e, t)]))
 			};
 		},
 		makeNativeButton(e, { text: t, handler: n, icon: r, isIconOnly: i, isPrimary: a, isToggle: o, tooltip: s, active: c, disabled: l, badge: u }) {
@@ -26643,7 +26697,7 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 				hint: t,
 				display: r ? i ? "icon" : "icon-text" : "text",
 				...r && { iconContent: { html: r } },
-				isPrimary: !!(a || S[e]),
+				isPrimary: !!(a || w[e]),
 				class: "fi-fc-tool",
 				click: (e) => {
 					e.preventDefault(), window.Alpine.evaluate(this.$el, n, { scope: {
@@ -26666,11 +26720,11 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 			};
 		},
 		watchActiveNativeButtons() {
-			Object.entries(a?.buttons ?? {}).forEach(([e, { active: t }]) => {
-				t && (S[e] = !!window.Alpine.evaluate(this.$el, t), this.$watch(t, (t) => {
-					S[e] = !!t, window.Alpine.raw(this.calendar)?.setOption("buttons", this.getButtons());
+			Object.entries(s?.buttons ?? {}).forEach(([e, { active: t }]) => {
+				t && (w[e] = !!window.Alpine.evaluate(this.$el, t), this.$watch(t, (t) => {
+					w[e] = !!t, window.Alpine.raw(this.calendar)?.setOption("buttons", this.getButtons());
 				}));
-			}), Object.values(S).some(Boolean) && window.Alpine.raw(this.calendar).setOption("buttons", this.getButtons());
+			}), Object.values(w).some(Boolean) && window.Alpine.raw(this.calendar).setOption("buttons", this.getButtons());
 		},
 		clickCustomButton(e, t) {
 			this.calendar?.getOption("buttons")?.[e]?.click?.(t);
@@ -26686,10 +26740,10 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 			};
 		},
 		destroy() {
-			Object.entries(this.listeners).forEach(([e, t]) => window.removeEventListener(e, t)), clearInterval(this.pollingTimer), this.colorSchemeObserver?.disconnect(), this.calendar?.destroy(), this.calendar = null;
+			this.isDestroyed = !0, Object.entries(this.listeners).forEach(([e, t]) => window.removeEventListener(e, t)), clearInterval(this.pollingTimer), this.colorSchemeObserver?.disconnect(), this.calendar?.destroy(), this.calendar = null;
 		},
 		queueDateInteraction(e) {
-			if (!p) return;
+			if (!h) return;
 			let t = this.pendingDateInteraction === null;
 			this.pendingDateInteraction = {
 				...this.pendingDateInteraction,
@@ -26706,4 +26760,4 @@ function yP({ id: e, locale: t, plugins: n, theme: r, paletteClass: i, nativeToo
 	};
 }
 //#endregion
-export { yP as default };
+export { wP as default };
