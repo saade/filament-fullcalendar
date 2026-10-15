@@ -4,6 +4,7 @@ namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Saade\FilamentFullCalendar\Data\FetchInfo;
+use Saade\FilamentFullCalendar\Support\V6Compat\V6CompatOptions;
 
 trait InteractsWithResources
 {
@@ -57,7 +58,7 @@ trait InteractsWithResources
      */
     protected function applyResourceColors(array $resource): array
     {
-        $resource = $this->applyFilamentColor($resource, 'eventColor', 'eventClassNames');
+        $resource = $this->applyEventColors($resource, prefix: 'event');
 
         if (is_array($resource['children'] ?? null)) {
             $resource['children'] = array_map($this->applyResourceColors(...), $resource['children']);
@@ -78,7 +79,7 @@ trait InteractsWithResources
         }
 
         return collect($resources)
-            ->map(fn (mixed $resource): array => $this->applyResourceColors($resource instanceof Arrayable ? $resource->toArray() : $resource))
+            ->map(fn (mixed $resource): array => $this->applyResourceColors(V6CompatOptions::resource($resource instanceof Arrayable ? $resource->toArray() : $resource)))
             ->values()
             ->all();
     }

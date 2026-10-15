@@ -7,13 +7,32 @@ use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Concerns\EvaluatesClosures;
+use InvalidArgumentException;
 use Throwable;
 
 class FilamentFullCalendarPlugin implements Plugin
 {
     use EvaluatesClosures;
 
-    protected array $plugins = ['dayGrid', 'timeGrid', 'interaction', 'list', 'moment', 'momentTimezone'];
+    /**
+     * @var array<string, array<string>>
+     */
+    public const THEMES = [
+        'filament' => [],
+        'breezy' => ['indigo', 'amber', 'emerald', 'rose'],
+        'classic' => ['default'],
+        'forma' => ['blue', 'green', 'purple', 'red'],
+        'monarch' => ['blue', 'green', 'purple', 'red', 'yellow'],
+        'pulse' => ['blue', 'green', 'purple', 'red'],
+    ];
+
+    protected array $plugins = ['dayGrid', 'timeGrid', 'interaction', 'list'];
+
+    protected string | Closure $theme = 'filament';
+
+    protected string | Closure | null $palette = null;
+
+    protected bool | Closure $hasNativeToolbar = false;
 
     protected string | Closure | null $schedulerLicenseKey = null;
 
@@ -92,6 +111,48 @@ class FilamentFullCalendarPlugin implements Plugin
     public function getPlugins(): array
     {
         return $this->plugins;
+    }
+
+    public function theme(string | Closure $theme): static
+    {
+        $this->theme = $theme;
+
+        return $this;
+    }
+
+    public function getTheme(): string
+    {
+        $theme = $this->evaluate($this->theme);
+
+        if (! array_key_exists($theme, static::THEMES)) {
+            throw new InvalidArgumentException("[{$theme}] is not a calendar theme. Use one of [" . implode('], [', array_keys(static::THEMES)) . '].');
+        }
+
+        return $theme;
+    }
+
+    public function palette(string | Closure | null $palette): static
+    {
+        $this->palette = $palette;
+
+        return $this;
+    }
+
+    public function getPalette(): ?string
+    {
+        return $this->evaluate($this->palette);
+    }
+
+    public function nativeToolbar(bool | Closure $condition = true): static
+    {
+        $this->hasNativeToolbar = $condition;
+
+        return $this;
+    }
+
+    public function hasNativeToolbar(): bool
+    {
+        return (bool) $this->evaluate($this->hasNativeToolbar);
     }
 
     public function schedulerLicenseKey(string | Closure | null $schedulerLicenseKey): static

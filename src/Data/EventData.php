@@ -5,12 +5,15 @@ namespace Saade\FilamentFullCalendar\Data;
 use DateTimeInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
+use Saade\FilamentFullCalendar\Support\V6Compat\V6CompatColors;
 
 /**
  * @phpstan-consistent-constructor
  */
 class EventData implements Arrayable, JsonSerializable
 {
+    use V6CompatColors;
+
     protected int | string | null $id = null;
 
     protected int | string | null $groupId = null;
@@ -31,13 +34,12 @@ class EventData implements Arrayable, JsonSerializable
 
     protected bool $shouldOpenUrlInNewTab = false;
 
-    protected ?string $color = null;
+    /**
+     * @var string | array<int, string> | null
+     */
+    protected string | array | null $color = null;
 
-    protected ?string $backgroundColor = null;
-
-    protected ?string $borderColor = null;
-
-    protected ?string $textColor = null;
+    protected ?string $contrastColor = null;
 
     protected ?array $extendedProps = null;
 
@@ -154,42 +156,18 @@ class EventData implements Arrayable, JsonSerializable
     }
 
     /**
-     * The name of a Filament color, such as `success`, which makes the event
-     * look like a badge of that color.
+     * @param  string | array<int, string>  $color
      */
-    public function color(string $color): static
+    public function color(string | array $color): static
     {
         $this->color = $color;
 
         return $this;
     }
 
-    /**
-     * The eventBackgroundColor override for this specific event.
-     */
-    public function backgroundColor(string $backgroundColor): static
+    public function contrastColor(string $color): static
     {
-        $this->backgroundColor = $backgroundColor;
-
-        return $this;
-    }
-
-    /**
-     * The eventBorderColor override for this specific event.
-     */
-    public function borderColor(string $borderColor): static
-    {
-        $this->borderColor = $borderColor;
-
-        return $this;
-    }
-
-    /**
-     * The eventTextColor override for this specific event.
-     */
-    public function textColor(string $textColor): static
-    {
-        $this->textColor = $textColor;
+        $this->contrastColor = $color;
 
         return $this;
     }
@@ -242,9 +220,7 @@ class EventData implements Arrayable, JsonSerializable
             ...$this->groupId ? ['groupId' => $this->groupId] : [],
             ...$this->allDay !== null ? ['allDay' => $this->allDay] : [],
             ...$this->color ? ['color' => $this->color] : [],
-            ...$this->backgroundColor ? ['backgroundColor' => $this->backgroundColor] : [],
-            ...$this->borderColor ? ['borderColor' => $this->borderColor] : [],
-            ...$this->textColor ? ['textColor' => $this->textColor] : [],
+            ...$this->contrastColor ? ['contrastColor' => $this->contrastColor] : [],
             ...($this->extendedProps || filled($this->tooltip) || $this->isTitleHtml) ? ['extendedProps' => [
                 ...$this->extendedProps ?? [],
                 ...$this->isTitleHtml ? ['isTitleHtml' => true] : [],

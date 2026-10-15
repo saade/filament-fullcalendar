@@ -13,7 +13,7 @@ it('takes its settings from the panel plugin by default', function () {
 
     expect($widget->getTimezone())->toBe('America/Sao_Paulo')
         ->and($widget->getLocale())->toBe('en')
-        ->and($widget->getPlugins())->toBe(['dayGrid', 'timeGrid', 'interaction', 'list', 'moment', 'momentTimezone'])
+        ->and($widget->getPlugins())->toBe(['dayGrid', 'timeGrid', 'interaction', 'list'])
         ->and($widget->getSchedulerLicenseKey())->toBeNull()
         ->and($widget->isEditable())->toBeTrue()
         ->and($widget->isSelectable())->toBeTrue();
@@ -46,6 +46,42 @@ it('accepts closures for the panel plugin settings', function () {
         ->and($plugin->getSchedulerLicenseKey())->toBe('from-closure')
         ->and($plugin->getConfig())->toBe(['firstDay' => 1]);
 });
+
+it('draws the calendar with the Filament theme unless another is chosen', function () {
+    Livewire::test(EventCalendarWidget::class)
+        ->assertSeeHtml("theme: 'filament'")
+        ->assertSeeHtml('paletteClass: null');
+
+    FilamentFullCalendarPlugin::current()->theme('monarch');
+
+    Livewire::test(EventCalendarWidget::class)->assertSeeHtml("theme: 'monarch'");
+});
+
+it('refuses a theme that does not exist', function () {
+    FilamentFullCalendarPlugin::make()->theme('bootstrap5')->getTheme();
+})->throws(InvalidArgumentException::class, '[bootstrap5] is not a calendar theme');
+
+it('gives a FullCalendar theme its first palette unless another is chosen', function () {
+    FilamentFullCalendarPlugin::current()->theme('monarch');
+
+    Livewire::test(EventCalendarWidget::class)->assertSeeHtml('fi-fc-palette-monarch-blue');
+
+    FilamentFullCalendarPlugin::current()->palette('yellow');
+
+    Livewire::test(EventCalendarWidget::class)->assertSeeHtml('fi-fc-palette-monarch-yellow');
+});
+
+it('refuses a palette the theme does not have', function () {
+    FilamentFullCalendarPlugin::current()->theme('breezy')->palette('yellow');
+
+    Livewire::test(EventCalendarWidget::class);
+})->throws(Exception::class, '[yellow] is not a palette of the [breezy] theme');
+
+it('refuses a palette for the Filament theme', function () {
+    FilamentFullCalendarPlugin::current()->palette('blue');
+
+    Livewire::test(EventCalendarWidget::class);
+})->throws(Exception::class, 'The [filament] theme has no palettes');
 
 it('works on a panel that does not register the plugin', function () {
     Filament::setCurrentPanel(Filament::getPanel('bare'));

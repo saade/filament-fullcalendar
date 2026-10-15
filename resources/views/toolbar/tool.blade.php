@@ -36,12 +36,11 @@
         <span @if ($labelJsExpression) x-text="{{ $labelJsExpression }}" @endif>{{ $label }}</span>
 
         @if ($badgeJsExpression)
-            <span
-                class="fi-fc-tool-badge"
-                x-show="{{ $badgeJsExpression }}"
-                x-text="{{ $badgeJsExpression }}"
-                x-cloak
-            ></span>
+            <x-slot name="badge">
+                <x-filament::badge size="xs" class="fi-fc-tool-badge" x-show="{{ $badgeJsExpression }}" x-cloak>
+                    <span x-text="{{ $badgeJsExpression }}"></span>
+                </x-filament::badge>
+            </x-slot>
         @endif
     </x-filament::button>
 @endif

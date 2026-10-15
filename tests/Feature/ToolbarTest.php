@@ -1,6 +1,7 @@
 <?php
 
 use Livewire\Livewire;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use Saade\FilamentFullCalendar\Tests\Fixtures\CallbacksCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\EventCalendarWidget;
 use Saade\FilamentFullCalendar\Tests\Fixtures\FilteredCalendarWidget;
@@ -124,7 +125,7 @@ it('gives a FullCalendar custom button a tool that clicks it', function () {
     $tool = Livewire::test(ToolbarCalendarWidget::class)->instance()->getTool('legacy');
 
     expect($tool->getLabel())->toBe('Legacy')
-        ->and($tool->getJsHandler())->toBe("clickCustomButton('legacy', \$event, \$el)");
+        ->and($tool->getJsHandler())->toBe("clickCustomButton('legacy', \$event)");
 });
 
 it('lets a tool with the name of an action replace the button of that action', function () {
@@ -188,6 +189,57 @@ it('leaves the toolbars to Livewire and only keeps the calendar itself out of it
     expect($html)->toContain('wire:ignore.self')
         ->and($html)->not->toContain('x-ignore')
         ->and(substr_count($html, 'wire:ignore'))->toBe(2);
+});
+
+it('leaves the toolbar to Filament unless the native one is asked for', function () {
+    expect(Livewire::test(EventCalendarWidget::class)->instance()->getNativeToolbar())->toBeNull();
+});
+
+it('lays out the native toolbar like the Filament one and passes the other tools through as buttons', function () {
+    FilamentFullCalendarPlugin::current()->nativeToolbar();
+
+    ToolbarCalendarWidget::$buttons = [
+        'start' => [['prev', 'next'], 'today', 'pickDate'],
+        'center' => ['title'],
+        'end' => [ToolbarCalendarWidget::group(), 'weekends', 'goToDate'],
+    ];
+
+    $component = Livewire::test(ToolbarCalendarWidget::class)->assertDontSeeHtml('fi-fc-toolbar');
+
+    $toolbar = $component->instance()->getNativeToolbar();
+
+    expect($toolbar)->toMatchArray([
+        'headerToolbar' => [
+            'start' => 'prev,next today pickDate',
+            'center' => 'title',
+            'end' => 'dayGridMonth,listWeek weekends goToDate',
+        ],
+        'footerToolbar' => false,
+    ])
+        ->and(array_keys($toolbar['buttons']))->toBe(['pickDate', 'weekends', 'goToDate'])
+        ->and($toolbar['buttons']['pickDate'])->toBe(['text' => 'Pick a date', 'handler' => "\$wire.mountAction('goToDate', { source: 'toolbar' })"])
+        ->and($toolbar['buttons']['goToDate'])->toMatchArray(['text' => 'Go to date', 'handler' => "\$wire.mountAction('goToDate')"]);
+});
+
+it('gives a native button the icon, tooltip, state and badge of its tool', function () {
+    FilamentFullCalendarPlugin::current()->nativeToolbar();
+
+    ToolbarCalendarWidget::$buttons = ['end' => ['weekends']];
+
+    $weekends = Livewire::test(ToolbarCalendarWidget::class)->instance()->getNativeToolbar()['buttons']['weekends'];
+
+    expect($weekends)->toMatchArray([
+        'isIconOnly' => true,
+        'isToggle' => true,
+        'tooltip' => "'Weekends'",
+        'active' => "calendar?.getOption('weekends')",
+    ])
+        ->and($weekends['icon'])->toStartWith('<svg class="fi-icon fi-size-sm"')
+        ->and($weekends)->not->toHaveKey('isPrimary');
+
+    $filters = Livewire::test(FilteredCalendarWidget::class)->instance()->getNativeToolbar()['buttons']['filters'];
+
+    expect($filters)->toMatchArray(['isIconOnly' => true, 'badge' => 'filtersCount']);
 });
 
 it('takes a name for a view when the views are defined in JavaScript', function () {

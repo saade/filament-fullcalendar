@@ -3,8 +3,9 @@
     use Filament\Tables\Enums\FiltersLayout;
 
     $headerActions = $this->getCachedHeaderActions();
-    $toolbar = $this->getToolbarButtons();
-    $footerToolbar = $this->getFooterToolbarButtons();
+    $nativeToolbar = $this->getNativeToolbar();
+    $toolbar = $nativeToolbar ? [] : $this->getToolbarButtons();
+    $footerToolbar = $nativeToolbar ? [] : $this->getFooterToolbarButtons();
     $hasFilters = $this->isFilterable();
     $filtersLayout = $this->getFiltersLayout();
     $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
@@ -114,6 +115,9 @@
                 id: @js($this->getId()),
                 locale: @js($this->getLocale()),
                 plugins: @js($this->getPlugins()),
+                theme: @js($this->getTheme()),
+                paletteClass: @js($this->getPaletteClass()),
+                nativeToolbar: @js($nativeToolbar),
                 schedulerLicenseKey: @js($this->getSchedulerLicenseKey()),
                 timeZone: @js($this->getTimezone()),
                 config: @js($this->getConfig()),
@@ -142,8 +146,7 @@
             <div
                 wire:ignore
                 x-ref="calendar"
-                class="fi-fc filament-fullcalendar"
-                style="{{ $this->getDefaultEventColorStyles() }}"
+                @class(array_filter(['fi-fc filament-fullcalendar', $this->getPaletteClass()]))
             ></div>
 
             @if (filled($footerToolbar))

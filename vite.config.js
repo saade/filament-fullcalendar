@@ -2,8 +2,6 @@
 import { defineConfig } from "vite";
 import path from "node:path";
 
-// The output mirrors where Filament publishes assets (Alpine components in
-// `components/`, scripts one level up) so the relative imports still resolve.
 export default defineConfig({
     root: process.cwd(),
     build: {
@@ -18,8 +16,8 @@ export default defineConfig({
         rollupOptions: {
             external: [],
             output: {
-                entryFileNames: "components/filament-fullcalendar-alpine.js",
-                chunkFileNames: "filament-fullcalendar-[name]-[hash].js",
+                entryFileNames: "filament-fullcalendar.js",
+                codeSplitting: false,
             },
         },
     },

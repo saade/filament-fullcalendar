@@ -35,7 +35,8 @@ updates:
       - "javascript"
     ignore:
       - dependency-name: "@fullcalendar/*"
-      - dependency-name: "moment"
-      - dependency-name: "moment-timezone"
+      - dependency-name: "fullcalendar"
+      - dependency-name: "fullcalendar-scheduler"
+      - dependency-name: "temporal-polyfill"
       - dependency-name: "rrule"
       - dependency-name: "ical.js"

@@ -1,217 +1,17 @@
-.fi-fc {
-    /* UI */
-    --fc-small-font-size: var(--text-sm);
+@import '../dist/fullcalendar.css';
 
-    --fc-border-color: color-mix(
-        in oklab,
-        var(--color-gray-950) 10%,
-        transparent
-    );
+@source '../dist/**/*.js';
 
-    --fc-highlight-color: color-mix(
-        in oklab,
-        var(--primary-500) 5%,
-        transparent
-    );
-
-    --fc-today-bg-color: color-mix(
-        in oklab,
-        var(--primary-500) 5%,
-        transparent
-    );
-
-    /* Events */
-    --fc-event-bg-color: var(--primary-50);
-    --fc-event-border-color: color-mix(in oklab, var(--primary-600) 10%, transparent);
-    --fc-event-text-color: var(--fc-default-event-text, var(--primary-700));
+:root {
+    --fc-popover-z: 10;
 }
 
-html.dark .fi-fc {
-    /* UI */
-    --fc-border-color: color-mix(in oklab, var(--color-white) 10%, transparent);
-    --fc-page-bg-color: var(--color-gray-900);
-    --fc-neutral-bg-color: color-mix(in oklab, var(--color-white) 5%, transparent);
-    --fc-list-event-hover-bg-color: color-mix(in oklab, var(--color-white) 5%, transparent);
-
-    /* Events */
-    /* Mixed with the card's background, so grid lines do not show through. */
-    --fc-event-bg-color: color-mix(in oklab, var(--primary-400) 10%, var(--color-gray-900));
-    --fc-event-border-color: color-mix(in oklab, var(--primary-400) 30%, transparent);
-    --fc-event-text-color: var(--fc-default-event-dark-text, var(--primary-300));
-}
-
-/*
- * The view is framed like a Filament table: rounded, with a ring. The ring
- * replaces the grid's own outer border, which would otherwise double it.
- */
-.fi-fc .fc-view {
-    @apply overflow-hidden rounded-xl ring-1 ring-gray-950/5 dark:ring-white/10;
-}
-
-.fi-fc.fc .fc-scrollgrid,
-.fi-fc.fc .fc-list {
-    border-width: 0;
-}
-
-.fi-fc.fc .fc-scrollgrid-section > :last-child {
-    border-right-width: 0;
-}
-
-.fi-fc.fc .fc-scrollgrid-section:last-child > * {
-    border-bottom-width: 0;
-}
-
-.fi-fc .fc-scrollgrid-section-header > *,
-.fi-fc .fc-list-day-cushion {
-    @apply bg-gray-50 dark:bg-white/5;
-}
-
-.fi-fc .fc-list-day-cushion,
-.fi-fc .fc-scrollgrid-section-header .fc-datagrid-cell-cushion,
-.fi-fc .fc-scrollgrid-section-header .fc-timeline-slot-cushion {
-    @apply text-sm font-semibold text-gray-950 dark:text-white;
-}
-
-.fi-fc .fc-list-day-cushion {
-    @apply px-3 py-2.5;
-}
-
-.fi-fc .fc-list-event:hover td {
-    @apply bg-gray-50 dark:bg-white/5;
-}
-
-.fi-fc .fc-col-header-cell-cushion {
-    @apply px-3 py-2.5 text-sm font-semibold text-gray-950 dark:text-white;
-}
-
-.fi-fc.fc .fc-daygrid-more-link {
-    @apply text-xs font-medium text-primary-600 hover:bg-transparent hover:underline dark:text-primary-400;
-}
-
-.fi-fc.fc .fc-popover {
-    @apply overflow-hidden rounded-lg border-0 bg-white shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
-}
-
-.fi-fc.fc .fc-popover-header {
-    @apply border-b border-gray-100 bg-transparent px-3 py-2 text-sm font-semibold text-gray-950 dark:border-white/5 dark:text-white;
-}
-
-.fi-fc.fc .fc-popover-body {
-    @apply p-2;
-
-    & > * + * {
-        @apply mt-1;
-    }
-}
-
-/* Filament's icon, from Heroicons, in place of FullCalendar's icon font. */
-.fi-fc .fc-icon-x {
-    @apply size-5;
-
-    font-size: inherit;
-
-    &::before {
-        @apply block size-5 bg-current;
-
-        content: '';
-        mask: var(--icon) center / contain no-repeat;
-    }
-}
-
-.fi-fc .fc-icon-x {
-    --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z'/%3E%3C/svg%3E");
-
-    @apply text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400;
-}
-
-.fi-fc .fc-list .fc-list-event-title a {
-    @apply cursor-pointer;
-}
-
-/* Sticky rows stack while the list scrolls, so they have to be opaque. */
-.fi-fc .fc-list-sticky .fc-list-day th {
-    @apply bg-white dark:bg-gray-900;
-}
-
-.fi-fc .fc-view-harness {
+.fi-fc .fi-fc-view {
     transition: opacity 150ms;
 }
 
-.fi-fc[aria-busy='true'] .fc-view-harness {
+.fi-fc[aria-busy='true'] .fi-fc-view {
     opacity: 0.6;
-}
-
-.fi-fc.fc .fc-popover {
-    z-index: 10;
-}
-
-.fi-fc .fc-daygrid-block-event,
-.fi-fc .fc-timegrid-event,
-.fi-fc .fc-timeline-event {
-    @apply rounded-md text-xs font-medium;
-}
-
-.fi-fc .fc-daygrid-block-event .fc-event-main,
-.fi-fc .fc-timeline-event .fc-event-main {
-    @apply px-1.5 py-0.5;
-}
-
-.fi-fc .fc-daygrid-block-event:not(.fc-event-start),
-.fi-fc .fc-timeline-event:not(.fc-event-start) {
-    @apply rounded-s-none;
-}
-
-.fi-fc .fc-daygrid-block-event:not(.fc-event-end),
-.fi-fc .fc-timeline-event:not(.fc-event-end) {
-    @apply rounded-e-none;
-}
-
-.fi-fc .fc-event.fi-color {
-    --fc-event-bg-color: var(--color-50);
-    --fc-event-border-color: color-mix(in oklab, var(--color-600) 10%, transparent);
-    --fc-event-text-color: var(--text);
-}
-
-html.dark .fi-fc .fc-event.fi-color {
-    --fc-event-bg-color: color-mix(in oklab, var(--color-400) 10%, var(--color-gray-900));
-    --fc-event-border-color: color-mix(in oklab, var(--color-400) 30%, transparent);
-    --fc-event-text-color: var(--dark-text);
-}
-
-.fi-fc .fc-event.fc-event-gray {
-    --fc-event-bg-color: var(--color-gray-50);
-    --fc-event-border-color: color-mix(in oklab, var(--color-gray-600) 10%, transparent);
-    --fc-event-text-color: var(--color-gray-600);
-}
-
-html.dark .fi-fc .fc-event.fc-event-gray {
-    --fc-event-bg-color: color-mix(in oklab, var(--color-gray-400) 10%, var(--color-gray-900));
-    --fc-event-border-color: color-mix(in oklab, var(--color-gray-400) 20%, transparent);
-    --fc-event-text-color: var(--color-gray-200);
-}
-
-.fi-fc .fc-bg-event.fi-color {
-    --fc-bg-event-color: var(--color-500);
-}
-
-.fi-fc .fc-bg-event.fc-event-gray {
-    --fc-bg-event-color: var(--color-gray-500);
-}
-
-/* The dot of an event is drawn with its border color, which is too faint here. */
-.fi-fc .fc-daygrid-event-dot,
-.fi-fc .fc-list-event-dot {
-    border-color: var(--primary-500);
-}
-
-.fi-fc .fc-event.fi-color .fc-daygrid-event-dot,
-.fi-fc .fc-event.fi-color .fc-list-event-dot {
-    border-color: var(--color-500);
-}
-
-.fi-fc .fc-event.fc-event-gray .fc-daygrid-event-dot,
-.fi-fc .fc-event.fc-event-gray .fc-list-event-dot {
-    border-color: var(--color-gray-400);
 }
 
 .fi-fc-tabs {
@@ -259,8 +59,6 @@ html.dark .fi-fc .fc-event.fc-event-gray {
     }
 
     & .fi-fc-tool {
-        @apply relative;
-
         & > span:first-letter {
             @apply uppercase;
         }
@@ -269,6 +67,10 @@ html.dark .fi-fc .fc-event.fc-event-gray {
             @apply bg-gray-50 text-primary-600 dark:bg-white/10 dark:text-primary-400;
         }
     }
+}
+
+.fi-fc-tool:not(.fi-btn) {
+    @apply relative gap-1.5;
 
     & .fi-fc-tool-badge {
         @apply absolute -end-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-md bg-primary-50 px-1 text-xs font-medium text-primary-600 ring-1 ring-primary-600/10 dark:bg-gray-900 dark:text-primary-400 dark:ring-primary-400/30;

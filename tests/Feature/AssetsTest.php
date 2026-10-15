@@ -1,57 +1,34 @@
 <?php
 
 use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 const ASSET_PACKAGE = 'saade/filament-fullcalendar';
 
-function calendarComponentAsset(): AlpineComponent
-{
-    return collect(FilamentAsset::getAlpineComponents([ASSET_PACKAGE]))->sole();
-}
+it('registers the component as the only script', function () {
+    $component = collect(FilamentAsset::getAlpineComponents([ASSET_PACKAGE]))->sole();
 
-it('registers the component and every file it can load', function () {
-    $scripts = collect(FilamentAsset::getScripts([ASSET_PACKAGE]))
-        ->map(fn (Js $asset): string => $asset->getId())
-        ->sort()
-        ->values()
-        ->all();
-
-    $built = collect(glob(realpath(__DIR__ . '/../../resources/dist') . '/*.js'))
-        ->map(fn (string $path): string => basename($path, '.js'))
-        ->sort()
-        ->values()
-        ->all();
-
-    expect(calendarComponentAsset()->getId())->toBe('filament-fullcalendar-alpine')
-        ->and($built)->not->toBeEmpty()
-        ->and($scripts)->toBe($built);
+    expect($component)->toBeInstanceOf(AlpineComponent::class)
+        ->and($component->getId())->toBe('filament-fullcalendar-alpine')
+        ->and(FilamentAsset::getScripts([ASSET_PACKAGE]))->toBeEmpty();
 });
 
-it('does not put the on-demand files on every page', function () {
-    expect(collect(FilamentAsset::getScripts([ASSET_PACKAGE]))->every(fn (Js $asset): bool => $asset->isLoadedOnRequest()))
-        ->toBeTrue();
-});
+it('builds the styles of every theme and palette', function () {
+    $css = file_get_contents(__DIR__ . '/../../resources/dist/fullcalendar.css');
 
-it('publishes the files where the imports of the component point', function () {
-    $component = calendarComponentAsset();
-
-    preg_match_all('#\.\./[\w.-]+\.js#', file_get_contents($component->getPath()), $matches);
-
-    $imports = array_unique($matches[0]);
-
-    expect($imports)->not->toBeEmpty();
-
-    $publishedScripts = collect(FilamentAsset::getScripts([ASSET_PACKAGE]))
-        ->map(fn (Js $asset): string => $asset->getRelativePublicPath())
-        ->all();
-
-    foreach ($imports as $import) {
-        expect(file_exists(dirname($component->getPath()) . '/' . $import))->toBeTrue();
-
-        $publishedImport = dirname($component->getRelativePublicPath(), 2) . '/' . basename($import);
-
-        expect($publishedScripts)->toContain($publishedImport);
+    foreach (FilamentFullCalendarPlugin::THEMES as $theme => $palettes) {
+        foreach ($palettes as $palette) {
+            expect($css)->toContain(".fi-fc-palette-{$theme}-{$palette} {");
+        }
     }
+});
+
+it('builds the component as one file that loads no other', function () {
+    $dist = realpath(__DIR__ . '/../../resources/dist');
+
+    $component = collect(FilamentAsset::getAlpineComponents([ASSET_PACKAGE]))->sole()->getPath();
+
+    expect(glob("{$dist}/{,*/}*.js", GLOB_BRACE))->toBe([realpath($component)])
+        ->and(file_get_contents($component))->not->toMatch('#import\(\s*["\'][./]#');
 });

@@ -12,6 +12,21 @@ function calendarEventSources(): array
     return Livewire::test(SourcesCalendarWidget::class)->instance()->getEventSources();
 }
 
+it('treats the event sources of config() like the ones of eventSources()', function () {
+    $widget = new class extends EventCalendarWidget
+    {
+        public function config(): array
+        {
+            return ['eventSources' => ['/feeds/a.json', ['url' => '/feeds/b.json', 'color' => 'success', 'classNames' => ['b']]]];
+        }
+    };
+
+    expect($widget->getEventSources())->toBe([
+        ['url' => '/feeds/a.json'],
+        ['url' => '/feeds/b.json', 'color' => 'var(--success-500)', 'className' => 'b fi-color-success'],
+    ]);
+});
+
 it('has no event sources unless they are defined', function () {
     expect(Livewire::test(EventCalendarWidget::class)->instance()->getEventSources())->toBe([]);
 });
@@ -20,8 +35,9 @@ it('describes a Google Calendar as a source that cannot be edited', function () 
     expect(calendarEventSources()[0])->toBe([
         'googleCalendarId' => 'holidays@group.v.calendar.google.com',
         'id' => 'holidays',
+        'color' => 'var(--gray-500)',
         'editable' => false,
-        'className' => ['fc-event-gray'],
+        'className' => 'fi-color-gray',
     ]);
 });
 
@@ -36,7 +52,7 @@ it('keeps the address of an iCalendar feed out of the page', function () {
 });
 
 it('passes plain arrays through', function () {
-    expect(calendarEventSources()[2])->toBe(['url' => '/feeds/custom.json', 'backgroundColor' => 'red', 'textColor' => '#fff']);
+    expect(calendarEventSources()[2])->toBe(['url' => '/feeds/custom.json', 'color' => 'red']);
 });
 
 it('serves the feed from this application and reads it once while it is cached', function () {

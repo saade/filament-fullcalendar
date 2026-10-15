@@ -5,6 +5,7 @@ namespace Saade\FilamentFullCalendar\Data;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Crypt;
 use JsonSerializable;
+use Saade\FilamentFullCalendar\Support\V6Compat\V6CompatColors;
 
 /**
  * Events the calendar reads from somewhere else and shows next to its own.
@@ -16,6 +17,8 @@ use JsonSerializable;
  */
 class EventSourceData implements Arrayable, JsonSerializable
 {
+    use V6CompatColors;
+
     protected ?string $googleCalendarId = null;
 
     protected ?string $iCalendarUrl = null;
@@ -24,13 +27,12 @@ class EventSourceData implements Arrayable, JsonSerializable
 
     protected int | string | null $id = null;
 
-    protected ?string $color = null;
+    /**
+     * @var string | array<int, string> | null
+     */
+    protected string | array | null $color = null;
 
-    protected ?string $backgroundColor = null;
-
-    protected ?string $borderColor = null;
-
-    protected ?string $textColor = null;
+    protected ?string $contrastColor = null;
 
     protected ?string $className = null;
 
@@ -69,33 +71,18 @@ class EventSourceData implements Arrayable, JsonSerializable
     }
 
     /**
-     * The name of a Filament color, such as `success`, which makes the events
-     * look like badges of that color.
+     * @param  string | array<int, string>  $color
      */
-    public function color(string $color): static
+    public function color(string | array $color): static
     {
         $this->color = $color;
 
         return $this;
     }
 
-    public function backgroundColor(string $color): static
+    public function contrastColor(string $color): static
     {
-        $this->backgroundColor = $color;
-
-        return $this;
-    }
-
-    public function borderColor(string $color): static
-    {
-        $this->borderColor = $color;
-
-        return $this;
-    }
-
-    public function textColor(string $color): static
-    {
-        $this->textColor = $color;
+        $this->contrastColor = $color;
 
         return $this;
     }
@@ -137,9 +124,7 @@ class EventSourceData implements Arrayable, JsonSerializable
             ...$this->iCalendarUrl ? ['url' => $this->getICalendarUrl(), 'format' => 'ics'] : [],
             ...filled($this->id) ? ['id' => $this->id] : [],
             ...$this->color ? ['color' => $this->color] : [],
-            ...$this->backgroundColor ? ['backgroundColor' => $this->backgroundColor] : [],
-            ...$this->borderColor ? ['borderColor' => $this->borderColor] : [],
-            ...$this->textColor ? ['textColor' => $this->textColor] : [],
+            ...$this->contrastColor ? ['contrastColor' => $this->contrastColor] : [],
             ...$this->className ? ['className' => $this->className] : [],
             'editable' => false,
             ...$this->extraProperties,

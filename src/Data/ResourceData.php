@@ -4,6 +4,7 @@ namespace Saade\FilamentFullCalendar\Data;
 
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
+use Saade\FilamentFullCalendar\Support\V6Compat\V6CompatResourceColors;
 
 /**
  * @phpstan-consistent-constructor
@@ -12,6 +13,8 @@ use JsonSerializable;
  */
 class ResourceData implements Arrayable, JsonSerializable
 {
+    use V6CompatResourceColors;
+
     protected int | string | null $id = null;
 
     protected ?string $title = null;
@@ -23,13 +26,12 @@ class ResourceData implements Arrayable, JsonSerializable
      */
     protected array $children = [];
 
-    protected ?string $eventColor = null;
+    /**
+     * @var string | array<int, string> | null
+     */
+    protected string | array | null $eventColor = null;
 
-    protected ?string $eventBackgroundColor = null;
-
-    protected ?string $eventBorderColor = null;
-
-    protected ?string $eventTextColor = null;
+    protected ?string $eventContrastColor = null;
 
     /**
      * @var array<string, mixed> | null
@@ -77,30 +79,19 @@ class ResourceData implements Arrayable, JsonSerializable
         return $this;
     }
 
-    public function eventColor(string $color): static
+    /**
+     * @param  string | array<int, string>  $color
+     */
+    public function eventColor(string | array $color): static
     {
         $this->eventColor = $color;
 
         return $this;
     }
 
-    public function eventBackgroundColor(string $color): static
+    public function eventContrastColor(string $color): static
     {
-        $this->eventBackgroundColor = $color;
-
-        return $this;
-    }
-
-    public function eventBorderColor(string $color): static
-    {
-        $this->eventBorderColor = $color;
-
-        return $this;
-    }
-
-    public function eventTextColor(string $color): static
-    {
-        $this->eventTextColor = $color;
+        $this->eventContrastColor = $color;
 
         return $this;
     }
@@ -139,9 +130,7 @@ class ResourceData implements Arrayable, JsonSerializable
                 $this->children,
             )] : [],
             ...$this->eventColor ? ['eventColor' => $this->eventColor] : [],
-            ...$this->eventBackgroundColor ? ['eventBackgroundColor' => $this->eventBackgroundColor] : [],
-            ...$this->eventBorderColor ? ['eventBorderColor' => $this->eventBorderColor] : [],
-            ...$this->eventTextColor ? ['eventTextColor' => $this->eventTextColor] : [],
+            ...$this->eventContrastColor ? ['eventContrastColor' => $this->eventContrastColor] : [],
             ...$this->extendedProps ? ['extendedProps' => $this->extendedProps] : [],
             ...$this->extraProperties,
         ];

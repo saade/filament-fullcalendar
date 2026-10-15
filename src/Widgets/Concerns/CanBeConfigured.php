@@ -2,7 +2,9 @@
 
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
+use InvalidArgumentException;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
+use Saade\FilamentFullCalendar\Support\V6Compat\V6CompatOptions;
 
 use function Saade\FilamentFullCalendar\array_merge_recursive_unique;
 
@@ -23,10 +25,10 @@ trait CanBeConfigured
      */
     protected function getConfig(): array
     {
-        return array_merge_recursive_unique(
+        return V6CompatOptions::config(array_merge_recursive_unique(
             FilamentFullCalendarPlugin::current()->getConfig(),
             $this->config(),
-        );
+        ));
     }
 
     public function getTimezone(): string
@@ -45,6 +47,44 @@ trait CanBeConfigured
     public function getPlugins(): array
     {
         return FilamentFullCalendarPlugin::current()->getPlugins();
+    }
+
+    public function getTheme(): string
+    {
+        return FilamentFullCalendarPlugin::current()->getTheme();
+    }
+
+    public function getPalette(): ?string
+    {
+        return FilamentFullCalendarPlugin::current()->getPalette();
+    }
+
+    public function getPaletteClass(): ?string
+    {
+        $theme = $this->getTheme();
+        $palettes = FilamentFullCalendarPlugin::THEMES[$theme];
+        $palette = $this->getPalette();
+
+        if (blank($palettes)) {
+            if (filled($palette)) {
+                throw new InvalidArgumentException("The [{$theme}] theme has no palettes, so [{$palette}] cannot be used with it.");
+            }
+
+            return null;
+        }
+
+        $palette ??= $palettes[0];
+
+        if (! in_array($palette, $palettes, true)) {
+            throw new InvalidArgumentException("[{$palette}] is not a palette of the [{$theme}] theme. Use one of [" . implode('], [', $palettes) . '].');
+        }
+
+        return "fi-fc-palette-{$theme}-{$palette}";
+    }
+
+    public function hasNativeToolbar(): bool
+    {
+        return FilamentFullCalendarPlugin::current()->hasNativeToolbar();
     }
 
     public function getSchedulerLicenseKey(): ?string

@@ -12,6 +12,7 @@
     - [Step 4: Rename what clashes with the widget's new names](#step-4-rename-what-clashes-with-the-widgets-new-names)
     - [Step 5: Update your tests](#step-5-update-your-tests)
   - [Behavior changes](#behavior-changes)
+    - [The calendar runs on FullCalendar 7](#the-calendar-runs-on-fullcalendar-7)
     - [Actions follow model policies](#actions-follow-model-policies)
     - [Records are scoped to the current tenant](#records-are-scoped-to-the-current-tenant)
     - [The toolbar has view buttons by default](#the-toolbar-has-view-buttons-by-default)
@@ -22,21 +23,23 @@
     - [Dragging and resizing](#dragging-and-resizing)
     - [A calendar only reacts to its own refresh and navigation](#a-calendar-only-reacts-to-its-own-refresh-and-navigation)
     - [The panel plugin is optional, and its settings can be overridden per widget](#the-panel-plugin-is-optional-and-its-settings-can-be-overridden-per-widget)
-    - [The JavaScript is split into several files](#the-javascript-is-split-into-several-files)
     - [A calendar with nothing to show in its modal fails with a message](#a-calendar-with-nothing-to-show-in-its-modal-fails-with-a-message)
   - [Deprecations](#deprecations)
     - [The package's action classes are deprecated in favor of Filament's](#the-packages-action-classes-are-deprecated-in-favor-of-filaments)
     - [`getFormSchema()` is deprecated in favor of `form()`](#getformschema-is-deprecated-in-favor-of-form)
+    - [`eventClassNames()` is deprecated in favor of `eventClass()`](#eventclassnames-is-deprecated-in-favor-of-eventclass)
+    - [FullCalendar 6's class names are deprecated in favor of the class-name options](#fullcalendar-6s-class-names-are-deprecated-in-favor-of-the-class-name-options)
+    - [`backgroundColor()`, `borderColor()` and `textColor()` are deprecated in favor of `color()` and `contrastColor()`](#backgroundcolor-bordercolor-and-textcolor-are-deprecated-in-favor-of-color-and-contrastcolor)
 
 
 ## What to expect
 5.x has the same requirements as 4.x (PHP 8.2 or higher, Filament 4 or 5) and is installed the same way. What changes is the widget's API and some of its behavior:
 
-|                                       | What to expect                                                                                                                                                    |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Required changes](#required-changes) | Five steps. A widget that overrides none of the event handlers and does not read `$this->record` needs only the first to load.                                    |
-| [Behavior changes](#behavior-changes) | Twelve to review. The most visible: model policies are enforced, the create button is no longer there by default, and the toolbar is drawn with Filament buttons. |
-| [Deprecations](#deprecations)         | Two. Both still work in 5.x.                                                                                                                                      |
+|                                       | What to expect                                                                                                                                                                                                             |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Required changes](#required-changes) | Five steps. A widget that overrides none of the event handlers and does not read `$this->record` needs only the first to load.                                                                                             |
+| [Behavior changes](#behavior-changes) | Twelve to review. The most visible: the calendar runs on FullCalendar 7 and looks different, model policies are enforced, the create button is no longer there by default, and the toolbar is drawn with Filament buttons. |
+| [Deprecations](#deprecations)         | Five. All still work in 5.x.                                                                                                                                                                                               |
 
 For what is new in 5.x, see the [changelog](CHANGELOG.md) and the [README](README.md).
 
@@ -82,15 +85,17 @@ vendor/bin/filament-fullcalendar-v5
 
 The script asks which directories to go through (`app,tests` by default; add others, such as `app-modules`, if your widgets live there) and whether to keep the create button. It only changes classes that extend the calendar widget, and `->call()` in tests:
 
-| Change | What the script does |
-| --- | --- |
-| [Step 1](#step-1-change-the-type-hint-of-fetchevents) | Changes the type hint of `fetchEvents()` to `FetchInfo`. |
-| [Step 2](#step-2-update-the-event-handlers) | Gives the event handlers their new signature, and reads the old arguments from `$info` at the top of the method so the body keeps working. |
-| [Step 3](#step-3-rename-record-to-eventrecord) | Renames `$this->record`, `getRecord()`, `resolveRecord()` and the others, except in a widget that declares `$record` itself. |
-| [Step 5](#step-5-update-your-tests) | Renames `->call('onEventClick')` and the like to the `handle*` methods. |
-| [The package's action classes](#the-packages-action-classes-are-deprecated-in-favor-of-filaments) | Replaces them with Filament's, adding what they did for you. |
-| [`getFormSchema()`](#getformschema-is-deprecated-in-favor-of-form) | Turns it into `form(Schema $schema)`. |
-| [No create button by default](#there-is-no-create-button-by-default) | If you say yes, adds `headerActions()` with a `CreateAction` to the widgets that do not define it. |
+| Change                                                                                            | What the script does                                                                                                                       |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Step 1](#step-1-change-the-type-hint-of-fetchevents)                                             | Changes the type hint of `fetchEvents()` to `FetchInfo`.                                                                                   |
+| [Step 2](#step-2-update-the-event-handlers)                                                       | Gives the event handlers their new signature, and reads the old arguments from `$info` at the top of the method so the body keeps working. |
+| [Step 3](#step-3-rename-record-to-eventrecord)                                                    | Renames `$this->record`, `getRecord()`, `resolveRecord()` and the others, except in a widget that declares `$record` itself.               |
+| [Step 5](#step-5-update-your-tests)                                                               | Renames `->call('onEventClick')` and the like to the `handle*` methods.                                                                    |
+| [The package's action classes](#the-packages-action-classes-are-deprecated-in-favor-of-filaments) | Replaces them with Filament's, adding what they did for you.                                                                               |
+| [`getFormSchema()`](#getformschema-is-deprecated-in-favor-of-form)                                | Turns it into `form(Schema $schema)`.                                                                                                      |
+| [No create button by default](#there-is-no-create-button-by-default)                              | If you say yes, adds `headerActions()` with a `CreateAction` to the widgets that do not define it.                                         |
+
+The script leaves the [deprecations](#deprecations) alone, such as `eventClassNames()` and `backgroundColor()`. They keep working in 5.x.
 
 Pass the directories and your answer to skip the questions, and `--dry-run` to see what would change without changing it:
 
@@ -203,8 +208,8 @@ The `$record` injected into action callbacks, as in `->mountUsing(function (Even
 
 The widget defines more methods and properties than it did in 4.x. If your widget already has one with the same name, rename yours, or, where it is meant to be the same thing, give it the same signature, type and default.
 
-- **Methods that drive the calendar:** `getTimezone()`, `getLocale()`, `getPlugins()`, `getSchedulerLicenseKey()`, `goToDate()`, `changeView()`, `next()`, `previous()`, `today()`, `scrollToTime()`, `setOption()`, `refreshResources()`, `applyFilters()`, `resetFilters()`
-- **Methods you override to configure it:** `fetchResources()`, `filtersSchema()`, `getTabs()`, `jsCallbacks()`, `eventSources()`, `toolbarActions()`, `toolbarButtons()`, `footerToolbarButtons()`, `tools()`, `createAction()`, `getHeading()`, `getDescription()`, `onDatesSet()`, `onExternalDrop()`, `isDroppable()`, `isReadOnly()`
+- **Methods that drive the calendar:** `getTimezone()`, `getLocale()`, `getPlugins()`, `getTheme()`, `getPalette()`, `getPaletteClass()`, `hasNativeToolbar()`, `getNativeToolbar()`, `getSchedulerLicenseKey()`, `goToDate()`, `changeView()`, `next()`, `previous()`, `today()`, `scrollToTime()`, `setOption()`, `refreshResources()`, `applyFilters()`, `resetFilters()`
+- **Methods you override to configure it:** `fetchResources()`, `filtersSchema()`, `getTabs()`, `jsCallbacks()`, `eventClass()`, `eventSources()`, `toolbarActions()`, `toolbarButtons()`, `footerToolbarButtons()`, `tools()`, `createAction()`, `getHeading()`, `getDescription()`, `onDatesSet()`, `onExternalDrop()`, `isDroppable()`, `isReadOnly()`
 - **Properties:** `$filters`, `$deferredFilters`, `$activeTab`, `$heading`, `$description`, `$filtersLayout`, `$hasDeferredFilters`, `$pollingInterval`
 
 They belong to the new [filter form and tabs](README.md#filtering-events), [header](README.md#heading-and-header-actions), [toolbars](README.md#toolbar-buttons), [control methods](README.md#controlling-the-calendar) and the other features listed in the [changelog](CHANGELOG.md).
@@ -235,6 +240,37 @@ Assertions made while the action is still open, such as `->fillForm()` or `->ass
 ## Behavior changes
 
 Nothing here stops a widget from loading, but each changes what an existing calendar does:
+
+---
+
+### The calendar runs on FullCalendar 7
+
+5.x bundles FullCalendar 7, which changed how calendars are styled, renamed many options and dropped some plugins. Most of it is handled for you.
+
+The calendar has a new look. It uses a theme made for Filament, drawn with your panel's colors, and events are tinted with their color instead of filled with it. You may switch to one of FullCalendar's own themes with `theme()`, and let FullCalendar draw the toolbar with `nativeToolbar()`. See [Styling the calendar](README.md#styling-the-calendar).
+
+The names FullCalendar 6 used are translated before they reach the calendar, so you don't have to rename them right away:
+
+- In events and event sources, `classNames` becomes `className`, and in resources, `eventClassNames` becomes `eventClass`.
+- In `config()`: `customButtons` becomes `buttons`, `buttonText`, in the calendar or in a view, becomes the `text` of an entry in `buttons`, or `monthText`, `weekTextLong`, `dayText`, `listText` and `yearText` for the units, `buttonHints` becomes the `hint` of an entry in `buttons`, `eventClassNames` becomes `eventClass`, `slotLabelFormat` becomes `slotHeaderFormat`, `dayPopoverFormat` becomes `popoverFormat`, `stickyHeaderDates` becomes `tableHeaderSticky`, `resourceAreaColumns` becomes `resourceColumns`, and so on for the other options that kept their meaning.
+- In `jsCallbacks()` and the render hook methods: `eventClassNames` becomes `eventClass`, `dayCellClassNames` becomes `dayCellClass`, `dayCellContent` becomes `dayCellTopContent`, and so on. A class-name callback that returns an array still works.
+- `moment`, `momentTimezone` and `resource` in a list of plugins are ignored, since FullCalendar 7 has named timezones and resources built in.
+- A few of FullCalendar 6's class names are put back on their elements, such as `fc-event` and `fc-daygrid-day`. They are [deprecated](#fullcalendar-6s-class-names-are-deprecated-in-favor-of-the-class-name-options).
+- In events and event sources, `backgroundColor`, `borderColor` and `textColor` become `color` and `contrastColor`, and in resources, `eventBackgroundColor`, `eventBorderColor` and `eventTextColor` become `eventColor` and `eventContrastColor`. The methods that set them are [deprecated](#backgroundcolor-bordercolor-and-textcolor-are-deprecated-in-favor-of-color-and-contrastcolor).
+
+These need changing by hand:
+
+- CSS written for FullCalendar's elements. FullCalendar 7 generates its class names and replaced its `--fc-*` variables, so selectors such as `.fc-daygrid-event` or `.fc-timegrid-slot` match nothing. FullCalendar has a class-name option for nearly every element instead. See [Styling an element](README.md#styling-an-element).
+- Options that changed meaning and have no one-to-one replacement: the `weekNumber*`, `allDay*`, `nowIndicator*` and `resourceLabel*` render hooks, which were split into several options each, and `slotLaneContent`, the time grid's `dayCellContent`, `windowResize`, `titleRangeSeparator`, `defaultRangeSeparator` and `fixedMirrorParent`, which were removed. FullCalendar's [upgrade guide](https://fullcalendar.io/docs/upgrading-from-v6) covers each one.
+- Moment format strings. The `moment` plugin is gone, so a format such as `'titleFormat' => 'MMMM YYYY'` no longer works. Use a [date formatting object](https://fullcalendar.io/docs/date-formatting) instead, such as `['month' => 'long', 'year' => 'numeric']`.
+- A `resourceAreaWidth` in units other than pixels or a percentage. A value in `rem` or `em` is converted to pixels for you, and any other is dropped.
+- `eventContent` on a list-item event. It no longer replaces the colored dot, and render hooks no longer apply to background events.
+- Tests that look at the events the calendar receives, with `assertCalendarHasEvent()` or `getCalendarEvents()`. The events have FullCalendar 7's fields: `className` is a string instead of a `classNames` array, and the CSS colors are in `color` and `contrastColor`.
+
+> [!WARNING]
+> FullCalendar Premium's open-source license changed from GPLv3 to AGPLv3. If you used the `GPL-My-Project-Is-Open-Source` key, the new one is `AGPL-My-Frontend-And-Backend-Are-Open-Source`, which requires both your frontend and your backend to be open source under the AGPL. Otherwise you need a commercial license from FullCalendar, or to stay on 4.x.
+
+The calendar's styles now come entirely from the stylesheet you import into your theme, so run `php artisan filament:assets` and rebuild your theme after updating.
 
 ---
 
@@ -291,7 +327,7 @@ protected function headerActions(): array
 
 ### The widget draws the toolbars
 
-The header and footer toolbars are made of Filament buttons now, not FullCalendar's. Your `headerToolbar` and `footerToolbar` options keep working, including buttons from `customButtons`, but CSS written for `.fc-toolbar`, `.fc-toolbar-title` or `.fc-button` no longer reaches them. The new elements are `.fi-fc-toolbar`, `.fi-fc-toolbar-heading` and `.fi-fc-tool`. See [Toolbar buttons](README.md#toolbar-buttons) for the new `toolbarButtons()` method.
+The header and footer toolbars are made of Filament buttons now, not FullCalendar's. Your `headerToolbar` and `footerToolbar` options keep working, including buttons from `buttons` (or `customButtons`), but CSS written for `.fc-toolbar`, `.fc-toolbar-title` or `.fc-button` no longer reaches them. The new elements are `.fi-fc-toolbar`, `.fi-fc-toolbar-heading` and `.fi-fc-tool`. See [Toolbar buttons](README.md#toolbar-buttons) for the new `toolbarButtons()` method. To have FullCalendar draw the toolbars again, turn on [`nativeToolbar()`](README.md#using-fullcalendars-toolbar).
 
 ---
 
@@ -332,15 +368,9 @@ The `filament-fullcalendar--*` browser events still reach every calendar when di
 
 The widget no longer fails on a panel that does not register `FilamentFullCalendarPlugin`, or on a page outside a panel. It falls back to the default settings. Filament's own styles and scripts are still needed on such a page.
 
-`getTimezone()`, `getLocale()`, `getPlugins()` and `getSchedulerLicenseKey()` are new public methods on the widget. They return the panel plugin's values unless you override them. If your widget already has a method with one of these names, rename it or make it compatible.
+`getTimezone()`, `getLocale()`, `getPlugins()`, `getTheme()`, `getPalette()`, `hasNativeToolbar()` and `getSchedulerLicenseKey()` are new public methods on the widget. They return the panel plugin's values unless you override them. If your widget already has a method with one of these names, rename it or make it compatible.
 
 If you published or replaced the widget's Blade view, it should read these from `$this` instead of from `FilamentFullCalendarPlugin::get()`.
-
----
-
-### The JavaScript is split into several files
-
-The calendar's script is no longer one file. `php artisan filament:assets` publishes the component and the parts it loads on demand, so run it after updating, as after any Filament update. If you referenced `resources/dist/filament-fullcalendar.js` in a build of your own, the component is now `resources/dist/components/filament-fullcalendar-alpine.js` and imports the files next to it by relative path.
 
 ---
 
@@ -354,6 +384,9 @@ These still work in 5.x:
 
 - [The package's action classes are deprecated in favor of Filament's](#the-packages-action-classes-are-deprecated-in-favor-of-filaments)
 - [`getFormSchema()` is deprecated in favor of `form()`](#getformschema-is-deprecated-in-favor-of-form)
+- [`eventClassNames()` is deprecated in favor of `eventClass()`](#eventclassnames-is-deprecated-in-favor-of-eventclass)
+- [FullCalendar 6's class names are deprecated in favor of the class-name options](#fullcalendar-6s-class-names-are-deprecated-in-favor-of-the-class-name-options)
+- [`backgroundColor()`, `borderColor()` and `textColor()` are deprecated in favor of `color()` and `contrastColor()`](#backgroundcolor-bordercolor-and-textcolor-are-deprecated-in-favor-of-color-and-contrastcolor)
 
 ---
 
@@ -423,3 +456,62 @@ Define the fields with `form(Schema $schema): Schema`, as on other Filament comp
 There is also a new `infolist(Schema $schema): Schema`. When it is defined, clicking an event shows its entries instead of the disabled form.
 
 The widget now implements `Filament\Schemas\Contracts\HasSchemas` and uses `InteractsWithSchemas`, in place of the deprecated `HasForms` and `InteractsWithForms`. This only matters if your code type-hints the widget as `HasForms` or calls `getForm()`, `getForms()` or `getCachedForms()` on it.
+
+---
+
+### `eventClassNames()` is deprecated in favor of `eventClass()`
+
+FullCalendar 7 renamed the `eventClassNames` render hook to `eventClass`, and the widget's method follows it. `eventClassNames()` still works in 5.x and will be removed in the next major.
+
+```diff
+-public function eventClassNames(): string
++public function eventClass(): string
+```
+
+---
+
+### FullCalendar 6's class names are deprecated in favor of the class-name options
+
+FullCalendar 7 no longer gives its elements class names such as `fc-event` or `fc-daygrid-day`. The calendar puts back a few of them so your stylesheets and scripts keep working in 5.x: `fc-view`, `fc-{view}-view`, `fc-event`, `fc-event-title`, `fc-event-time`, `fc-bg-event`, `fc-daygrid-day`, `fc-col-header-cell`, `fc-more-link`, `fc-highlight` and `fc-non-business`. They will be removed in the next major.
+
+Give the element a class of your own with its class-name option instead, such as `eventClass` or `dayCellClass`, and target that. See [Styling an element](README.md#styling-an-element).
+
+```diff
+-.fc-daygrid-day:hover {
++.calendar-day:hover {
+```
+
+```php
+public function config(): array
+{
+    return [
+        'dayCellClass' => 'calendar-day',
+    ];
+}
+```
+
+---
+
+### `backgroundColor()`, `borderColor()` and `textColor()` are deprecated in favor of `color()` and `contrastColor()`
+
+FullCalendar 7 gives an event a single color and a contrast color for its text. `color()` takes the name of a Filament color, or a palette from Filament's `Color` class for any other color, and `contrastColor()` takes a CSS color. The same goes for event sources, and for `eventColor()` and `eventContrastColor()` on a resource. The old methods still work in 5.x and will be removed in the next major. When you give both a background and a border color, the background color is used.
+
+```diff
++use Filament\Support\Colors\Color;
++
+ EventData::make()
+-    ->backgroundColor('#fde047')
+-    ->textColor('#000')
++    ->color(Color::hex('#fde047'))
++    ->contrastColor('#000')
+```
+
+```diff
+ ResourceData::make()
+-    ->eventBackgroundColor('#fde047')
+-    ->eventTextColor('#000')
++    ->eventColor(Color::hex('#fde047'))
++    ->eventContrastColor('#000')
+```
+
+In an array, set `color` and `contrastColor` in place of `backgroundColor`, `borderColor` and `textColor`.

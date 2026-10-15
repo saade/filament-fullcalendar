@@ -21,6 +21,7 @@ use Saade\FilamentFullCalendar\Data\EventDropInfo;
 use Saade\FilamentFullCalendar\Data\EventInfo;
 use Saade\FilamentFullCalendar\Data\EventResizeInfo;
 use Saade\FilamentFullCalendar\Data\FetchInfo;
+use Saade\FilamentFullCalendar\Support\V6Compat\V6CompatOptions;
 
 trait InteractsWithEvents
 {
@@ -395,15 +396,13 @@ trait InteractsWithEvents
      */
     protected function normalizeEvent(mixed $event): array
     {
-        if ($event instanceof Eventable) {
-            return $this->applyFilamentColor($this->getEventFromRecord($event));
-        }
+        $event = match (true) {
+            $event instanceof Eventable => $this->getEventFromRecord($event),
+            $event instanceof Arrayable => $event->toArray(),
+            default => $event,
+        };
 
-        if ($event instanceof Arrayable) {
-            return $this->applyFilamentColor($event->toArray());
-        }
-
-        return $this->applyFilamentColor($event);
+        return $this->applyEventColors(V6CompatOptions::event($event));
     }
 
     /**
@@ -455,7 +454,7 @@ trait InteractsWithEvents
                 $event = $event->toArray();
             }
 
-            $events[] = $this->applyFilamentColor([
+            $events[] = $this->normalizeEvent([
                 ...$event,
                 'id' => $event['id'] ?? "{$identity['model']}-{$identity['key']}-{$index}",
                 'editable' => $event['editable'] ?? false,

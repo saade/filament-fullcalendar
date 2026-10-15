@@ -5,17 +5,29 @@
 [![Tests](https://img.shields.io/github/actions/workflow/status/saade/filament-fullcalendar/run-tests.yml?branch=5.x&label=tests&style=flat-square)](https://github.com/saade/filament-fullcalendar/actions/workflows/run-tests.yml)
 [![Plumb score](https://plumbphp.dev/badges/saade/filament-fullcalendar/composite.svg)](https://plumbphp.dev/saade/filament-fullcalendar)
 
+[FullCalendar](https://fullcalendar.io) for [Filament](https://filamentphp.com) panels: show your models on a calendar and view, create, edit, drag and resize them with Filament actions.
+
 <p align="center">
-    <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/cover.png" alt="Filament FullCalendar" style="width: 100%; max-width: 800px; border-radius: 10px" />
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/calendar-dark.png">
+        <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/calendar-light.png" alt="A month view of the calendar in Filament's theme" style="width: 100%; max-width: 900px" />
+    </picture>
 </p>
 
-[FullCalendar](https://fullcalendar.io) for [Filament](https://filamentphp.com) panels: show your models on a calendar and view, create, edit, drag and resize them with Filament actions.
+# What's new in 5.x
+
+- The calendar runs on FullCalendar 7, with a theme made for Filament that uses your panel's colors and follows it into dark mode. You may also pick one of [FullCalendar's themes](#using-fullcalendars-themes) and let it [draw the toolbar](#using-fullcalendars-toolbar).
+- [Models can describe their own events](#returning-models), and one calendar can show several models.
+- [Filters and tabs](#filtering-events) narrow down the events, like on a Filament table.
+- The [toolbar](#toolbar-buttons) is made of Filament buttons, and can hold actions, dropdowns and tools of your own.
+- Items can be [dragged onto the calendar](#dragging-items-onto-the-calendar), and [other calendars](#showing-other-calendars), such as iCalendar feeds, shown next to your events.
+- [Testing helpers](#testing) for your widgets, and a script that [upgrades your widgets from 4.x](UPGRADING.md#automated-upgrade).
 
 # Version compatibility
 
 | Plugin | Filament | FullCalendar | Install                                               |
 | ------ | -------- | ------------ | ----------------------------------------------------- |
-| 5.x    | 4.x, 5.x | 6.x          | `composer require saade/filament-fullcalendar:"^5.0"` |
+| 5.x    | 4.x, 5.x | 7.x          | `composer require saade/filament-fullcalendar:"^5.0"` |
 | 4.x    | 4.x, 5.x | 6.x          | `composer require saade/filament-fullcalendar:"^4.0"` |
 | 3.x    | 3.x      | 6.x          | `composer require saade/filament-fullcalendar:"^3.0"` |
 | 2.x    | 2.x      | 5.x          | `composer require saade/filament-fullcalendar:"^2.0"` |
@@ -25,6 +37,7 @@ Upgrading from 4.x? Read the [upgrade guide](UPGRADING.md). Coming from 3.x, fol
 # Table of contents
 
 - [Filament FullCalendar](#filament-fullcalendar)
+- [What's new in 5.x](#whats-new-in-5x)
 - [Version compatibility](#version-compatibility)
 - [Table of contents](#table-of-contents)
 - [Installation](#installation)
@@ -41,6 +54,9 @@ Upgrading from 4.x? Read the [upgrade guide](UPGRADING.md). Coming from 3.x, fol
   - [Configuring a single widget](#configuring-a-single-widget)
   - [Read-only calendars](#read-only-calendars)
   - [A different view on phones](#a-different-view-on-phones)
+  - [Styling the calendar](#styling-the-calendar)
+    - [Using FullCalendar's themes](#using-fullcalendars-themes)
+    - [Styling an element](#styling-an-element)
   - [Premium plugins and licensing](#premium-plugins-and-licensing)
     - [Do I need a license?](#do-i-need-a-license)
 - [Interacting with actions](#interacting-with-actions)
@@ -88,6 +104,7 @@ Upgrading from 4.x? Read the [upgrade guide](UPGRADING.md). Coming from 3.x, fol
     - [Dropdowns](#dropdowns)
     - [Footer toolbar](#footer-toolbar)
     - [FullCalendar's own toolbar options](#fullcalendars-own-toolbar-options)
+    - [Using FullCalendar's toolbar](#using-fullcalendars-toolbar)
   - [Reacting to navigation](#reacting-to-navigation)
   - [Styling](#styling)
   - [Loading state](#loading-state)
@@ -190,7 +207,7 @@ class CalendarWidget extends FullCalendarWidget
 
 ## Returning events
 
-`fetchEvents()` returns an array of [FullCalendar event objects](https://legacy.fullcalendar.io/v6/event-object). `$info` holds the visible range, so only the events that overlap it need to be loaded. `$info->overlapping()` adds that condition to a query:
+`fetchEvents()` returns an array of [FullCalendar event objects](https://fullcalendar.io/docs/event-object). `$info` holds the visible range, so only the events that overlap it need to be loaded. `$info->overlapping()` adds that condition to a query:
 
 ```php
 <?php
@@ -255,21 +272,21 @@ public function fetchEvents(FetchInfo $info): array
 }
 ```
 
-| Method                                                                                     | Description                                                                                                                                                  |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `id(int \| string $id)`                                                                    | Identifies the event. Required for the view, edit and delete actions to find the record. An event without one, such as a holiday, does nothing when clicked. |
-| `title(string $title, bool $html = false)`                                                 | The text shown on the event. With `html: true` it is rendered as HTML and not escaped.                                                                       |
-| `start(DateTimeInterface \| string $start)`                                                | When the event begins.                                                                                                                                       |
-| `end(DateTimeInterface \| string \| null $end)`                                            | When the event ends (exclusive).                                                                                                                             |
-| `allDay(bool $allDay = true)`                                                              | Shows the event in the all-day section, without a time.                                                                                                      |
-| `url(string $url, bool $shouldOpenUrlInNewTab = false)`                                    | Visits a URL when the event is clicked, instead of opening the view action.                                                                                  |
-| `color(string $color)`                                                                     | The name of a Filament color, such as `success`. The event is colored like a badge of that color. See [Coloring events](#coloring-events).                   |
-| `backgroundColor(string $color)`, `borderColor(string $color)`, `textColor(string $color)` | CSS colors for this event.                                                                                                                                   |
-| `groupId(int \| string $groupId)`                                                          | Events sharing a group are dragged and resized together.                                                                                                     |
-| `resourceId(int \| string $resourceId)`, `resourceIds(array $resourceIds)`                 | Associates the event with [resources](https://legacy.fullcalendar.io/v6/resource-data).                                                                      |
-| `tooltip(string \| array $tooltip, bool $html = false)`                                    | Text shown when the event is hovered. An array gives one line per item. With `html: true` it is rendered as HTML and not escaped.                            |
-| `extendedProps(array $props)`                                                              | Your own data, available to the [render hooks](#render-hooks) as `event.extendedProps`.                                                                      |
-| `extraProperties(array $properties)`                                                       | Any other [event property](https://legacy.fullcalendar.io/v6/event-object), such as `display`, `classNames`, `editable` or `rrule`.                          |
+| Method                                                                     | Description                                                                                                                                                  |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id(int \| string $id)`                                                    | Identifies the event. Required for the view, edit and delete actions to find the record. An event without one, such as a holiday, does nothing when clicked. |
+| `title(string $title, bool $html = false)`                                 | The text shown on the event. With `html: true` it is rendered as HTML and not escaped.                                                                       |
+| `start(DateTimeInterface \| string $start)`                                | When the event begins.                                                                                                                                       |
+| `end(DateTimeInterface \| string \| null $end)`                            | When the event ends (exclusive).                                                                                                                             |
+| `allDay(bool $allDay = true)`                                              | Shows the event in the all-day section, without a time.                                                                                                      |
+| `url(string $url, bool $shouldOpenUrlInNewTab = false)`                    | Visits a URL when the event is clicked, instead of opening the view action.                                                                                  |
+| `color(string \| array $color)`                                            | The name of a Filament color, such as `success`, or a palette, such as `Color::hex('#fde047')`. See [Coloring events](#coloring-events).                     |
+| `contrastColor(string $color)`                                             | The CSS color of the text when a theme fills the event with its color. See [Coloring events](#coloring-events).                                              |
+| `groupId(int \| string $groupId)`                                          | Events sharing a group are dragged and resized together.                                                                                                     |
+| `resourceId(int \| string $resourceId)`, `resourceIds(array $resourceIds)` | Associates the event with [resources](https://fullcalendar.io/docs/resource-data).                                                                           |
+| `tooltip(string \| array $tooltip, bool $html = false)`                    | Text shown when the event is hovered. An array gives one line per item. With `html: true` it is rendered as HTML and not escaped.                            |
+| `extendedProps(array $props)`                                              | Your own data, available to the [render hooks](#render-hooks) as `event.extendedProps`.                                                                      |
+| `extraProperties(array $properties)`                                       | Any other [event property](https://fullcalendar.io/docs/event-object), such as `display`, `className`, `editable` or `rrule`.                                |
 
 ## Returning models
 
@@ -433,21 +450,24 @@ $panel->plugin(
 );
 ```
 
-| Method                                                | Default                                                                  | Description                                                                                                             |
-| ----------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| `selectable(bool \| Closure $selectable = true)`      | `false`                                                                  | Lets users click or drag over dates to create an event. See [selectable](https://legacy.fullcalendar.io/v6/selectable). |
-| `editable(bool \| Closure $editable = true)`          | `false`                                                                  | Lets users drag and resize events. See [editable](https://legacy.fullcalendar.io/v6/editable).                          |
-| `timezone(string \| Closure $timezone)`               | `config('app.timezone')`                                                 | The time zone dates are displayed in. See [timeZone](https://legacy.fullcalendar.io/v6/timeZone).                       |
-| `locale(string \| Closure $locale)`                   | The app locale                                                           | The language of the calendar. See [locale](https://legacy.fullcalendar.io/v6/locale).                                   |
-| `plugins(array $plugins, bool $merge = true)`         | `interaction`, `dayGrid`, `timeGrid`, `list`, `moment`, `momentTimezone` | FullCalendar plugins to enable. Pass `false` as the second argument to replace the defaults.                            |
-| `schedulerLicenseKey(string \| Closure \| null $key)` | `null`                                                                   | Your FullCalendar Premium license key. See [Premium plugins and licensing](#premium-plugins-and-licensing).             |
-| `config(array \| Closure $config)`                    | `[]`                                                                     | Any other [FullCalendar option](https://legacy.fullcalendar.io/v6#toc).                                                 |
+| Method                                                | Default                                      | Description                                                                                                        |
+| ----------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `selectable(bool \| Closure $selectable = true)`      | `false`                                      | Lets users click or drag over dates to create an event. See [selectable](https://fullcalendar.io/docs/selectable). |
+| `editable(bool \| Closure $editable = true)`          | `false`                                      | Lets users drag and resize events. See [editable](https://fullcalendar.io/docs/editable).                          |
+| `timezone(string \| Closure $timezone)`               | `config('app.timezone')`                     | The time zone dates are displayed in. See [timeZone](https://fullcalendar.io/docs/timeZone).                       |
+| `locale(string \| Closure $locale)`                   | The app locale                               | The language of the calendar. See [locale](https://fullcalendar.io/docs/locale).                                   |
+| `plugins(array $plugins, bool $merge = true)`         | `interaction`, `dayGrid`, `timeGrid`, `list` | FullCalendar plugins to enable. Pass `false` as the second argument to replace the defaults.                       |
+| `schedulerLicenseKey(string \| Closure \| null $key)` | `null`                                       | Your FullCalendar Premium license key. See [Premium plugins and licensing](#premium-plugins-and-licensing).        |
+| `theme(string \| Closure $theme)`                     | `filament`                                   | How the calendar looks. See [Styling the calendar](#styling-the-calendar).                                         |
+| `palette(string \| Closure \| null $palette)`         | The theme's first                            | The colors of one of FullCalendar's themes. See [Using FullCalendar's themes](#using-fullcalendars-themes).        |
+| `nativeToolbar(bool \| Closure $condition = true)`    | `false`                                      | Lets FullCalendar draw the toolbar. See [Using FullCalendar's toolbar](#using-fullcalendars-toolbar).              |
+| `config(array \| Closure $config)`                    | `[]`                                         | Any other [FullCalendar option](https://fullcalendar.io/docs#toc).                                                 |
 
-Available plugins: `interaction`, `dayGrid`, `timeGrid`, `list`, `multiMonth`, `rrule`, `moment`, `momentTimezone`, and the premium `scrollGrid`, `timeline`, `adaptive`, `resource`, `resourceDayGrid`, `resourceTimeline`, `resourceTimeGrid`.
+Available plugins: `interaction`, `dayGrid`, `timeGrid`, `list`, `multiMonth`, `rrule`, and the premium `scrollGrid`, `timeline`, `adaptive`, `resourceDayGrid`, `resourceTimeline`, `resourceTimeGrid`.
 
 ## Configuring a single widget
 
-Override `config()` on a widget to set [FullCalendar options](https://legacy.fullcalendar.io/v6#toc) for that calendar only. It is merged over the plugin's `config()`:
+Override `config()` on a widget to set [FullCalendar options](https://fullcalendar.io/docs#toc) for that calendar only. It is merged over the plugin's `config()`:
 
 ```php
 public function config(): array
@@ -463,7 +483,7 @@ public function config(): array
 }
 ```
 
-The timezone, locale, plugins and license key are methods on the widget, so one calendar can differ from the rest of the panel:
+The timezone, locale, plugins, license key, theme, palette and toolbar are methods on the widget (`getTheme()`, `getPalette()` and `hasNativeToolbar()` for the last three), so one calendar can differ from the rest of the panel:
 
 ```php
 public function getTimezone(): string
@@ -494,12 +514,12 @@ Options people ask about most often:
 | Goal                                                                 | Option                                                                                                                                                                        |
 | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Choose which views the toolbar offers                                | [`toolbarButtons()`](#toolbar-buttons), with view names such as `dayGridMonth`, `timeGridWeek`, `timeGridDay`, `listWeek` or `multiMonthYear` (needs the `multiMonth` plugin) |
-| Choose the first view                                                | [`initialView`](https://legacy.fullcalendar.io/v6/initialView)                                                                                                                |
-| Start the week on Monday                                             | [`firstDay`](https://legacy.fullcalendar.io/v6/firstDay)                                                                                                                      |
-| Limit the events shown per day                                       | [`dayMaxEvents`](https://legacy.fullcalendar.io/v6/dayMaxEvents)                                                                                                              |
-| Stop users navigating or selecting outside a range, such as the past | [`validRange`](https://legacy.fullcalendar.io/v6/validRange), [`selectConstraint`](https://legacy.fullcalendar.io/v6/selectConstraint)                                        |
-| Highlight working hours                                              | [`businessHours`](https://legacy.fullcalendar.io/v6/businessHours)                                                                                                            |
-| 24-hour times                                                        | [`eventTimeFormat`](https://legacy.fullcalendar.io/v6/eventTimeFormat), [`slotLabelFormat`](https://legacy.fullcalendar.io/v6/slotLabelFormat)                                |
+| Choose the first view                                                | [`initialView`](https://fullcalendar.io/docs/initialView)                                                                                                                     |
+| Start the week on Monday                                             | [`firstDay`](https://fullcalendar.io/docs/firstDay)                                                                                                                           |
+| Limit the events shown per day                                       | [`dayMaxEvents`](https://fullcalendar.io/docs/dayMaxEvents)                                                                                                                   |
+| Stop users navigating or selecting outside a range, such as the past | [`validRange`](https://fullcalendar.io/docs/validRange), [`selectConstraint`](https://fullcalendar.io/docs/selectConstraint)                                                  |
+| Highlight working hours                                              | [`businessHours`](https://fullcalendar.io/docs/businessHours)                                                                                                                 |
+| 24-hour times                                                        | [`eventTimeFormat`](https://fullcalendar.io/docs/eventTimeFormat), [`slotHeaderFormat`](https://fullcalendar.io/docs/slotHeaderFormat)                                        |
 
 `config()` is sent to the browser as JSON, so it cannot hold JavaScript functions. Those go in [`jsCallbacks()`](#javascript-callbacks).
 
@@ -540,6 +560,101 @@ public function config(): array
 
 It is not set by default, so nothing changes unless you ask for it. A screen counts as a phone below 768 pixels wide; change that with `mobileBreakpoint`. The view is chosen once, when the calendar loads, and the user can still switch to any view in the toolbar.
 
+## Styling the calendar
+
+By default, the calendar uses a theme made for Filament. It takes its colors from your panel: the primary color for buttons, today and events, and the gray scale for borders and text. It follows the panel into dark mode. Its classes are Tailwind classes, which your panel's theme compiles from the stylesheet you imported when [installing](#installation) the plugin.
+
+### Using FullCalendar's themes
+
+You may use one of FullCalendar's own themes instead, using the `theme()` method:
+
+```php
+FilamentFullCalendarPlugin::make()
+    ->theme('monarch')
+```
+
+Each of these themes comes with color palettes, and uses its first one unless you choose another with `palette()`:
+
+```php
+FilamentFullCalendarPlugin::make()
+    ->theme('monarch')
+    ->palette('purple')
+```
+
+| Theme     | Palettes                                   |
+| --------- | ------------------------------------------ |
+| `breezy`  | `indigo`, `amber`, `emerald`, `rose`       |
+| `classic` | `default`                                  |
+| `forma`   | `blue`, `green`, `purple`, `red`           |
+| `monarch` | `blue`, `green`, `purple`, `red`, `yellow` |
+| `pulse`   | `blue`, `green`, `purple`, `red`           |
+
+<table>
+    <tr>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-filament.png" alt="The filament theme" /><br /><code>filament</code></td>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-breezy.png" alt="The breezy theme with the indigo palette" /><br /><code>breezy</code>, <code>indigo</code></td>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-classic.png" alt="The classic theme" /><br /><code>classic</code></td>
+    </tr>
+    <tr>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-forma.png" alt="The forma theme with the green palette" /><br /><code>forma</code>, <code>green</code></td>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-monarch.png" alt="The monarch theme with the purple palette" /><br /><code>monarch</code>, <code>purple</code></td>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-pulse.png" alt="The pulse theme with the red palette" /><br /><code>pulse</code>, <code>red</code></td>
+    </tr>
+</table>
+
+FullCalendar's themes are shown here with [FullCalendar's toolbar](#using-fullcalendars-toolbar), and on its [demos page](https://fullcalendar.io/demos). They follow the panel into dark mode, but take their colors from the palette, not from the panel. The `filament` theme has no palettes, so giving it one throws an exception, as does a theme or palette that is not in the table.
+
+The toolbar is still drawn with Filament buttons. To have it match the theme, let [FullCalendar draw the toolbar](#using-fullcalendars-toolbar).
+
+### Styling an element
+
+FullCalendar generates short class names for its elements, such as `fc-pC`, which may change in any release, so a stylesheet should not target them. Instead, it has a class-name option for nearly every element, such as `dayCellClass`, `eventClass` or `slotLaneClass`, listed in its [render hook index](https://fullcalendar.io/docs/render-hook-index). The classes you give are added to the theme's. A string goes in `config()`:
+
+```php
+public function config(): array
+{
+    return [
+        'dayCellClass' => 'bg-gray-50 dark:bg-white/5',
+    ];
+}
+```
+
+A function that picks classes from the element's state goes in [`jsCallbacks()`](#javascript-callbacks):
+
+```php
+public function jsCallbacks(): array
+{
+    return [
+        'dayCellClass' => <<<'JS'
+            (info) => info.isToday ? 'bg-primary-50 dark:bg-primary-950' : ''
+            JS,
+    ];
+}
+```
+
+Tailwind only generates the classes it finds in the files your theme scans, which include `app/Filament` in Filament's theme by default.
+
+The widget also gives a few elements classes of its own, which stay the same between releases:
+
+| Class                             | Element                                                                                                             |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `fi-fc`, `filament-fullcalendar`  | The calendar.                                                                                                       |
+| `fi-fc-view`                      | The view.                                                                                                           |
+| `fi-fc-event-title`               | The title of an event.                                                                                              |
+| `fi-color-{color}`                | An event, or the events of a resource, colored with a Filament color, as in `fi-color-success`.                     |
+| `fi-fc-palette-{theme}-{palette}` | The calendar, its events and its popovers, with one of FullCalendar's themes, as in `fi-fc-palette-monarch-purple`. |
+
+To give stylesheets and scripts written for FullCalendar 6 time to move to these options, the calendar puts back a few of its class names. They are deprecated and will be removed in the next major version:
+
+| Class                                         | Element                                           |
+| --------------------------------------------- | ------------------------------------------------- |
+| `fc-view`, `fc-{view}-view`                   | The view, as in `fc-dayGridMonth-view`            |
+| `fc-event`, `fc-event-title`, `fc-event-time` | An event and its parts                            |
+| `fc-bg-event`                                 | A background event                                |
+| `fc-daygrid-day`, `fc-col-header-cell`        | A day cell and a day heading                      |
+| `fc-more-link`                                | The "+2 more" link                                |
+| `fc-highlight`, `fc-non-business`             | A selection, and the hours outside business hours |
+
 ## Premium plugins and licensing
 
 This package is MIT licensed, and so are the standard views it uses: month, week, day, list and multi-month. The `timeline`, `resource*`, `scrollGrid` and `adaptive` plugins belong to [FullCalendar Premium](https://fullcalendar.io/pricing), which is licensed by FullCalendar, not by this package.
@@ -548,14 +663,14 @@ This package is MIT licensed, and so are the standard views it uses: month, week
 
 | You use                                                                                               | License                                                                             |
 | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Only the standard views                                                                               | None. Nothing premium is downloaded by the browser.                                 |
+| Only the standard views                                                                               | None.                                                                               |
 | A premium plugin, to try it out                                                                       | FullCalendar's trial key, `CC-Attribution-NonCommercial-NoDerivatives`.             |
 | A premium plugin in a commercial or internal product                                                  | A [paid license](https://fullcalendar.io/pricing) from FullCalendar, per developer. |
 | A premium plugin in a project that qualifies under FullCalendar's non-commercial or open-source terms | The key FullCalendar publishes for that case.                                       |
 
 The [FullCalendar license terms](https://fullcalendar.io/license) decide which row is yours, and they are narrower than they sound, so read them before going to production. This table is a summary, not legal advice.
 
-The premium code is only loaded by a calendar that lists a premium plugin, and the key is yours to provide:
+The premium plugins are only enabled in a calendar that lists one, and the key is yours to provide:
 
 ```php
 FilamentFullCalendarPlugin::make()
@@ -909,7 +1024,7 @@ protected function onExternalDrop(ExternalDropInfo $info): void
 }
 ```
 
-A calendar only accepts elements that have the `data-filament-fullcalendar-draggable` attribute, and only those addressed to it or to no calendar in particular. To narrow that further for one calendar, set FullCalendar's [`dropAccept`](https://legacy.fullcalendar.io/v6/dropAccept): a CSS selector in `config()`, or a function in [`jsCallbacks()`](#javascript-callbacks).
+A calendar only accepts elements that have the `data-filament-fullcalendar-draggable` attribute, and only those addressed to it or to no calendar in particular. To narrow that further for one calendar, set FullCalendar's [`dropAccept`](https://fullcalendar.io/docs/dropAccept): a CSS selector in `config()`, or a function in [`jsCallbacks()`](#javascript-callbacks).
 
 ```php
 public function config(): array
@@ -928,6 +1043,7 @@ The dragged item stays where it was. If it should disappear from its list once s
 A calendar can show events from elsewhere next to its own, such as public holidays or a team's shared calendar. Return them from `eventSources()`:
 
 ```php
+use Filament\Support\Colors\Color;
 use Saade\FilamentFullCalendar\Data\EventSourceData;
 
 public function eventSources(): array
@@ -937,23 +1053,22 @@ public function eventSources(): array
             ->color('gray'),
 
         EventSourceData::googleCalendar('en.usa#holiday@group.v.calendar.google.com')
-            ->backgroundColor('#0f9d58'),
+            ->color(Color::hex('#0f9d58')),
     ];
 }
 ```
 
-These events are read-only: they cannot be dragged or resized, and clicking one does not open the calendar's modals. The JavaScript for each kind of source is only downloaded by calendars that use it.
+These events are read-only: they cannot be dragged or resized, and clicking one does not open the calendar's modals.
 
-| Method                                                                                     | Description                                                                                           |
-| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| `id(int \| string $id)`                                                                    | Identifies the source, for use in [JavaScript callbacks](#javascript-callbacks) as `event.source.id`. |
-| `color(string $color)`                                                                     | The name of a Filament color for the events of this source, as [on an event](#coloring-events).       |
-| `backgroundColor(string $color)`, `borderColor(string $color)`, `textColor(string $color)` | CSS colors for the events of this source.                                                             |
-| `className(string $className)`                                                             | A CSS class for the events of this source.                                                            |
-| `cacheFor(int $minutes)`                                                                   | How long an iCalendar feed is kept before it is read again. 15 minutes by default.                    |
-| `extraProperties(array $properties)`                                                       | Any other [event source option](https://legacy.fullcalendar.io/v6/event-source-object).               |
+| Method                                                          | Description                                                                                           |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `id(int \| string $id)`                                         | Identifies the source, for use in [JavaScript callbacks](#javascript-callbacks) as `event.source.id`. |
+| `color(string \| array $color)`, `contrastColor(string $color)` | Colors for the events of this source, as [on an event](#coloring-events).                             |
+| `className(string $className)`                                  | A CSS class for the events of this source.                                                            |
+| `cacheFor(int $minutes)`                                        | How long an iCalendar feed is kept before it is read again. 15 minutes by default.                    |
+| `extraProperties(array $properties)`                            | Any other [event source option](https://fullcalendar.io/docs/event-source-object).                    |
 
-`eventSources()` may also return plain arrays in FullCalendar's [event source](https://legacy.fullcalendar.io/v6/event-source-object) format, such as a JSON feed of your own.
+`eventSources()` may also return plain arrays in FullCalendar's [event source](https://fullcalendar.io/docs/event-source-object) format, such as a JSON feed of your own.
 
 ## iCalendar feeds
 
@@ -963,7 +1078,7 @@ The feed is read by your application, not by the browser, and served to the cale
 
 ## Google Calendar
 
-A Google Calendar source reads a **public** calendar through Google's API, and needs a [Google Calendar API key](https://legacy.fullcalendar.io/v6/google-calendar). Set it on the panel plugin:
+A Google Calendar source reads a **public** calendar through Google's API, and needs a [Google Calendar API key](https://fullcalendar.io/docs/google-calendar). Set it on the panel plugin:
 
 ```php
 FilamentFullCalendarPlugin::make()
@@ -1116,7 +1231,7 @@ class RoomTimelineWidget extends FullCalendarWidget
     {
         return [
             'initialView' => 'resourceTimelineWeek',
-            'resourceAreaHeaderContent' => 'Rooms',
+            'resourceColumnHeaderContent' => 'Rooms',
         ];
     }
 
@@ -1157,17 +1272,17 @@ class RoomTimelineWidget extends FullCalendarWidget
 
 The plugins and the license key can also be set once for the panel, as shown in [Premium plugins and licensing](#premium-plugins-and-licensing). While you evaluate the premium views, FullCalendar's trial key `CC-Attribution-NonCommercial-NoDerivatives` removes the license warning.
 
-The resources are sent with the page, so they cost no extra request. `fetchResources()` may also return plain arrays in the shape of FullCalendar's [resource object](https://legacy.fullcalendar.io/v6/resource-object).
+The resources are sent with the page, so they cost no extra request. `fetchResources()` may also return plain arrays in the shape of FullCalendar's [resource object](https://fullcalendar.io/docs/resource-object).
 
-| Method                                                                                                                                 | Description                                                                                                                                                                        |
-| -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id(int \| string $id)`                                                                                                                | Identifies the resource. Events point to it with `resourceId()`.                                                                                                                   |
-| `title(string $title)`                                                                                                                 | The text shown for the resource.                                                                                                                                                   |
-| `parentId(int \| string \| null $parentId)`                                                                                            | Nests the resource under another one.                                                                                                                                              |
-| `children(array $children)`                                                                                                            | Nested resources, as `ResourceData` objects or arrays.                                                                                                                             |
-| `eventColor(string $color)`, `eventBackgroundColor(string $color)`, `eventBorderColor(string $color)`, `eventTextColor(string $color)` | Colors for the events of this resource. `eventColor()` takes the name of a Filament color, as `color()` does [on an event](#coloring-events), and the other three take CSS colors. |
-| `extendedProps(array $props)`                                                                                                          | Your own data, such as the values of extra [resource columns](https://legacy.fullcalendar.io/v6/resourceAreaColumns).                                                              |
-| `extraProperties(array $properties)`                                                                                                   | Any other [resource property](https://legacy.fullcalendar.io/v6/resource-object), such as `eventOverlap` or `eventConstraint`.                                                     |
+| Method                                                                    | Description                                                                                                               |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `id(int \| string $id)`                                                   | Identifies the resource. Events point to it with `resourceId()`.                                                          |
+| `title(string $title)`                                                    | The text shown for the resource.                                                                                          |
+| `parentId(int \| string \| null $parentId)`                               | Nests the resource under another one.                                                                                     |
+| `children(array $children)`                                               | Nested resources, as `ResourceData` objects or arrays.                                                                    |
+| `eventColor(string \| array $color)`, `eventContrastColor(string $color)` | Colors for the events of this resource, as `color()` and `contrastColor()` [on an event](#coloring-events).               |
+| `extendedProps(array $props)`                                             | Your own data, such as the values of extra [resource columns](https://fullcalendar.io/docs/resourceColumns).              |
+| `extraProperties(array $properties)`                                      | Any other [resource property](https://fullcalendar.io/docs/resource-object), such as `eventOverlap` or `eventConstraint`. |
 
 ## Moving events between resources
 
@@ -1181,7 +1296,7 @@ With `$resourceAttribute` set next to [`$startAttribute`](#dragging-and-resizing
 $this->refreshResources();
 ```
 
-If the resources depend on the dates being shown, turn on [`refetchResourcesOnNavigate`](https://legacy.fullcalendar.io/v6/refetchResourcesOnNavigate) in `config()`. `fetchResources()` then receives the visible range as `$info` each time the user navigates, at the cost of one more request per navigation.
+If the resources depend on the dates being shown, turn on [`refetchResourcesOnNavigate`](https://fullcalendar.io/docs/refetchResourcesOnNavigate) in `config()`. `fetchResources()` then receives the visible range as `$info` each time the user navigates, at the cost of one more request per navigation.
 
 # Intercepting events
 
@@ -1235,14 +1350,14 @@ The info classes are in `Saade\FilamentFullCalendar\Data`:
 
 The widget has methods to drive its calendar. Call them from the widget itself, for example in an action, or from the browser with `wire:click`:
 
-| Method                                        | Effect                                                                                       |
-| --------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `refreshRecords()`                            | Fetches the events again. The built-in actions already do this after they run.               |
-| `goToDate(DateTimeInterface \| string $date)` | Moves to a date                                                                              |
-| `changeView(string $view, $date = null)`      | Switches view, for example to `timeGridWeek`, and goes to a date when one is given           |
-| `next()`, `previous()`, `today()`             | Navigates                                                                                    |
-| `scrollToTime(string $time)`                  | Scrolls a view with time slots to a time of day, as in `08:00`                               |
-| `setOption(string $option, mixed $value)`     | Changes a [FullCalendar option](https://legacy.fullcalendar.io/v6) of the calendar on screen |
+| Method                                        | Effect                                                                                  |
+| --------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `refreshRecords()`                            | Fetches the events again. The built-in actions already do this after they run.          |
+| `goToDate(DateTimeInterface \| string $date)` | Moves to a date                                                                         |
+| `changeView(string $view, $date = null)`      | Switches view, for example to `timeGridWeek`, and goes to a date when one is given      |
+| `next()`, `previous()`, `today()`             | Navigates                                                                               |
+| `scrollToTime(string $time)`                  | Scrolls a view with time slots to a time of day, as in `08:00`                          |
+| `setOption(string $option, mixed $value)`     | Changes a [FullCalendar option](https://fullcalendar.io/docs) of the calendar on screen |
 
 ```php
 use Filament\Actions\Action;
@@ -1307,15 +1422,19 @@ Everything FullCalendar offers is reachable: plain values through `config()`, fu
 
 ## Views of your own length
 
-FullCalendar's views can be given [any duration](https://legacy.fullcalendar.io/v6/custom-view-with-settings). Define the view under `views` and name it in [`toolbarButtons()`](#toolbar-buttons):
+FullCalendar's views can be given [any duration](https://fullcalendar.io/docs/custom-view-with-settings). Define the view under `views` and name it in [`toolbarButtons()`](#toolbar-buttons):
 
 ```php
 public function config(): array
 {
     return [
         'views' => [
-            'dayGridThreeDay' => ['type' => 'dayGrid', 'duration' => ['days' => 3], 'buttonText' => '3 days'],
-            'timeGridFourDay' => ['type' => 'timeGrid', 'duration' => ['days' => 4], 'buttonText' => '4 days'],
+            'dayGridThreeDay' => ['type' => 'dayGrid', 'duration' => ['days' => 3]],
+            'timeGridFourDay' => ['type' => 'timeGrid', 'duration' => ['days' => 4]],
+        ],
+        'buttons' => [
+            'dayGridThreeDay' => ['text' => '3 days'],
+            'timeGridFourDay' => ['text' => '4 days'],
         ],
     ];
 }
@@ -1344,7 +1463,6 @@ public function jsCallbacks(): array
             ({
                 aroundToday: {
                     type: 'dayGrid',
-                    buttonText: 'Around today',
                     dateIncrement: { days: 1 },
                     visibleRange: (currentDate) => {
                         const day = (offset) => new Date(Date.UTC(
@@ -1362,7 +1480,7 @@ public function jsCallbacks(): array
 }
 ```
 
-Name `aroundToday` in `toolbarButtons()` as above. `views` in `jsCallbacks()` replaces `views` in `config()`, so when you use it, define all your own views there.
+Name `aroundToday` in `toolbarButtons()` as above, and give its button a text with `'buttons' => ['aroundToday' => ['text' => 'Around today']]` in `config()`. `views` in `jsCallbacks()` replaces `views` in `config()`, so when you use it, define all your own views there.
 
 ## A year at a glance
 
@@ -1382,18 +1500,18 @@ public function config(): array
 
 ## Options worth knowing
 
-| Goal                                                         | Option                                                                                                                                                                                                                                       |
-| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A line at the current time                                   | [`nowIndicator`](https://legacy.fullcalendar.io/v6/nowIndicator)                                                                                                                                                                             |
-| Week numbers                                                 | [`weekNumbers`](https://legacy.fullcalendar.io/v6/weekNumbers)                                                                                                                                                                               |
-| Day and week headings that open that day or week             | [`navLinks`](https://legacy.fullcalendar.io/v6/navLinks)                                                                                                                                                                                     |
-| Shorter or longer time slots                                 | [`slotDuration`](https://legacy.fullcalendar.io/v6/slotDuration), [`snapDuration`](https://legacy.fullcalendar.io/v6/snapDuration)                                                                                                           |
-| The time the day opens at                                    | [`scrollTime`](https://legacy.fullcalendar.io/v6/scrollTime)                                                                                                                                                                                 |
-| A calendar as tall as its content, or filling a fixed height | [`height`](https://legacy.fullcalendar.io/v6/height), [`contentHeight`](https://legacy.fullcalendar.io/v6/contentHeight), [`expandRows`](https://legacy.fullcalendar.io/v6/expandRows)                                                       |
-| What "+2 more" does, and how many rows show before it        | [`moreLinkClick`](https://legacy.fullcalendar.io/v6/moreLinkClick), [`dayMaxEventRows`](https://legacy.fullcalendar.io/v6/dayMaxEventRows)                                                                                                   |
-| The order of events within a day                             | [`eventOrder`](https://legacy.fullcalendar.io/v6/eventOrder)                                                                                                                                                                                 |
-| Right-to-left                                                | [`direction`](https://legacy.fullcalendar.io/v6/direction)                                                                                                                                                                                   |
-| Group, sort and filter the rows of a resource view           | [`resourceGroupField`](https://legacy.fullcalendar.io/v6/resourceGroupField), [`resourceOrder`](https://legacy.fullcalendar.io/v6/resourceOrder), [`filterResourcesWithEvents`](https://legacy.fullcalendar.io/v6/filterResourcesWithEvents) |
+| Goal                                                         | Option                                                                                                                                                                                                                        |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A line at the current time                                   | [`nowIndicator`](https://fullcalendar.io/docs/nowIndicator)                                                                                                                                                                   |
+| Week numbers                                                 | [`weekNumbers`](https://fullcalendar.io/docs/weekNumbers)                                                                                                                                                                     |
+| Day and week headings that open that day or week             | [`navLinks`](https://fullcalendar.io/docs/navLinks)                                                                                                                                                                           |
+| Shorter or longer time slots                                 | [`slotDuration`](https://fullcalendar.io/docs/slotDuration), [`snapDuration`](https://fullcalendar.io/docs/snapDuration)                                                                                                      |
+| The time the day opens at                                    | [`scrollTime`](https://fullcalendar.io/docs/scrollTime)                                                                                                                                                                       |
+| A calendar as tall as its content, or filling a fixed height | [`height`](https://fullcalendar.io/docs/height), [`contentHeight`](https://fullcalendar.io/docs/contentHeight), [`expandRows`](https://fullcalendar.io/docs/expandRows)                                                       |
+| What "+2 more" does, and how many rows show before it        | [`moreLinkClick`](https://fullcalendar.io/docs/moreLinkClick), [`dayMaxEventRows`](https://fullcalendar.io/docs/dayMaxEventRows)                                                                                              |
+| The order of events within a day                             | [`eventOrder`](https://fullcalendar.io/docs/eventOrder)                                                                                                                                                                       |
+| Right-to-left                                                | [`direction`](https://fullcalendar.io/docs/direction)                                                                                                                                                                         |
+| Group, sort and filter the rows of a resource view           | [`resourceGroupField`](https://fullcalendar.io/docs/resourceGroupField), [`resourceOrder`](https://fullcalendar.io/docs/resourceOrder), [`filterResourcesWithEvents`](https://fullcalendar.io/docs/filterResourcesWithEvents) |
 
 ## Background events
 
@@ -1403,12 +1521,13 @@ An event with `display` set to `background` shades its dates instead of showing 
 EventData::make()
     ->start('2026-12-24')
     ->end('2026-12-27')
-    ->extraProperties(['display' => 'background', 'backgroundColor' => 'red'])
+    ->color('danger')
+    ->extraProperties(['display' => 'background'])
 ```
 
 ## When the view changes
 
-[`viewDidMount`](https://legacy.fullcalendar.io/v6/view-render-hooks) runs in the browser when a view is put on the page:
+[`viewDidMount`](https://fullcalendar.io/docs/view-render-hooks) runs in the browser when a view is put on the page:
 
 ```php
 'viewDidMount' => <<<'JS'
@@ -1424,7 +1543,7 @@ FullCalendar can shade the hours you are closed and limit where events may go. O
 
 ## Business hours
 
-[`businessHours`](https://legacy.fullcalendar.io/v6/businessHours) shades everything outside the given hours. On its own it only changes how the calendar looks:
+[`businessHours`](https://fullcalendar.io/docs/businessHours) shades everything outside the given hours. On its own it only changes how the calendar looks:
 
 ```php
 public function config(): array
@@ -1451,7 +1570,7 @@ Both also accept hours of their own, in the same format as `businessHours`.
 
 ## Limiting the dates
 
-[`validRange`](https://legacy.fullcalendar.io/v6/validRange) stops the user from navigating or selecting outside a range. Either end can be left out:
+[`validRange`](https://fullcalendar.io/docs/validRange) stops the user from navigating or selecting outside a range. Either end can be left out:
 
 ```php
 'validRange' => [
@@ -1460,7 +1579,7 @@ Both also accept hours of their own, in the same format as `businessHours`.
 ],
 ```
 
-To hide days or hours altogether, there are [`hiddenDays`](https://legacy.fullcalendar.io/v6/hiddenDays), [`weekends`](https://legacy.fullcalendar.io/v6/weekends), and [`slotMinTime`](https://legacy.fullcalendar.io/v6/slotMinTime) and `slotMaxTime` for the time grid:
+To hide days or hours altogether, there are [`hiddenDays`](https://fullcalendar.io/docs/hiddenDays), [`weekends`](https://fullcalendar.io/docs/weekends), and [`slotMinTime`](https://fullcalendar.io/docs/slotMinTime) and `slotMaxTime` for the time grid:
 
 ```php
 'weekends' => false,
@@ -1470,7 +1589,7 @@ To hide days or hours altogether, there are [`hiddenDays`](https://legacy.fullca
 
 ## Overlapping events
 
-[`eventOverlap`](https://legacy.fullcalendar.io/v6/eventOverlap) and [`selectOverlap`](https://legacy.fullcalendar.io/v6/selectOverlap) decide whether an event may be moved onto, or a selection made over, another event:
+[`eventOverlap`](https://fullcalendar.io/docs/eventOverlap) and [`selectOverlap`](https://fullcalendar.io/docs/selectOverlap) decide whether an event may be moved onto, or a selection made over, another event:
 
 ```php
 'eventOverlap' => false,
@@ -1479,7 +1598,7 @@ To hide days or hours altogether, there are [`hiddenDays`](https://legacy.fullca
 
 ## Rules of your own
 
-When the rule depends on the event, use the function forms in `jsCallbacks()`. [`selectAllow`](https://legacy.fullcalendar.io/v6/selectAllow) and [`eventAllow`](https://legacy.fullcalendar.io/v6/eventAllow) are asked for every position while the user drags, and return whether it is allowed:
+When the rule depends on the event, use the function forms in `jsCallbacks()`. [`selectAllow`](https://fullcalendar.io/docs/selectAllow) and [`eventAllow`](https://fullcalendar.io/docs/eventAllow) are asked for every position while the user drags, and return whether it is allowed:
 
 ```php
 public function jsCallbacks(): array
@@ -1509,14 +1628,14 @@ public function jsCallbacks(): array
         'selectAllow' => <<<'JS'
             (info) => info.start >= new Date()
         JS,
-        'dayCellClassNames' => <<<'JS'
-            ({ date }) => [0, 6].includes(date.getUTCDay()) ? ['is-weekend'] : []
+        'dayCellClass' => <<<'JS'
+            ({ date }) => [0, 6].includes(date.getUTCDay()) ? 'is-weekend' : ''
         JS,
     ];
 }
 ```
 
-Any option from the [FullCalendar docs](https://legacy.fullcalendar.io/v6) works, and these are merged over `config()`.
+Any option from the [FullCalendar docs](https://fullcalendar.io/docs) works, and these are merged over `config()`.
 
 The calendar handles `eventClick`, `eventDrop`, `eventResize`, `dateClick`, `select`, `datesSet` and `loading` itself. A callback of yours for one of these runs first, and returning `false` from it stops the calendar from doing its part, such as opening the modal:
 
@@ -1531,7 +1650,7 @@ JS,
 
 ## Render hooks
 
-FullCalendar's [event render hooks](https://legacy.fullcalendar.io/v6/event-render-hooks) `eventClassNames`, `eventContent`, `eventDidMount` and `eventWillUnmount` also have methods of their own:
+FullCalendar's [event render hooks](https://fullcalendar.io/docs/event-render-hooks) `eventClass`, `eventContent`, `eventDidMount` and `eventWillUnmount` also have methods of their own:
 
 ```php
 public function eventDidMount(): string
@@ -1590,7 +1709,7 @@ These tools come with the calendar:
 | `filters`                                                                                       | Opens the [filters](#filter-layout), with a count of the ones that are set. |
 | Any view name, such as `dayGridMonth`, `timeGridWeek`, `listWeek`, or a view defined in `views` | Switches to that view. The button of the current view is highlighted.       |
 
-The labels of `today` and of the view buttons are FullCalendar's, so they follow the calendar's locale and its `buttonText` option. So are the tooltips, such as "Previous month" and "week view", which come from its `buttonHints` and `viewHint` options.
+The labels of `today` and of the view buttons are FullCalendar's, so they follow the calendar's locale and the `text` of each entry in its `buttons` option. So are the tooltips, such as "Previous month" and "week view", which come from the `hint` of those entries and from its `viewHint` option.
 
 A name that matches no tool throws `Toolbar button [name] cannot be found.`, and a tool that is not named in `toolbarButtons()` is not shown.
 
@@ -1745,9 +1864,33 @@ protected function footerToolbarButtons(): array
 
 ### FullCalendar's own toolbar options
 
-A calendar that sets FullCalendar's `headerToolbar` option and has no `toolbarButtons()` keeps its layout: the option is read the same way, with a space between buttons and a comma joining them. Buttons from `customButtons` work there too. `'headerToolbar' => false` hides the toolbar.
+A calendar that sets FullCalendar's `headerToolbar` option and has no `toolbarButtons()` keeps its layout: the option is read the same way, with a space between buttons and a comma joining them. Buttons of your own from the `buttons` option work there too. `'headerToolbar' => false` hides the toolbar.
 
 FullCalendar's `footerToolbar` option is read the same way for the [footer toolbar](#footer-toolbar).
+
+### Using FullCalendar's toolbar
+
+By default, the widget draws the toolbars with Filament buttons. You may let FullCalendar draw them instead, so they match [FullCalendar's theme](#using-fullcalendars-themes), using the `nativeToolbar()` method:
+
+```php
+FilamentFullCalendarPlugin::make()
+    ->theme('monarch')
+    ->nativeToolbar()
+```
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/toolbars.png" alt="The same toolbar drawn with Filament buttons, above, and by FullCalendar in the monarch theme, below" style="width: 100%; max-width: 900px" />
+</p>
+
+The toolbars keep the layout of `toolbarButtons()`. The tools FullCalendar knows, `prev`, `next`, `prevYear`, `nextYear`, `today`, `title`, the views and the entries of its `buttons` option, become its own buttons. Every other tool, such as an action or `filters`, becomes a FullCalendar button that does the same thing when clicked, with the tool's label, icon, tooltip, badge and `disabledJsExpression()`. Each of these buttons has the `fi-fc-tool` class, and a toggle has an `aria-pressed` attribute.
+
+FullCalendar's buttons cannot do everything Filament's can:
+
+- A tool that is active, such as a toggle that is on, is shown as a primary button.
+- A tool is either primary, when its `color()` is `primary`, or plain. Other colors are ignored.
+- A tool shows its `label()`. `labelJsExpression()` is ignored.
+- The tools of a `ToolbarButtonGroup` are shown side by side instead of in a dropdown.
+- The toolbar is drawn once, when the calendar loads, so a tool that is hidden or shown later with `visible()` stays as it was.
 
 ## Reacting to navigation
 
@@ -1771,7 +1914,7 @@ The browser only reports this when the method exists, since it costs a request o
 
 ## Styling
 
-The widget's own elements have classes to style from your theme. FullCalendar's elements keep their `fc-` classes, inside `.fi-fc`.
+The widget's own elements have classes to style from your theme. For FullCalendar's elements, see [Styling an element](#styling-an-element). The buttons of [FullCalendar's toolbar](#using-fullcalendars-toolbar) only have the `fi-fc-tool` class.
 
 | Class                                                                                                             | Element                                                                              |
 | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
@@ -1941,7 +2084,7 @@ protected function headerActions(): array
 
 ## Coloring events
 
-Events look like Filament badges. Without a color they use the panel's primary color. Give `color()` the name of any color registered in Filament, and the event gets the background, border and text of a badge of that color, in light and dark mode:
+Events are tinted with their color, like Filament badges: a light fill, with the text in a deeper shade of the same color, in light and dark mode. Without a color they use the panel's primary color. Give `color()` the name of any color registered in Filament:
 
 ```php
 EventData::make()
@@ -1956,16 +2099,22 @@ An enum that implements Filament's `HasColor` fits directly: `->color($event->st
 
 `color()` on an [event source](#showing-other-calendars) and `eventColor()` on a [resource](#resource-views) work the same way.
 
-`color()` only takes Filament colors. For any other color, [register it in Filament](https://filamentphp.com/docs/5.x/styling/colors) or set CSS colors with `backgroundColor()`, `borderColor()` and `textColor()`:
+For a color that is not registered in Filament, give `color()` a palette from Filament's `Color` class:
+
+```php
+use Filament\Support\Colors\Color;
+
+EventData::make()
+    ->color(Color::hex('#fde047'))
+```
+
+The `classic`, `monarch` and `pulse` [themes](#using-fullcalendars-themes) fill an event with its color and show its text in white. Use `contrastColor()` to change it:
 
 ```php
 EventData::make()
-    ->backgroundColor('#fde047')
-    ->borderColor('transparent')
-    ->textColor('#000')
+    ->color(Color::hex('#fde047'))
+    ->contrastColor('#000')
 ```
-
-CSS colors are used exactly as given, in light and dark mode. With a background color and no text color, the text is white, as in FullCalendar.
 
 ## HTML in the event title
 
@@ -2007,7 +2156,7 @@ In a plain array, these are the `tooltip` and `isTooltipHtml` keys of `extendedP
 
 ## Recurring events
 
-Enable the `rrule` plugin and pass an [`rrule`](https://legacy.fullcalendar.io/v6/rrule-plugin) with the event:
+Enable the `rrule` plugin and pass an [`rrule`](https://fullcalendar.io/docs/rrule-plugin) with the event:
 
 ```php
 EventData::make()
@@ -2023,7 +2172,7 @@ EventData::make()
     ])
 ```
 
-An event that repeats on fixed weekdays does not need the plugin. FullCalendar's own [recurrence properties](https://legacy.fullcalendar.io/v6/recurring-events) are enough:
+An event that repeats on fixed weekdays does not need the plugin. FullCalendar's own [recurrence properties](https://fullcalendar.io/docs/recurring-events) are enough:
 
 ```php
 EventData::make()

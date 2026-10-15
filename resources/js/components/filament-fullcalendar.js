@@ -1,63 +1,19 @@
-import { Calendar } from '@fullcalendar/core'
-import interaction, { Draggable } from '@fullcalendar/interaction'
-import dayGrid from '@fullcalendar/daygrid'
-import timeGrid from '@fullcalendar/timegrid'
-import list from '@fullcalendar/list'
-import multiMonth from '@fullcalendar/multimonth'
+import { Calendar } from 'fullcalendar'
+import { Draggable } from 'fullcalendar/interaction'
+import allLocales from 'fullcalendar/locales-all'
+import availablePlugins from '../plugins/index.js'
+import themes from '../plugins/themes.js'
+import * as v6 from '../plugins/v6-compat.js'
+import { joinClasses } from '../support/classes.js'
 
-const standardPlugins = { interaction, dayGrid, timeGrid, list, multiMonth }
-
-const pluginGroups = [
-    {
-        names: [
-            'scrollGrid',
-            'timeline',
-            'adaptive',
-            'resource',
-            'resourceDayGrid',
-            'resourceTimeline',
-            'resourceTimeGrid',
-        ],
-        load: () => import('../plugins/premium.js'),
-    },
-    {
-        names: ['moment', 'momentTimezone'],
-        load: () => import('../plugins/moment.js'),
-    },
-    {
-        names: ['rrule'],
-        load: () => import('../plugins/rrule.js'),
-    },
-    {
-        names: ['googleCalendar'],
-        load: () => import('../plugins/google-calendar.js'),
-    },
-    {
-        names: ['iCalendar'],
-        load: () => import('../plugins/icalendar.js'),
-    },
-]
-
-async function loadPlugins(names) {
-    const groups = await Promise.all(
-        pluginGroups
-            .filter((group) => names.some((name) => group.names.includes(name)))
-            .map((group) => group.load()),
-    )
-
-    const available = Object.assign(
-        { ...standardPlugins },
-        ...groups.map((group) => group.default),
-    )
-
-    return names.map((name) => {
-        if (!available[name]) {
+const resolvePlugins = (names) =>
+    names.map((name) => {
+        if (!availablePlugins[name]) {
             throw new Error(`[${name}] is not a FullCalendar plugin this package knows.`)
         }
 
-        return available[name]
+        return availablePlugins[name]
     })
-}
 
 const draggableSelector = '[data-filament-fullcalendar-draggable]'
 
@@ -81,8 +37,16 @@ function makeItemsDraggable() {
 const ownSourceId = 'filament-fullcalendar'
 
 const serializeEvent = (event) => ({
-    ...event.toPlainObject(),
-    isRecurring: Boolean(event._def.recurringDef),
+    id: event.id,
+    groupId: event.groupId,
+    title: event.title,
+    start: event.startStr,
+    end: event.endStr || null,
+    allDay: event.allDay,
+    url: event.url,
+    display: event.display,
+    extendedProps: event.extendedProps,
+    isRecurring: Boolean(event._def?.recurringDef),
     source: event.source?.id || null,
     resourceIds: event.getResources?.().map((resource) => resource.id) ?? [],
 })
@@ -116,42 +80,23 @@ function addTooltip({ event, el }) {
 function renderHtmlTitle({ event, el }) {
     if (!event.extendedProps.isTitleHtml) return
 
-    const title =
-        el.querySelector('.fc-event-title') ??
-        el.querySelector('.fc-list-event-title a') ??
-        el.querySelector('.fc-list-event-title')
+    const title = el.querySelector('.fi-fc-event-title')
 
     if (title) title.innerHTML = event.title
 }
 
-// Zero where scrollbars float over the page, as they do on macOS.
-function measureScrollbarWidth() {
-    const probe = document.createElement('div')
-
-    probe.style.cssText =
-        'position: absolute; visibility: hidden; width: 100px; height: 100px; overflow: scroll'
-
-    document.body.appendChild(probe)
-
-    const width = probe.offsetWidth - probe.clientWidth
-
-    probe.remove()
-
-    return width
-}
+const colorScheme = () =>
+    document.documentElement.classList.contains('dark') ? 'dark' : 'light'
 
 const isEnglish = (locale) => !locale || /^en([-_]us)?$/i.test(locale)
-
-async function loadLocales(locale) {
-    if (isEnglish(locale)) return []
-
-    return (await import('../plugins/locales.js')).default
-}
 
 export default function fullcalendar({
     id,
     locale,
     plugins,
+    theme,
+    paletteClass,
+    nativeToolbar,
     schedulerLicenseKey,
     timeZone,
     config,
@@ -168,11 +113,22 @@ export default function fullcalendar({
     shouldReportDates,
     callbacks,
 }) {
+    ;({ plugins, callbacks } = v6.options({ plugins, callbacks, config }))
+
     // A callback from the widget for an option the calendar also handles runs
     // first, and returning false from it stops the calendar's own handling.
     const isCancelledByCallback = (name, ...args) =>
         typeof callbacks[name] === 'function' &&
         callbacks[name](...args) === false
+
+    const activeNativeButtons = {}
+
+    const ownClasses = {
+        viewClass: 'fi-fc-view',
+        eventClass: paletteClass,
+        eventTitleClass: 'fi-fc-event-title',
+        popoverClass: paletteClass,
+    }
 
     return {
         /** @type Calendar */
@@ -184,9 +140,9 @@ export default function fullcalendar({
 
         pollingTimer: null,
 
-        isDragging: false,
+        colorSchemeObserver: null,
 
-        isDestroyed: false,
+        isDragging: false,
 
         id,
 
@@ -196,17 +152,13 @@ export default function fullcalendar({
 
         viewType: null,
 
-        isTodayInRange: false,
+        isTodayDisabled: false,
 
-        resizeObserver: null,
-
-        lastWidth: null,
-
-        scrollbarWidth: measureScrollbarWidth(),
+        optionChanges: 0,
 
         initialResources: Array.isArray(resources) ? resources : null,
 
-        async init() {
+        init() {
             const {
                 mobileInitialView,
                 mobileBreakpoint = 768,
@@ -219,29 +171,20 @@ export default function fullcalendar({
                 `(max-width: ${mobileBreakpoint - 1}px)`,
             ).matches
 
-            const allEventSources = [
-                ...(config.eventSources ?? []),
-                ...eventSources,
-            ]
-
             const sourcePlugins = [
-                allEventSources.some((source) => source.googleCalendarId) &&
+                eventSources.some((source) => source.googleCalendarId) &&
                     'googleCalendar',
-                allEventSources.some((source) => source.format === 'ics') &&
+                eventSources.some((source) => source.format === 'ics') &&
                     'iCalendar',
             ].filter(Boolean)
 
-            const [loadedPlugins, locales] = await Promise.all([
-                loadPlugins([
-                    ...new Set([...plugins, ...configPlugins, ...sourcePlugins]),
-                ]),
-                loadLocales(config.locale ?? locale),
-            ])
-
-            if (this.isDestroyed) return
-
             this.calendar = new Calendar(this.$refs.calendar, {
-                plugins: loadedPlugins,
+                plugins: [
+                    ...resolvePlugins([
+                        ...new Set([...plugins, ...configPlugins, ...sourcePlugins]),
+                    ]),
+                    themes[theme],
+                ],
                 locale,
                 ...(schedulerLicenseKey && { schedulerLicenseKey }),
                 editable,
@@ -270,14 +213,26 @@ export default function fullcalendar({
                     },
                 }),
                 ...fullCalendarConfig,
-                // The widget draws the toolbars itself.
-                headerToolbar: false,
-                footerToolbar: false,
+                headerToolbar: nativeToolbar?.headerToolbar ?? false,
+                footerToolbar: nativeToolbar?.footerToolbar ?? false,
+                colorScheme: colorScheme(),
                 timeZone,
                 ...(isMobile &&
                     mobileInitialView && { initialView: mobileInitialView }),
-                locales: [...locales, ...configLocales],
+                locales: [
+                    ...(isEnglish(config.locale ?? locale) ? [] : allLocales),
+                    ...configLocales,
+                ],
                 ...callbacks,
+                ...Object.fromEntries(
+                    Object.entries(ownClasses).map(([name, ownClass]) => [
+                        name,
+                        joinClasses(
+                            ownClass,
+                            callbacks[name] ?? fullCalendarConfig[name],
+                        ),
+                    ]),
+                ),
                 eventDidMount: (info) => {
                     addTooltip(info)
                     renderHtmlTitle(info)
@@ -301,7 +256,7 @@ export default function fullcalendar({
                                 .catch(failureCallback)
                         },
                     },
-                    ...allEventSources.map((source) =>
+                    ...eventSources.map((source) =>
                         source.googleCalendarId
                             ? {
                                   ...source,
@@ -313,10 +268,7 @@ export default function fullcalendar({
                             : source,
                     ),
                 ],
-                customButtons: {
-                    ...config.customButtons,
-                    ...callbacks.customButtons,
-                },
+                buttons: this.getButtons(),
                 ...(droppable && {
                     droppable: true,
                     dropAccept: (el) => {
@@ -513,8 +465,21 @@ export default function fullcalendar({
                 },
             })
 
+            this.trackOptions()
+            this.watchActiveNativeButtons()
+
             this.calendar.render()
             this.syncToolbar()
+
+            this.colorSchemeObserver = new MutationObserver(() => {
+                if (this.calendar?.getOption('colorScheme') === colorScheme()) return
+
+                this.calendar?.setOption('colorScheme', colorScheme())
+            })
+
+            this.colorSchemeObserver.observe(document.documentElement, {
+                attributeFilter: ['class'],
+            })
 
             if (droppable) makeItemsDraggable()
 
@@ -533,28 +498,6 @@ export default function fullcalendar({
                     this.calendar.refetchEvents()
                 }, pollingInterval)
             }
-
-            // A calendar created while hidden, in a closed modal or an
-            // inactive tab, has no size until its container gets one.
-            this.resizeObserver = new ResizeObserver(([entry]) => {
-                const width = entry.contentRect.width
-
-                const scrollbarWidth = Math.max(
-                    this.scrollbarWidth,
-                    window.innerWidth - document.documentElement.clientWidth,
-                )
-
-                // A scrollbar that appears or disappears changes the width by
-                // its own size, and resizing the calendar for it can bring the
-                // scrollbar back, which would never end.
-                if (Math.abs(width - this.lastWidth) <= scrollbarWidth) return
-
-                this.lastWidth = width
-
-                requestAnimationFrame(() => this.calendar?.updateSize())
-            })
-
-            this.resizeObserver.observe(this.$refs.calendar)
 
             const handlers = {
                 refresh: () => this.calendar.refetchEvents(),
@@ -593,8 +536,6 @@ export default function fullcalendar({
 
         syncToolbar() {
             const { view } = this.calendar
-            const { dateEnv, dateProfile } = this.calendar.getCurrentData()
-            const now = dateEnv.createMarker(new Date())
 
             this.title = view.title
 
@@ -604,74 +545,116 @@ export default function fullcalendar({
                 }),
             )
             this.viewType = view.type
-            this.isTodayInRange =
-                now >= dateProfile.currentRange.start &&
-                now < dateProfile.currentRange.end
+            this.isTodayDisabled = this.calendar.getButtonState().today.isDisabled
         },
 
         getToolLabel(name) {
             if (!this.viewType) return ''
 
-            const { viewSpecs, options } = this.calendar.getCurrentData()
-            const spec = viewSpecs[name]
-
             return (
-                spec?.buttonTextOverride ??
-                spec?.buttonTextDefault ??
-                options.buttonText?.[name] ??
+                this.calendar.getOption('buttons')?.[name]?.text ??
+                this.calendar.getButtonState()[name]?.text ??
                 name
             )
         },
 
-        // FullCalendar's `buttonHints` and `viewHint`, worked out the way its
-        // own toolbar does.
         getToolHint(name) {
             if (!this.viewType) return ''
 
-            const { viewSpecs, options } = this.calendar.getCurrentData()
-            const text = options.buttonText ?? {}
-
-            const format = (hint, args, fallback) => {
-                if (typeof hint === 'function') return hint(...args)
-
-                if (typeof hint !== 'string') return fallback ?? ''
-
-                return args.reduce(
-                    (result, argument, index) =>
-                        result.replace(`$${index}`, argument || ''),
-                    hint,
-                )
-            }
-
-            const spec = viewSpecs[name]
-
-            if (spec) {
-                const label = spec.buttonTextOverride ?? spec.buttonTextDefault
-
-                return format(
-                    spec.buttonTitleOverride ??
-                        spec.buttonTitleDefault ??
-                        options.viewHint,
-                    [label, name],
-                    label,
-                )
-            }
-
-            const isYear = name.endsWith('Year')
-            const unit = isYear ? 'year' : viewSpecs[this.viewType]?.singleUnit
-
-            return format(
-                options.buttonHints?.[name.replace('Year', '')],
-                [text[unit] || unit, unit],
-                text[name],
+            return (
+                this.calendar.getOption('buttons')?.[name]?.hint ??
+                this.calendar.getButtonState()[name]?.hint ??
+                ''
             )
         },
 
-        clickCustomButton(name, event, element) {
-            this.calendar?.getOption('customButtons')?.[name]?.click?.(
-                event,
-                element,
-            )
+        getButtons() {
+            return {
+                ...config.buttons,
+                ...callbacks.buttons,
+                ...Object.fromEntries(
+                    Object.entries(nativeToolbar?.buttons ?? {}).map(
+                        ([name, tool]) => [name, this.makeNativeButton(name, tool)],
+                    ),
+                ),
+            }
+        },
+
+        makeNativeButton(name, { text, handler, icon, isIconOnly, isPrimary, isToggle, tooltip, active, disabled, badge }) {
+            return {
+                text,
+                hint: text,
+                display: icon ? (isIconOnly ? 'icon' : 'icon-text') : 'text',
+                ...(icon && { iconContent: { html: icon } }),
+                isPrimary: Boolean(isPrimary || activeNativeButtons[name]),
+                class: 'fi-fc-tool',
+                click: (event) => {
+                    event.preventDefault()
+
+                    window.Alpine.evaluate(this.$el, handler, {
+                        scope: { $el: event.currentTarget, $event: event },
+                    })
+                },
+                didMount: ({ el }) => {
+                    if (tooltip) {
+                        el.setAttribute('x-tooltip', `{ content: ${tooltip}, theme: $store.theme }`)
+                    }
+
+                    if (disabled) el.setAttribute('x-bind:disabled', disabled)
+
+                    if (isToggle && active) {
+                        el.setAttribute('x-bind:aria-pressed', `(${active}) ? 'true' : 'false'`)
+                    }
+
+                    if (badge) {
+                        const badgeEl = document.createElement('span')
+                        badgeEl.className = 'fi-fc-tool-badge'
+                        badgeEl.setAttribute('x-show', badge)
+                        badgeEl.setAttribute('x-text', badge)
+                        badgeEl.setAttribute('x-cloak', '')
+                        el.append(badgeEl)
+                    }
+                },
+            }
+        },
+
+        trackOptions() {
+            const calendar = window.Alpine.raw(this.calendar)
+            const { getOption, setOption } = calendar
+
+            calendar.getOption = (name) => {
+                void this.optionChanges
+
+                return getOption.call(calendar, name)
+            }
+
+            calendar.setOption = (name, value) => {
+                setOption.call(calendar, name, value)
+
+                this.optionChanges++
+            }
+        },
+
+        watchActiveNativeButtons() {
+            Object.entries(nativeToolbar?.buttons ?? {}).forEach(([name, { active }]) => {
+                if (!active) return
+
+                activeNativeButtons[name] = Boolean(window.Alpine.evaluate(this.$el, active))
+
+                this.$watch(active, (isActive) => {
+                    activeNativeButtons[name] = Boolean(isActive)
+
+                    window.Alpine.raw(this.calendar)?.setOption('buttons', this.getButtons())
+                })
+            })
+
+            if (Object.values(activeNativeButtons).some(Boolean)) {
+                window.Alpine.raw(this.calendar).setOption('buttons', this.getButtons())
+            }
+        },
+
+        clickCustomButton(name, event) {
+            this.calendar?.getOption('buttons')?.[name]?.click?.(event)
         },
 
         // A view only serialises to its type; the rest are getters.
@@ -687,15 +670,13 @@ export default function fullcalendar({
         },
 
         destroy() {
-            this.isDestroyed = true
-
             Object.entries(this.listeners).forEach(([name, listener]) =>
                 window.removeEventListener(name, listener),
             )
 
             clearInterval(this.pollingTimer)
 
-            this.resizeObserver?.disconnect()
+            this.colorSchemeObserver?.disconnect()
 
             this.calendar?.destroy()
             this.calendar = null

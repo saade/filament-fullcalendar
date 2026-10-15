@@ -279,17 +279,17 @@ I'm excited to finally get v5 into your hands.
 
 These change the behavior of existing calendars. See the [upgrade guide](UPGRADING.md).
 
+- The calendar runs on FullCalendar 7, with a new theme made for Filament that takes its colors from the panel. Options, event fields and render hooks that FullCalendar renamed are translated from their FullCalendar 6 names, so existing configuration keeps working, but custom CSS that targets FullCalendar's `fc-*` classes or `--fc-*` variables has to be rewritten. The `moment` and `momentTimezone` plugins are gone; named timezones work without them. FullCalendar Premium's open-source key is now AGPLv3.
 - Moving, resizing and selecting are refused on the server when the calendar is not `editable` or `selectable`. Before, those settings only stopped the calendar itself from asking.
 - `editable`, `selectable` and `droppable` set in the panel plugin's `config()` array are now respected.
-- The JavaScript is split into parts that are downloaded on demand. A calendar with the standard views loads 155 KB gzipped, down from 204 KB, or 93 KB without the `moment` plugins. The premium plugins, `rrule` and the locales are only downloaded by calendars that use them. Run `php artisan filament:assets` after updating.
 - The view, create, edit and delete actions follow the model's policy when it has one. In 4.x, any user who could see the widget could open, edit or delete any record of the model by id unless `authorize()` was called on each action.
 - Records are scoped to the current tenant in panels with tenancy.
 - The toolbar shows the month, week and day view buttons by default, as it did in 3.x.
 - The calendar has no header actions by default. The create button is gone unless `headerActions()` returns a `CreateAction`; selecting dates still opens the create modal.
-- The header and footer toolbars are drawn by the widget with Filament buttons, in place of FullCalendar's own. `headerToolbar`, `footerToolbar` and `customButtons` are still read for their layout. CSS that targets `.fc-toolbar` or `.fc-button` no longer applies to them.
+- The header and footer toolbars are drawn by the widget with Filament buttons, in place of FullCalendar's own, unless `nativeToolbar()` is on. `headerToolbar`, `footerToolbar` and `buttons` (or `customButtons`) are still read for their layout. CSS that targets `.fc-toolbar` or `.fc-button` no longer applies to them.
 - The calendar is framed like a Filament table, with rounded corners, a ring and a header band for the day names. Button labels are capitalised, the title is smaller and semibold, the "+more" link uses the primary color, and its popover looks like a Filament dropdown. The list view's day rows and the resource timeline's header use the same header band, and the navigation arrows and the popover's close button are Filament's icons.
 - Events look like Filament badges: a tinted background with colored text, in the panel's primary color unless the event has its own. Before, they were filled with the primary color.
-- FullCalendar's `color` property on an event, set in a plain array or through `extraProperties()`, only takes the name of a Filament color, such as `success`. A CSS color there now throws. Use `backgroundColor`, `borderColor` and `textColor` for CSS colors.
+- FullCalendar's `color` property on an event, set in a plain array or through `extraProperties()`, only takes the name of a Filament color, such as `success`. A CSS color there now throws. For any other color, use a palette from Filament's `Color` class, such as `Color::hex('#fde047')`.
 - Date selection uses the timezone configured on the panel plugin.
 - `selectable` and `editable` set in a widget's `config()` are respected by the date click and selection handlers.
 - The calendar refetches its events after any action other than viewing has run, not only after the package's own actions.
@@ -316,17 +316,21 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - Clicking an event with no record behind it, such as a holiday, opened a broken modal ([#238](https://github.com/saade/filament-fullcalendar/discussions/238)). It now does nothing.
 - An event with a `url` caused a full page load in panels with SPA mode. It now navigates like any other link.
 - Filling the create form from a date selection discarded the fields' `default()` values ([#207](https://github.com/saade/filament-fullcalendar/issues/207)).
+- In 5.0.0-beta2, a tool with a hidden label, such as `filters`, showed no badge.
+- A tool's active state that read an option with `calendar.getOption()`, such as the Weekends tool in the README, did not change when the option did.
 
 ### Added
 
-- `color()` on an event or an event source, and `eventColor()` on a resource, color the events like a Filament badge of that color, in light and dark mode.
-- `backgroundColor()` and `borderColor()` on an event source.
+- `color()` on an event or an event source, and `eventColor()` on a resource, color the events like a Filament badge of that color, in light and dark mode. They take the name of a Filament color or a palette from Filament's `Color` class, such as `Color::hex('#fde047')`.
+- `contrastColor()` on an event or an event source, and `eventContrastColor()` on a resource, set the color of the text on themes that fill the event with its color.
 - `$startAttribute` and `$endAttribute` make the widget fill the create form from a date selection and save a dragged or resized event's new dates, and `$shouldConfirmEventChanges` opens the edit action with them filled in.
 - `goToDate()`, `changeView()`, `next()`, `previous()` and `today()` drive the calendar from PHP.
 - Models that implement `Eventable` describe their own event, and `fetchEvents()` can return them as an array, a collection or a query. One calendar can show several models: each event resolves to a record of its own model through a signed reference, with that model's label and policy.
 - Models that implement `Eventables` show up as several events, each of which opens the same record.
 - When the widget defines no `form()` or `infolist()`, the one from the model's resource is used.
 - `EventData::title()` takes `html: true` to render the title as HTML.
+- `theme()` on the panel plugin chooses how the calendar looks: `filament`, the default, or one of FullCalendar's themes, `breezy`, `classic`, `forma`, `monarch` and `pulse`, with `palette()` for their color palettes. `nativeToolbar()` lets FullCalendar draw the toolbar, with the icon, tooltip, badge and active state of each tool. A widget can override each with `getTheme()`, `getPalette()` and `hasNativeToolbar()`.
+- The widget's `eventClass()` render hook, FullCalendar 7's name for `eventClassNames()`.
 - `scrollToTime()` and `setOption()` join the methods that drive the calendar from PHP.
 - `changeView()` takes an optional date to go to at the same time.
 - `$info->event->source` and `$info->event->resourceIds` tell the event handlers which event source an event came from and which resources it is shown in.
@@ -339,7 +343,7 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 - `EventData::tooltip()` shows a tooltip when an event is hovered.
 - `eventSources()` shows read-only events from iCalendar feeds and public Google Calendars next to the calendar's own. iCalendar feeds are read by the application and cached, so private feed addresses stay out of the page.
 - Items from outside the calendar can be dragged onto it with the `draggable` Blade component and `droppable` in `config()`. A dropped record is saved with its new dates, and any other item opens the create action.
-- `jsCallbacks()` passes any FullCalendar option that takes a function, such as `selectAllow` or `dayCellClassNames`. A callback for something the calendar handles itself runs first and can cancel it by returning `false`.
+- `jsCallbacks()` passes any FullCalendar option that takes a function, such as `selectAllow` or `dayCellClass`. A callback for something the calendar handles itself runs first and can cancel it by returning `false`.
 - `$heading` and `$description` give the widget's card a header, where `:title` stands for the period the calendar is showing. Header actions are shown in that header, as on a table.
 - `toolbarButtons()` lays out the toolbar by tool name, like the toolbar of Filament's rich editor. The calendar comes with tools for navigation, the title, each view and the filters. `toolbarActions()` adds Filament actions as tools, `tools()` adds `CalendarTool`s of your own, and `ToolbarButtonGroup` puts several tools in a dropdown. `footerToolbarButtons()` does the same for a toolbar under the calendar.
 - `onDatesSet()` is called with the view and its dates when the user navigates, and the calendar is marked `aria-busy` and dimmed while it fetches events.
@@ -355,6 +359,9 @@ These change the behavior of existing calendars. See the [upgrade guide](UPGRADI
 
 ### Deprecated
 
+- The widget's `eventClassNames()`. Define `eventClass()` instead.
+- The class names from FullCalendar 6 that the calendar puts back on its elements, such as `fc-event` and `fc-daygrid-day`. Use FullCalendar's class-name options instead.
+- `backgroundColor()`, `borderColor()` and `textColor()` on an event and an event source, and `eventBackgroundColor()`, `eventBorderColor()` and `eventTextColor()` on a resource. Use `color()` and `contrastColor()`, or `eventColor()` and `eventContrastColor()`, instead.
 - `getFormSchema()`. Define `form()` instead.
 - The action classes in `Saade\FilamentFullCalendar\Actions`. Use the ones from `Filament\Actions`.
 

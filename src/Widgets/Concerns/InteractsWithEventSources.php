@@ -2,7 +2,6 @@
 
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
-use Illuminate\Contracts\Support\Arrayable;
 use Saade\FilamentFullCalendar\Data\EventSourceData;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
@@ -24,8 +23,8 @@ trait InteractsWithEventSources
     public function getEventSources(): array
     {
         return array_map(
-            fn (mixed $source): array => $this->applyFilamentColor($source instanceof Arrayable ? $source->toArray() : $source, classKey: 'className'),
-            array_values($this->eventSources()),
+            fn (mixed $source): array => $this->normalizeEvent(is_string($source) ? ['url' => $source] : $source),
+            [...array_values((array) ($this->getConfig()['eventSources'] ?? [])), ...array_values($this->eventSources())],
         );
     }
 

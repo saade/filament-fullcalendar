@@ -8,18 +8,44 @@ it('has no callbacks unless they are defined', function () {
     expect(Livewire::test(EventCalendarWidget::class)->instance()->getJsCallbacks())->toBe([]);
 });
 
+it('still lets a widget override the deprecated eventClassNames()', function () {
+    $widget = new class extends EventCalendarWidget
+    {
+        #[Override]
+        public function eventClassNames(): string
+        {
+            return trim(parent::eventClassNames()) === 'null' ? "() => 'legacy';" : '';
+        }
+    };
+
+    expect($widget->getJsCallbacks())->toBe(['eventClass' => "() => 'legacy'"]);
+});
+
+it('gives the deprecated eventClassNames() what eventClass() returns', function () {
+    $widget = new class extends EventCalendarWidget
+    {
+        public function eventClass(): string
+        {
+            return "() => 'new'";
+        }
+    };
+
+    expect($widget->eventClassNames())->toBe("() => 'new'")
+        ->and($widget->getJsCallbacks())->toBe(['eventClass' => "() => 'new'"]);
+});
+
 it('collects the render hooks and jsCallbacks() without a trailing semicolon', function () {
     expect(Livewire::test(CallbacksCalendarWidget::class)->instance()->getJsCallbacks())->toBe([
         'eventDidMount' => "function ({ el }) { el.dataset.mounted = 'yes' }",
         'selectAllow' => 'function (info) { return info.start >= new Date() }',
-        'dayCellClassNames' => '({ isPast }) => isPast ? ["is-past"] : []',
+        'dayCellClass' => '({ isPast }) => isPast ? ["is-past"] : []',
     ]);
 });
 
 it('prints the callbacks as JavaScript', function () {
     Livewire::test(CallbacksCalendarWidget::class)
         ->assertSeeHtml('selectAllow: (function (info) { return info.start &gt;= new Date() }),')
-        ->assertSeeHtml('dayCellClassNames: (({ isPast }) =&gt; isPast ? [&quot;is-past&quot;] : []),');
+        ->assertSeeHtml('dayCellClass: (({ isPast }) =&gt; isPast ? [&quot;is-past&quot;] : []),');
 });
 
 it('refuses a callback name that is not an option name', function () {

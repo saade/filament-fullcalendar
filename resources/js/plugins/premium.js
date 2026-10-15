@@ -1,16 +1,14 @@
-import scrollGrid from '@fullcalendar/scrollgrid'
-import timeline from '@fullcalendar/timeline'
-import adaptive from '@fullcalendar/adaptive'
-import resource from '@fullcalendar/resource'
-import resourceDayGrid from '@fullcalendar/resource-daygrid'
-import resourceTimeline from '@fullcalendar/resource-timeline'
-import resourceTimeGrid from '@fullcalendar/resource-timegrid'
+import scrollGrid from 'fullcalendar-scheduler/scrollgrid'
+import timeline from 'fullcalendar-scheduler/timeline'
+import adaptive from 'fullcalendar-scheduler/adaptive'
+import resourceDayGrid from 'fullcalendar-scheduler/resource-daygrid'
+import resourceTimeline from 'fullcalendar-scheduler/resource-timeline'
+import resourceTimeGrid from 'fullcalendar-scheduler/resource-timegrid'
 
 export default {
     scrollGrid,
     timeline,
     adaptive,
-    resource,
     resourceDayGrid,
     resourceTimeline,
     resourceTimeGrid,

@@ -3,11 +3,14 @@
 namespace Saade\FilamentFullCalendar\Widgets\Concerns;
 
 use Filament\Actions\Action;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Js;
 use LogicException;
 use Saade\FilamentFullCalendar\Toolbar\CalendarTool;
 use Saade\FilamentFullCalendar\Toolbar\ToolbarButtonGroup;
+
+use function Filament\Support\generate_icon_html;
 
 trait HasToolbar
 {
@@ -78,6 +81,75 @@ trait HasToolbar
         return $this->resolveToolbarButtons(
             $this->footerToolbarButtons() ?? $this->getToolbarButtonsFromConfig('footerToolbar') ?? [],
         );
+    }
+
+    /**
+     * @return array{headerToolbar: array<string, string> | false, footerToolbar: array<string, string> | false, buttons: array<string, array<string, string | bool>>} | null
+     */
+    public function getNativeToolbar(): ?array
+    {
+        if (! $this->hasNativeToolbar()) {
+            return null;
+        }
+
+        $buttons = [];
+        $toolbars = [];
+
+        foreach (['headerToolbar' => $this->getToolbarButtons(), 'footerToolbar' => $this->getFooterToolbarButtons()] as $option => $toolbar) {
+            $toolbars[$option] = false;
+
+            foreach ($toolbar as $section => $groups) {
+                $names = [];
+
+                foreach ($groups as $group) {
+                    $tools = [];
+
+                    foreach ($group as $tool) {
+                        array_push($tools, ...(($tool instanceof ToolbarButtonGroup) ? $tool->getResolvedButtons() : [$tool]));
+                    }
+
+                    foreach ($tools as $tool) {
+                        if ((! $this->isNativeTool($tool->getName())) && filled($tool->getJsHandler())) {
+                            $buttons[$tool->getName()] = $this->makeNativeButton($tool);
+                        }
+                    }
+
+                    $names[] = implode(',', array_map(fn (CalendarTool $tool): string => $tool->getName(), $tools));
+                }
+
+                $toolbars[$option][$section] = implode(' ', $names);
+            }
+        }
+
+        return [...$toolbars, 'buttons' => $buttons];
+    }
+
+    /**
+     * @return array<string, string | bool>
+     */
+    protected function makeNativeButton(CalendarTool $tool): array
+    {
+        $icon = generate_icon_html($tool->getIcon(), size: IconSize::Small)?->toHtml();
+        $isIconOnly = $tool->isLabelHidden() && filled($icon);
+
+        return array_filter([
+            'text' => $tool->getLabel(),
+            'handler' => $tool->getJsHandler(),
+            'icon' => $icon,
+            'isIconOnly' => $isIconOnly,
+            'isPrimary' => $tool->getColor() === 'primary',
+            'isToggle' => $tool->isToggle(),
+            'tooltip' => $tool->getTooltipJsExpression() ?? ($isIconOnly ? Js::from($tool->getLabel())->toHtml() : null),
+            'active' => $tool->getActiveJsExpression(),
+            'disabled' => $tool->getDisabledJsExpression(),
+            'badge' => $tool->getBadgeJsExpression(),
+        ]);
+    }
+
+    protected function isNativeTool(string $name): bool
+    {
+        return in_array($name, ['prev', 'next', 'prevYear', 'nextYear', 'today', 'title'], true)
+            || ((! array_key_exists($name, $this->getTools())) && (filled($this->makeViewTool($name)) || filled($this->makeCustomButtonTool($name))));
     }
 
     /**
@@ -170,7 +242,7 @@ trait HasToolbar
                 ->labelJsExpression("getToolLabel('today')")
                 ->tooltipJsExpression("getToolHint('today')")
                 ->jsHandler('calendar?.today()')
-                ->disabledJsExpression('isTodayInRange'),
+                ->disabledJsExpression('isTodayDisabled'),
             CalendarTool::make('title')
                 ->heading()
                 ->labelJsExpression('title'),
@@ -222,16 +294,16 @@ trait HasToolbar
 
     protected function makeCustomButtonTool(string $name): ?CalendarTool
     {
-        $button = $this->getConfig()['customButtons'][$name] ?? null;
+        $button = $this->getConfig()['buttons'][$name] ?? null;
 
-        if (blank($button) && (! array_key_exists('customButtons', $this->getJsCallbacks()))) {
+        if (blank($button) && (! array_key_exists('buttons', $this->getJsCallbacks()))) {
             return null;
         }
 
         return CalendarTool::make($name)
             ->label($button['text'] ?? null)
             ->hiddenLabel(false)
-            ->jsHandler('clickCustomButton(' . Js::from($name) . ', $event, $el)');
+            ->jsHandler('clickCustomButton(' . Js::from($name) . ', $event)');
     }
 
     /**

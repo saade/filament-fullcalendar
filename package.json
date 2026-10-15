@@ -3,33 +3,19 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build && node scripts/build-css.js"
     },
     "devDependencies": {
-        "@fullcalendar/adaptive": "^6.1.21",
-        "@fullcalendar/core": "^6.1.21",
-        "@fullcalendar/daygrid": "^6.1.21",
-        "@fullcalendar/google-calendar": "^6.1.21",
-        "@fullcalendar/icalendar": "^6.1.21",
-        "@fullcalendar/interaction": "^6.1.21",
-        "@fullcalendar/list": "^6.1.21",
-        "@fullcalendar/moment": "^6.1.21",
-        "@fullcalendar/moment-timezone": "^6.1.21",
-        "@fullcalendar/multimonth": "^6.1.21",
-        "@fullcalendar/resource": "^6.1.21",
-        "@fullcalendar/resource-daygrid": "^6.1.21",
-        "@fullcalendar/resource-timegrid": "^6.1.21",
-        "@fullcalendar/resource-timeline": "^6.1.21",
-        "@fullcalendar/rrule": "^6.1.21",
-        "@fullcalendar/scrollgrid": "^6.1.21",
-        "@fullcalendar/timegrid": "^6.1.21",
-        "@fullcalendar/timeline": "^6.1.21",
+        "@fullcalendar/google-calendar": "^7.1.1",
+        "@fullcalendar/icalendar": "^7.1.1",
+        "@fullcalendar/rrule": "^7.1.1",
         "@shufo/prettier-plugin-blade": "^1.16.2",
-        "ical.js": "^1.5.0",
-        "moment": "^2.29.4",
-        "moment-timezone": "^0.5.48",
+        "fullcalendar": "^7.1.1",
+        "fullcalendar-scheduler": "^7.1.1",
+        "ical.js": "^2.2.1",
         "prettier": "^3.9.9",
-        "rrule": "^2.7.2",
+        "rrule": "^2.8.1",
+        "temporal-polyfill": "^1.0.5",
         "vite": "^8.3.2"
     }
 }

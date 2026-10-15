@@ -8,6 +8,7 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'vite.config.js'
+      - 'scripts/**'
       - 'resources/js/**'
       - '.github/workflows/build-assets.yml'
   pull_request:
@@ -17,6 +18,7 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'vite.config.js'
+      - 'scripts/**'
       - 'resources/js/**'
       - '.github/workflows/build-assets.yml'
 

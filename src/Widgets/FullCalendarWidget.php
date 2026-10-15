@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Saade\FilamentFullCalendar\Data\FetchInfo;
+use Saade\FilamentFullCalendar\Support\V6Compat\V6CompatRenderHooks;
 
 class FullCalendarWidget extends Widget implements HasActions, HasSchemas
 {
@@ -40,6 +41,7 @@ class FullCalendarWidget extends Widget implements HasActions, HasSchemas
     use InteractsWithFormActions;
     use InteractsWithHeaderActions;
     use InteractsWithSchemas;
+    use V6CompatRenderHooks;
 
     protected string $view = 'filament-fullcalendar::fullcalendar';
 

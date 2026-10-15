@@ -19,6 +19,7 @@
 /build                  export-ignore
 /docs                   export-ignore
 /tests                  export-ignore
+/scripts                export-ignore
 /resources/js           export-ignore
 /package.json           export-ignore
 /package-lock.json      export-ignore

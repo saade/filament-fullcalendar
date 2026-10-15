@@ -63,7 +63,7 @@ it('gives the record the range that is being fetched', function () {
 it('colors the events like any other', function () {
     createRental();
 
-    expect(fetchRentalEvents()[0]['classNames'])->toContain('fi-color-success');
+    expect(fetchRentalEvents()[0])->toMatchArray(['color' => 'var(--success-500)', 'className' => 'fi-color-success']);
 });
 
 it('does not let the events be dragged or resized unless one says so', function () {

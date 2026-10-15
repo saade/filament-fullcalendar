@@ -20,10 +20,8 @@ it('serializes children, colors and extra data', function () {
             ResourceData::make()->id('room')->title('Room'),
             ['id' => 'hall', 'title' => 'Hall'],
         ])
-        ->eventColor('red')
-        ->eventBackgroundColor('green')
-        ->eventBorderColor('blue')
-        ->eventTextColor('white')
+        ->eventColor('danger')
+        ->eventContrastColor('white')
         ->extendedProps(['capacity' => 10])
         ->extraProperties(['eventOverlap' => false]);
 
@@ -34,10 +32,8 @@ it('serializes children, colors and extra data', function () {
             ['id' => 'room', 'title' => 'Room'],
             ['id' => 'hall', 'title' => 'Hall'],
         ],
-        'eventColor' => 'red',
-        'eventBackgroundColor' => 'green',
-        'eventBorderColor' => 'blue',
-        'eventTextColor' => 'white',
+        'eventColor' => 'danger',
+        'eventContrastColor' => 'white',
         'extendedProps' => ['capacity' => 10],
         'eventOverlap' => false,
     ]);
