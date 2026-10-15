@@ -2,6 +2,105 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v5.0.0-beta3 - 2026-10-15
+
+> [!IMPORTANT]
+This is the third beta of Filament FullCalendar v5, and it moves the plugin to **FullCalendar 7**.
+
+I had planned to leave FullCalendar 7 for the next major, but shipping 5.0.0 on a version of FullCalendar that's already been replaced didn't feel right. So it's in v5, along with something to show for it.
+
+Most of your configuration keeps working, but please read the "Before you update" section below, test it, and open an issue if anything looks off.
+
+<p align="center">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/calendar-dark.png">
+        <img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/calendar-light.png" alt="A month view of the calendar in Filament's theme" />
+    </picture>
+</p>
+### A theme made for Filament
+
+The calendar now uses a theme built on FullCalendar 7's theme system. It takes its colors from your panel: the primary color for buttons, today and events, and the gray scale for borders and text. It follows your panel into dark mode, and its classes are Tailwind classes, compiled by your panel's theme. No more CSS overrides fighting FullCalendar's stylesheet.
+
+### Pick a look
+
+Prefer FullCalendar's own look? All five of its themes ship with the plugin, each with its color palettes:
+
+```php
+FilamentFullCalendarPlugin::make()
+    ->theme('monarch')
+    ->palette('purple')
+    ->nativeToolbar()
+
+```
+<table>
+    <tr>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-filament.png" alt="The filament theme" /><br /><code>filament</code></td>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-breezy.png" alt="The breezy theme" /><br /><code>breezy</code></td>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-classic.png" alt="The classic theme" /><br /><code>classic</code></td>
+    </tr>
+    <tr>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-forma.png" alt="The forma theme" /><br /><code>forma</code></td>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-monarch.png" alt="The monarch theme" /><br /><code>monarch</code></td>
+        <td><img src="https://raw.githubusercontent.com/saade/filament-fullcalendar/5.x/art/theme-pulse.png" alt="The pulse theme" /><br /><code>pulse</code></td>
+    </tr>
+</table>
+`nativeToolbar()` lets FullCalendar draw the toolbar in the theme's style instead of using Filament buttons. Your actions, filters and custom tools come along, with their icons, tooltips and badges.
+
+### Colors
+
+`color()` takes the name of any color registered in Filament, such as `success`, or a palette from Filament's `Color` class for anything else:
+
+```php
+use Filament\Support\Colors\Color;
+
+EventData::make()->color('success');
+EventData::make()->color(Color::hex('#fde047'))->contrastColor('#000');
+
+```
+The same goes for `color()` on event sources and `eventColor()` on resources. `contrastColor()` sets the text color on the themes that fill events with their color.
+
+### Your FullCalendar 6 configuration keeps working
+
+FullCalendar 7 renamed a lot of options, event fields and render hooks. The plugin translates the old names for you, so things like `eventClassNames`, `customButtons`, `buttonText`, `slotLabelFormat` or `backgroundColor` on an event keep working. A few of FullCalendar 6's class names, such as `fc-event` and `fc-daygrid-day`, are also put back on their elements.
+
+These are deprecated and will be removed in the next major:
+
+- `backgroundColor()`, `borderColor()` and `textColor()` on events and event sources, in favor of `color()` and `contrastColor()`
+- `eventBackgroundColor()`, `eventBorderColor()` and `eventTextColor()` on resources, in favor of `eventColor()` and `eventContrastColor()`
+- the widget's `eventClassNames()`, in favor of `eventClass()`
+- FullCalendar 6's class names, in favor of the class-name options and the widget's own `fi-fc-*` classes
+
+### One script
+
+The plugin ships a single script again, with no extra files for your application to serve. It holds FullCalendar 7, the premium views, recurrence, locales, external calendars and all six themes.
+
+### Fixed
+
+- A tool with a hidden label, such as `filters`, showed no badge.
+- A tool's active state that read an option with `calendar.getOption()`, such as a Weekends toggle, did not change when the option did.
+
+### Before you update
+
+Most of this is handled for you. These need your attention:
+
+- **CSS written for FullCalendar's elements.** FullCalendar 7 generates its class names and replaced its `--fc-*` variables, so selectors such as `.fc-daygrid-event` match nothing. Use FullCalendar's class-name options instead, such as `eventClass` or `dayCellClass`.
+- **Moment format strings.** The `moment` plugin is gone, so a format such as `'titleFormat' => 'MMMM YYYY'` no longer works. Use a date formatting object instead.
+- **FullCalendar Premium's open-source key.** It changed from GPLv3 to AGPLv3. If you used `GPL-My-Project-Is-Open-Source`, the new key is `AGPL-My-Frontend-And-Backend-Are-Open-Source`, which requires both your frontend and your backend to be open source.
+
+After updating, publish the new script and rebuild your theme:
+
+```bash
+composer update saade/filament-fullcalendar
+php artisan filament:assets
+npm run build
+
+```
+The [upgrade guide](https://github.com/saade/filament-fullcalendar/blob/5.x/UPGRADING.md#the-calendar-runs-on-fullcalendar-7) covers every rename and what's left to change by hand.
+
+Thanks again to everyone testing the betas. 💛
+
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v5.0.0-beta2...v5.0.0-beta3
+
 ## v5.0.0-beta2 - 2026-10-11
 
 ### Release Notes
@@ -29,6 +128,7 @@ To make upgrading even easier, v5 now ships with an **automated upgrade script**
 composer require saade/filament-fullcalendar:"^5.0"
 composer require rector/rector:^2.5 --dev --no-scripts
 vendor/bin/filament-fullcalendar-v5
+
 
 
 ```
@@ -262,6 +362,7 @@ Filament FullCalendar v5 supports:
 ```bash
 composer require saade/filament-fullcalendar:"^5.0"
 php artisan filament:assets
+
 
 
 ```
