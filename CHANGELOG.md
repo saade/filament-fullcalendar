@@ -2,6 +2,36 @@
 
 All notable changes to `filament-fullcalendar` will be documented in this file.
 
+## v5.0.0-beta4 - 2026-10-16
+
+### Fixed
+
+- In 5.0.0-beta3, clicking, dragging or resizing an event on a calendar without resource views threw an error in the browser, so the view and edit modals never opened. Thanks to everyone who reported it. ([`12a3c34`](https://github.com/saade/filament-fullcalendar/commit/12a3c347dae6ce0bce3eb1234463f7fb54615ea4))
+
+### Added
+
+- **A theme of your own.** `registerTheme()` on the panel plugin takes a name and the address of a JavaScript module that exports a FullCalendar 7 theme, and `theme()` takes that name. A theme can `extends` a built-in theme or another registered one, replacing only the options it sets.
+  ([`d63bf49`](https://github.com/saade/filament-fullcalendar/commit/d63bf4907cfed26aaa928e48acffce21bafb5c26))
+
+  ```php
+  use Illuminate\Support\Facades\Vite;
+
+FilamentFullCalendarPlugin::make()
+    ->registerTheme('brutalist', fn (): string => Vite::asset('resources/js/calendar/brutalist.js'))
+    ->theme('brutalist')
+
+  ```
+See [Using a theme of your own](https://github.com/saade/filament-fullcalendar/tree/5.x#using-a-theme-of-your-own) for how to write and build one.
+
+### Updating
+
+  ```bash
+  composer update saade/filament-fullcalendar
+php artisan filament:assets
+
+  ```
+**Full Changelog**: https://github.com/saade/filament-fullcalendar/compare/v5.0.0-beta3...v5.0.0-beta4
+
 ## v5.0.0-beta3 - 2026-10-15
 
 > [!IMPORTANT]
@@ -18,7 +48,6 @@ Most of your configuration keeps working, but please read the "Before you update
     </picture>
 </p>
 ### A theme made for Filament
-
 The calendar now uses a theme built on FullCalendar 7's theme system. It takes its colors from your panel: the primary color for buttons, today and events, and the gray scale for borders and text. It follows your panel into dark mode, and its classes are Tailwind classes, compiled by your panel's theme. No more CSS overrides fighting FullCalendar's stylesheet.
 
 ### Pick a look
@@ -30,6 +59,7 @@ FilamentFullCalendarPlugin::make()
     ->theme('monarch')
     ->palette('purple')
     ->nativeToolbar()
+
 
 ```
 <table>
@@ -45,7 +75,6 @@ FilamentFullCalendarPlugin::make()
     </tr>
 </table>
 `nativeToolbar()` lets FullCalendar draw the toolbar in the theme's style instead of using Filament buttons. Your actions, filters and custom tools come along, with their icons, tooltips and badges.
-
 ### Colors
 
 `color()` takes the name of any color registered in Filament, such as `success`, or a palette from Filament's `Color` class for anything else:
@@ -55,6 +84,7 @@ use Filament\Support\Colors\Color;
 
 EventData::make()->color('success');
 EventData::make()->color(Color::hex('#fde047'))->contrastColor('#000');
+
 
 ```
 The same goes for `color()` on event sources and `eventColor()` on resources. `contrastColor()` sets the text color on the themes that fill events with their color.
@@ -94,6 +124,7 @@ composer update saade/filament-fullcalendar
 php artisan filament:assets
 npm run build
 
+
 ```
 The [upgrade guide](https://github.com/saade/filament-fullcalendar/blob/5.x/UPGRADING.md#the-calendar-runs-on-fullcalendar-7) covers every rename and what's left to change by hand.
 
@@ -128,6 +159,7 @@ To make upgrading even easier, v5 now ships with an **automated upgrade script**
 composer require saade/filament-fullcalendar:"^5.0"
 composer require rector/rector:^2.5 --dev --no-scripts
 vendor/bin/filament-fullcalendar-v5
+
 
 
 
@@ -362,6 +394,7 @@ Filament FullCalendar v5 supports:
 ```bash
 composer require saade/filament-fullcalendar:"^5.0"
 php artisan filament:assets
+
 
 
 
