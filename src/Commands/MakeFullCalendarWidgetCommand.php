@@ -6,6 +6,7 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Filament\Widgets\Commands\MakeWidgetCommand;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Throwable;
@@ -81,7 +82,7 @@ class MakeFullCalendarWidgetCommand extends MakeWidgetCommand
         ];
     }
 
-    public function handle(): int
+    public function handle(?Filesystem $filesystem = null): int
     {
         try {
             $this->configureFqnEnd();
