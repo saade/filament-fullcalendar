@@ -13,7 +13,7 @@
         "fullcalendar": "^7.1.1",
         "fullcalendar-scheduler": "^7.1.1",
         "ical.js": "^2.2.1",
-        "prettier": "^3.9.9",
+        "prettier": "^3.9.10",
         "rrule": "^2.8.1",
         "temporal-polyfill": "^1.0.5",
         "vite": "^8.3.4"
