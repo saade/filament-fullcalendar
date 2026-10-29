@@ -9,7 +9,7 @@
         "@fullcalendar/google-calendar": "^7.1.1",
         "@fullcalendar/icalendar": "^7.1.1",
         "@fullcalendar/rrule": "^7.1.1",
-        "@shufo/prettier-plugin-blade": "^1.16.2",
+        "@shufo/prettier-plugin-blade": "^1.16.3",
         "fullcalendar": "^7.1.1",
         "fullcalendar-scheduler": "^7.1.1",
         "ical.js": "^2.2.1",
